@@ -1,4 +1,4 @@
-<title>Mimic Season</title>
+<title>Some of It Bites</title>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#231F1A">
 
@@ -125,7 +125,10 @@ body.sbx #top .rk{color:#FFB38A}
 @keyframes throb{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
 .badge{
   display:inline-block; min-width:16px; margin-left:5px; padding:0 4px; border-radius:9px;
-  background:var(--verm); color:#fff; font-family:var(--mono); font-size:11.5px; vertical-align:1px;
+  background:#8FB56A; color:#20240F; font-weight:700; font-family:var(--mono); font-size:11.5px; vertical-align:1px;
+}
+/* the handbook's unread count is neither — it is just news */
+#top #help .badge{background:#E8D9BC; color:#231F1A;
 }
 
 /* ── overlays ── */
@@ -185,26 +188,37 @@ body.sbx #top .rk{color:#FFB38A}
   display:flex; gap:12px; align-items:flex-start; width:100%; text-align:left;
   border:1px solid #5A5241; background:#332E24; padding:13px; margin-bottom:8px;
 }
-/* unaffordable is communicated by the price, not by making the card unreadable */
+/* Affordable or not is the first thing you should see: a lit card with a filled
+   price chip, or a dimmed card whose chip says how much you are short. */
 .card:hover:not(:disabled){background:#3D3729; border-color:#7A7059}
-.card:disabled{background:#292418; border-color:#443E31; cursor:not-allowed}
-.card:disabled .cc{color:#A0926F}
-.card:disabled .cn{color:#D8CFB8}
+.card:disabled{background:#282318; border-color:#403A2E; cursor:not-allowed; opacity:.6}
+.card:disabled .cn{color:#CFC6B0}
+
 .card .ci{flex:none; width:34px; height:34px}
 .card .cb{flex:1; min-width:0}
-.card .cn{font-family:var(--mono); font-size:13px; font-weight:700; letter-spacing:.09em; text-transform:uppercase}
+.card .cn{font-family:var(--mono); font-size:14px; font-weight:700; letter-spacing:.09em; text-transform:uppercase}
 .card .cd{font-size:15px; color:#DCD3BD; line-height:1.45; margin-top:2px}
-.card .cc{font-family:var(--mono); font-size:13px; margin-top:5px; color:#E8825F; font-weight:700}
+.card .cc{font-family:var(--mono); font-size:14px; margin-top:6px; font-weight:700;
+  display:inline-block; padding:3px 8px; border:1px solid #6E6551; color:#C8BC9C}
 .card .cc s{color:#8C846F; text-decoration:none; font-weight:400}
+.card .cc .short{font-weight:400; color:#A99C80; letter-spacing:.02em}
+/* affordable — green, because in this game warm red is what danger looks like */
+.card.ok .cc{background:#8FB56A; border-color:#8FB56A; color:#20240F; font-weight:700}
+/* maxed out — nothing left to buy, and it should not read as locked */
+.card.done .cc{border-color:#8A7C60; color:#EFE6CE; background:transparent}
+.card.done{opacity:1; background:#302B21; border-color:#8A7C60}
+.card.done .cd,.card.done .cn{color:#E4DBC4}
 .card.bought{border-color:#8A7C60}
-.card.ok{border-color:#E8825F; background:#3A3327; box-shadow:inset 4px 0 0 #E8825F}
-.card.ok:hover{background:#463D2D}
+.card.ok{border-color:#8FB56A; background:#353A26; box-shadow:inset 6px 0 0 #8FB56A}
+.card.ok:hover{background:#3E4530}
+.card .key.act{color:#FFF8E6}
 
 .card .lv{
-  font-family:var(--mono); font-size:11px; letter-spacing:.09em; border:1px solid #7A7059;
+  font-family:var(--mono); font-size:13px; letter-spacing:.09em; border:1px solid #7A7059;
   padding:2px 6px; color:#D8CFB8; flex:none; align-self:flex-start;
 }
-.card.bought .lv{border-color:var(--verm); color:#E8825F}
+.card.bought .lv{border-color:#9C8F70; color:#EFE6CE}
+.card.done .lv{border-color:#C8BC9C; color:#FFF8E6}
 .carrywarn{
   position:absolute; left:0; right:0; bottom:56px; z-index:3;
   margin:0 12px; padding:9px 11px; background:#3A2118; border:1px solid var(--verm);
@@ -213,18 +227,38 @@ body.sbx #top .rk{color:#FFB38A}
 .carrywarn b{color:#FFB38A}
 .stats2{display:grid; grid-template-columns:repeat(auto-fit,minmax(98px,1fr)); gap:1px; background:#5A5241; border:1px solid #5A5241; margin-bottom:12px}
 .stats2 div{background:#332E24; padding:7px 9px; font-family:var(--mono)}
-.stats2 span{display:block; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:#B3A98F}
-.stats2 b{font-size:16px; color:#FFF8E6; font-variant-numeric:tabular-nums}
-.buyrow{display:flex; align-items:center; gap:8px; margin-bottom:16px; font-family:var(--mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:#B3A98F}
-.buyrow .bn{border:1px solid #7A7059; color:#DCD3BD; padding:7px 14px; font-family:var(--mono); font-size:12px; letter-spacing:.08em}
-.buyrow .bn.on{background:#E8825F; border-color:#E8825F; color:#231F1A; font-weight:700}
+.stats2 span{display:block; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:#B3A98F}
+.stats2 b{font-size:17.5px; color:#FFF8E6; font-variant-numeric:tabular-nums}
+.dstat{display:grid; grid-template-columns:repeat(auto-fit,minmax(104px,1fr)); gap:1px;
+  background:#5A5241; border:1px solid #5A5241; margin-bottom:14px}
+.dstat div{background:#332E24; padding:6px 8px; font-family:var(--mono)}
+.dstat span{display:block; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:#B3A98F}
+.dstat b{font-size:14.5px; color:#FFF8E6; font-variant-numeric:tabular-nums; font-weight:400}
+.drow{display:flex; flex-wrap:wrap; gap:7px; margin-bottom:6px}
+.dbtn{font-family:var(--mono); font-size:12.5px; letter-spacing:.06em; border:1px solid #7A7059;
+  background:#332E24; color:#E4DBC4; padding:8px 11px; text-align:left}
+.dbtn:active{transform:translateY(1px)}
+.dbtn:hover{background:#3F3729; border-color:#9C8F70}
+/* the way back in, once it has been found */
+body.dbg #top .rk:after{content:' · DBG'; color:#E8825F; letter-spacing:.14em}
+#top .rk{cursor:pointer}
+.legend{display:flex; flex-wrap:wrap; gap:6px 16px; margin:-8px 0 16px; font-family:var(--mono);
+  font-size:11.5px; letter-spacing:.06em; color:#B3A98F}
+.legend span{display:flex; align-items:center; gap:6px}
+.legend .sw{width:11px; height:11px; flex:none; border:1px solid #6E6551}
+.legend .sw.buy{background:#8FB56A; border-color:#8FB56A}
+.legend .sw.act{background:#FFF8E6; border-color:#FFF8E6}
+.legend .sw.off{background:#3A3428}
+.buyrow{display:flex; align-items:center; gap:8px; margin-bottom:16px; font-family:var(--mono); font-size:13px; letter-spacing:.12em; text-transform:uppercase; color:#B3A98F}
+.buyrow .bn{border:1px solid #7A7059; color:#DCD3BD; padding:7px 14px; font-family:var(--mono); font-size:13.5px; letter-spacing:.08em}
+.buyrow .bn.on{background:#8FB56A; border-color:#8FB56A; color:#20240F; font-weight:700}
 .card .pbar{height:4px; background:#443E32; margin-top:6px}
-.card .pbar i{display:block; height:100%; background:#E8825F}
+.card .pbar i{display:block; height:100%; background:#8FB56A}
 .card.flash{animation:cf .35s ease-out}
-@keyframes cf{0%{background:var(--verm)}100%{background:#2C2820}}
-.grp{font-family:var(--mono); font-size:11.5px; letter-spacing:.15em; text-transform:uppercase; color:#D2C7A8; margin:22px 0 10px; padding-bottom:7px; border-bottom:1px solid #5A5241}
+@keyframes cf{0%{background:#435636}55%{background:#3A4A31}100%{background:#2C2820}}
+.grp{font-family:var(--mono); font-size:12.5px; letter-spacing:.15em; text-transform:uppercase; color:#D2C7A8; margin:22px 0 10px; padding-bottom:7px; border-bottom:1px solid #5A5241}
 .grp:first-child{margin-top:0}
-.key{font-size:13.5px; line-height:1.45; color:#F49B74; margin-top:4px; font-family:var(--mono); letter-spacing:.04em}
+.key{font-size:14.5px; line-height:1.45; color:#B3A98F; margin-top:4px; font-family:var(--mono); letter-spacing:.04em}
 
 .big{font-family:var(--disp); font-size:clamp(30px,11vw,58px); line-height:.94; text-transform:uppercase; letter-spacing:.01em; margin:0 0 10px}
 .big .v{color:var(--verm)}
@@ -270,57 +304,111 @@ body.sbx #top .rk{color:#FFB38A}
 .cta.ghost{background:#3A342B; color:var(--bone)}
 .btns.sub{gap:14px; margin:10px 0 0; align-items:center}
 .lnk{
-  font-family:var(--mono); font-size:12px; letter-spacing:.11em; text-transform:uppercase;
+  font-family:var(--mono); font-size:13.5px; letter-spacing:.11em; text-transform:uppercase;
   color:#B9B09A; border-bottom:1px solid #5E5647; padding:2px 0;
 }
 .lnk:hover{color:var(--bone); border-color:var(--bone)}
 .lnk.danger{color:#C4705C}
 .lnk.danger:hover{color:#E8825F; border-color:#E8825F}
-.foot{font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#6E6754; margin:14px 0 0; line-height:1.6}
+.foot{font-family:var(--mono); font-size:12.5px; letter-spacing:.08em; text-transform:uppercase; color:#6E6754; margin:14px 0 0; line-height:1.6}
 
 .cat{display:grid; grid-template-columns:repeat(auto-fill,minmax(134px,1fr)); gap:7px; margin-bottom:4px}
 .ci2{border:1px solid #5A5241; background:#332E24; padding:6px 5px 7px; text-align:center; position:relative}
 .ci2 canvas{display:block; margin:0 auto; image-rendering:auto}
 .ci2 .cid{
-  position:absolute; top:3px; left:4px; font-family:var(--mono); font-size:10px; font-weight:700;
+  position:absolute; top:3px; left:4px; font-family:var(--mono); font-size:11.5px; font-weight:700;
   letter-spacing:.08em; color:var(--ink); background:#E8825F; padding:0 3px;
 }
-.ci2 .nm2{font-family:var(--mono); font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:#E8D9BC; line-height:1.3; margin-top:4px}
-.ci2 .sub{font-family:var(--mono); font-size:10.5px; color:#B3A98F; line-height:1.3; margin-top:2px}
+.ci2 .nm2{font-family:var(--mono); font-size:12.5px; letter-spacing:.05em; text-transform:uppercase; color:#E8D9BC; line-height:1.3; margin-top:4px}
+.ci2 .sub{font-family:var(--mono); font-size:12px; color:#B3A98F; line-height:1.3; margin-top:2px}
 .ci2.wide{grid-column:span 2}
-.doc{border:1px solid #5A5241; background:#332E24; margin-bottom:7px}
-.doc summary{padding:9px 11px; cursor:pointer; list-style:none; display:flex; flex-direction:column; gap:2px}
+/* ── the memos are paper, not menu rows ──────────────────────────
+   Bone stock on the dark desk, ink type, a hard drop shadow so each
+   sheet sits above the panel, and a barely-there tilt so a stack of
+   them reads as a stack. */
+.docs{padding:4px 6px 2px}
+.doc{
+  background:#E9E1CC; color:var(--ink); border:1px solid #A2977B;
+  box-shadow:3px 3px 0 rgba(0,0,0,.30); margin:0 0 15px; position:relative;
+}
+.doc:nth-child(odd){transform:rotate(-.35deg)}
+.doc:nth-child(even){transform:rotate(.28deg)}
+/* dog-eared corner */
+.doc::after{
+  content:''; position:absolute; right:-1px; bottom:-1px; width:15px; height:15px;
+  background:linear-gradient(315deg,#332E24 46%,#C9BE9F 47%,#A2977B 100%);
+}
+.doc summary{
+  padding:11px 13px 10px; cursor:pointer; list-style:none;
+  display:flex; flex-direction:column; gap:3px;
+}
 .doc summary::-webkit-details-marker{display:none}
-.doc summary b{font-family:var(--mono); font-size:13px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:#E8D9BC}
-.doc summary i{font-family:var(--mono); font-size:11px; letter-spacing:.08em; color:#B3A98F; font-style:normal}
-.doc[open] summary{border-bottom:1px solid #4B4438}
-.doc > div{padding:14px; font-size:15.5px; line-height:1.6; color:#E4DCC7; font-style:italic}
+.doc summary:hover b{color:var(--gloss)}
+.doc summary b{
+  font-family:var(--mono); font-size:14px; font-weight:700; letter-spacing:.06em;
+  text-transform:uppercase; color:var(--ink); line-height:1.3;
+}
+/* the source line is a rubber stamp, not a subtitle */
+.doc summary i{
+  align-self:flex-start; font-family:var(--mono); font-size:11px; letter-spacing:.14em;
+  text-transform:uppercase; font-style:normal; color:var(--gloss);
+  border:1.5px solid var(--gloss); padding:1px 5px; opacity:.78;
+}
+.doc[open] summary{border-bottom:1px dashed #A2977B}
+.doc > div{
+  padding:14px 15px 17px; font-family:var(--mono); font-size:14.5px; line-height:1.72;
+  color:#2C2721; font-style:normal;
+}
+.doc > div b{color:var(--ink)}
+.doc > div i{font-style:italic; color:#4A4236}
 .hb{font-size:15.5px; line-height:1.6; color:#E4DCC7; margin:0 0 10px; max-width:60em}
 .hb b{color:var(--bone)}
 .hrow{display:flex; justify-content:space-between; gap:12px; padding:6px 0; border-bottom:1px solid #4E4636; font-size:15px; color:#DCD3BD}
 .hrow span{flex:1}
 .hrow b{flex:1.4; text-align:right; color:#FFF8E6; font-weight:400}
-.htab{border:1px solid #5A5241; margin:8px 0 12px; overflow-x:auto}
-.htab .hh,.htab .hr{display:grid; grid-template-columns:1.5fr .7fr .7fr .7fr 1.6fr; gap:9px; padding:8px 10px; font-size:13.5px; align-items:baseline}
+.htab{border:1px solid #5A5241; margin:8px 0 12px}
+.htab .hh,.htab .hr{display:grid; gap:9px; padding:8px 10px; font-size:14.5px; align-items:baseline}
+/* the column template follows the number of columns the table actually has */
+.htab.c5 .hh,.htab.c5 .hr{grid-template-columns:1.35fr .65fr 1fr .65fr .85fr}
+.htab.c4 .hh,.htab.c4 .hr{grid-template-columns:1.25fr .8fr .6fr 2.3fr}
+.htab.c3 .hh,.htab.c3 .hr{grid-template-columns:1.2fr 1fr 2fr}
+.htab.c2 .hh,.htab.c2 .hr{grid-template-columns:.35fr 3fr}
 .htab .hh{background:#4A4335; font-family:var(--mono); font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; color:#D2C7A8}
 .htab .hr{border-top:1px solid #4E4636; color:#DCD3BD}
 .htab .hr span:first-child{color:#FFF8E6}
+/* on a phone a table is a stack of labelled lines, never a grid */
+@media (max-width:620px){
+  .htab .hh{display:none}
+  .htab .hr{display:block; padding:10px 12px}
+  .htab .hr span{display:block; margin-top:4px}
+  .htab .hr span:first-child{font-size:16.5px; margin-top:0; line-height:1.25}
+  .htab .hr span[data-l]:not(:first-child):before{
+    content:attr(data-l) ' '; font-family:var(--mono); font-size:10px; letter-spacing:.12em;
+    text-transform:uppercase; opacity:.52; margin-right:5px;
+  }
+  .htab .hr span.num{display:inline-block; margin-right:18px}
+  .hrow{flex-direction:column; gap:1px}
+  .hrow span,.hrow b{flex:none}
+  .hrow b{text-align:left}
+}
 .kit{display:flex; gap:12px; align-items:flex-start; border:1px solid #5A5241; background:#332E24; padding:10px; margin-bottom:8px}
 .kitart{flex:none}
 .kitinfo{min-width:0}
 .socks{display:grid; grid-template-columns:repeat(auto-fit,minmax(78px,1fr)); gap:7px; margin-bottom:8px}
 .sock{border:1px solid #5A5241; background:#332E24; padding:9px 5px 8px; text-align:center}
 .sock.full{border-color:#7A6E55}
-.sock span{display:block; font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:#B3A98F; margin-top:3px}
+.sock span{display:block; font-family:var(--mono); font-size:12.5px; letter-spacing:.06em; text-transform:uppercase; color:#B3A98F; margin-top:3px}
 .sock.full span{color:#E8D9BC}
-.hint{font-family:var(--mono); font-size:12px; line-height:1.6; letter-spacing:.04em; color:#B3A98F; margin:0 0 12px}
+.hint{font-family:var(--mono); font-size:13.5px; line-height:1.6; letter-spacing:.04em; color:#B3A98F; margin:0 0 12px}
 .fangs{display:grid; grid-template-columns:repeat(auto-fill,minmax(152px,1fr)); gap:8px; margin-bottom:4px}
 .fang{border:1px solid #5A5241; background:#332E24; padding:10px}
-.fang .fn{font-family:var(--mono); font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#E8D9BC; margin-top:4px}
-.fang .fd{font-size:14px; color:#DCD3BD; line-height:1.35; margin-top:2px}
-.fang .fc{font-family:var(--mono); font-size:11.5px; color:#E8825F; margin-top:4px}
-.owned{display:grid; grid-template-columns:repeat(auto-fill,minmax(164px,1fr)); gap:1px; background:#5A5241; border:1px solid #5A5241; margin-bottom:4px}
-.ow{background:#332E24; padding:8px 10px; display:flex; justify-content:space-between; gap:8px; font-family:var(--mono); font-size:12.5px; color:#A0967D}
+.fang .fn{font-family:var(--mono); font-size:13.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#E8D9BC; margin-top:4px}
+.fang .fd{font-size:15px; color:#DCD3BD; line-height:1.35; margin-top:2px}
+.fang .fc{font-family:var(--mono); font-size:13px; color:#E8825F; margin-top:4px}
+.owned{display:grid; grid-template-columns:repeat(auto-fill,minmax(182px,1fr)); gap:1px; background:#5A5241; border:1px solid #5A5241; margin-bottom:4px}
+.ow{background:#332E24; padding:8px 10px; display:flex; justify-content:space-between; gap:8px; font-family:var(--mono); font-size:14px; color:#A0967D}
+.ow span{min-width:0; overflow-wrap:anywhere}
+.ow b{flex:none}
 .ow.has{color:#FFF8E6}
 .ow b{color:#B3A98F}
 .ow.has b{color:#E8825F}
@@ -328,7 +416,7 @@ body.sbx #top .rk{color:#FFB38A}
 .bxi{border:1px solid #5A5241; background:#332E24; padding:8px 6px; text-align:center}
 .bxi.got{border-color:var(--verm)}
 .bxi svg{width:100%; height:34px; display:block; margin-bottom:5px}
-.bxi .nm{font-family:var(--mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:#A0967D; line-height:1.3}
+.bxi .nm{font-family:var(--mono); font-size:12.5px; letter-spacing:.06em; text-transform:uppercase; color:#A0967D; line-height:1.3}
 .bxi.got .nm{color:#E8D9BC}
 
 @media (min-width:620px){
@@ -406,6 +494,14 @@ body.sbx #top .rk{color:#FFB38A}
     <div class="backstrip"><button type="button" data-back="ovHelp">Back to the room</button></div>
   </div>
 
+  <!-- debug -->
+  <div class="ov sheet" id="ovDbg">
+    <div class="ovh"><div class="htxt"><h2>Debug</h2><span class="where"></span></div><button class="x" id="xDbg" type="button">&larr; Room</button></div>
+    <div class="ovb" id="dbgBody"></div>
+    <div class="backstrip"><button type="button" data-back="ovDbg">Back to the room</button></div>
+    <div class="ovf">Not shipped to players · five taps on the rank, or D on a keyboard</div>
+  </div>
+
   <!-- art catalogue -->
   <div class="ov sheet" id="ovCat">
     <div class="ovh"><div class="htxt"><h2>Art Catalogue</h2><span class="where"></span></div><button class="x" id="xCat" type="button">&larr; Room</button></div>
@@ -461,8 +557,8 @@ body.sbx #top .rk{color:#FFB38A}
     <div class="katint"></div>
     <div class="menu">
       <p class="eyebrow">Guild of Ambiguous Furniture · provisional licence, class III</p>
-      <h2 class="big">Mimic<br><span class="v">Season</span></h2>
-      <p class="mid">It is not that <b>some</b> of the furniture is alive. It is that an unhelpful percentage of it is.</p>
+      <h2 class="big">Some of<br><span class="v">it bites</span></h2>
+      <p class="mid">You are licensed to strike furniture. An unhelpful percentage of it strikes back.</p>
       <p class="mid" style="font-size:14.5px;color:#B9B09A">Hold to break things. The longer you stay without banking, the more each set of teeth is worth — and the more you lose if the room takes you.</p>
       <div class="btns">
         <button class="cta v" id="startBtn" type="button">Take the job</button>
@@ -470,7 +566,6 @@ body.sbx #top .rk{color:#FFB38A}
       </div>
       <div class="btns sub">
         <button class="lnk" id="rulesBtn" type="button">How to play</button>
-        <button class="lnk" id="sbxBtn" type="button">Sandbox · max everything</button>
         <button class="lnk danger" id="wipeBtn" type="button" hidden>New game</button>
       </div>
       <p class="foot" id="saveLine"></p>
@@ -484,7 +579,6 @@ body.sbx #top .rk{color:#FFB38A}
   <button class="tab" id="shopBtn" data-panel="ovShop" type="button">Store</button>
   <button class="tab" id="mapBtn"  data-panel="ovMap"  type="button">Rooms</button>
   <button class="tab" id="bestBtn" data-panel="ovBest" type="button">Kit</button>
-  <button class="tab" id="catBtn"  data-panel="ovCat"  type="button">Art</button>
 </div>
 
 <script>
@@ -575,14 +669,14 @@ var KITN=Object.keys(KIT);
 
 /* quota = sets of teeth the Guild wants out of this room before it counts as cleared */
 var ROOMS=[
-  {n:'The Starter Cellar', spot:'#B4842A', quota:8,  kinds:['chest','barrel','crate','stool','urn','sack','bucket','shelf'], count:11, hp:4,   pay:1,   rule:'Chests. Just chests. For now.'},
-  {n:'The Dining Hall',    spot:'#6E7F86', quota:14, kinds:['plate','bucket','urn','stool'],       count:20, hp:3,   pay:0.9, rule:'Swarms. Small, fast, plentiful.'},
-  {n:'The Library',        spot:'#3A5AA0', quota:18, kinds:['book','shelf','crate','stool'],       count:13, hp:8,   pay:1.8, rule:'Some books do something when opened.'},
-  {n:'The Armoury',        spot:'#5A6157', quota:22, kinds:['helm','crate','barrel','shelf'],      count:12, hp:16,  pay:3.0, rule:'These bite. A loose mimic opens eyes on its own.'},
-  {n:'The Kitchens',       spot:'#D08A16', quota:26, kinds:['plate','sack','bucket','urn'],        count:16, hp:34,  pay:4.4, rule:'Edible. Every set of teeth closes an eye.'},
-  {n:'The Gallery',        spot:'#6B4076', quota:30, kinds:['wardrobe','shelf','stool','book'],    count:14, hp:78,  pay:7,   rule:'They watch. Eyes open 60% faster.'},
-  {n:'The Throne Room',    spot:'#C9A227', quota:34, kinds:['wardrobe','chest','helm','urn'],      count:14, hp:190, pay:11,  rule:'Something here has been reigning for 400 years.'},
-  {n:'Outside',            spot:'#DED8C4', quota:40, kinds:['wardrobe','shelf','chest','barrel'],  count:15, hp:520, pay:18,  rule:'No ink at all. The sky is unprinted.'}
+  {n:'The Starter Cellar', spot:'#B4842A', quota:8,  kinds:['chest','barrel','crate','stool','urn','sack','bucket','shelf'], count:11, hp:4,   pay:1,   rule:'Chests. Just chests. For now.', door:'cellar', darch:1, wallCol:'#C2BAA0', floorCol:'#D9D3BA', seed:37, busy:1},
+  {n:'The Dining Hall',    spot:'#6E7F86', quota:14, kinds:['plate','bucket','urn','stool'],       count:20, hp:3,   pay:0.9, rule:'Swarms. Small, fast, plentiful.', door:'ajar', dmin:0.13, wallCol:'#C8C1A6', floorCol:'#DAD4BF', seed:67},
+  {n:'The Library',        spot:'#3A5AA0', quota:18, kinds:['book','shelf','crate','stool'],       count:13, hp:8,   pay:1.8, rule:'Some books do something when opened.', door:'glazed', wallCol:'#C9C2A7', floorCol:'#DBD5C0', seed:101, busy:1},
+  {n:'The Armoury',        spot:'#5A6157', quota:22, kinds:['helm','crate','barrel','shelf'],      count:12, hp:16,  pay:3.0, rule:'These bite. A loose mimic opens eyes on its own.', door:'banded', wallCol:'#BFB89E', floorCol:'#D3CDB4', seed:157, busy:1},
+  {n:'The Kitchens',       spot:'#D08A16', quota:26, kinds:['plate','sack','bucket','urn'],        count:16, hp:34,  pay:4.4, rule:'Edible. Every set of teeth closes an eye.', door:'swing', wallCol:'#CBC4A9', floorCol:'#DED8C4', seed:191, busy:1},
+  {n:'The Gallery',        spot:'#6B4076', quota:30, kinds:['wardrobe','shelf','stool','book'],    count:14, hp:78,  pay:7,   rule:'They watch. Eyes open 60% faster.', door:'panelled', darch:1, wallCol:'#CCC5AA', floorCol:'#DED8C4', seed:241, busy:1},
+  {n:'The Throne Room',    spot:'#C9A227', quota:34, kinds:['wardrobe','chest','helm','urn'],      count:14, hp:190, pay:11,  rule:'Something here has been reigning for 400 years.', door:'gilt', wallCol:'#C9C2A7', floorCol:'#DCD6C1', seed:283, busy:1},
+  {n:'Outside',            spot:'#DED8C4', quota:40, kinds:['wardrobe','shelf','chest','barrel'],  count:15, hp:520, pay:18,  rule:'No ink at all. The sky is unprinted.', door:'freestanding', wallCol:'#F1EEE1', floorCol:'#DED8C4', seed:349, noSkirt:1}
 ];
 
 /* the ladder of hammers. aoe is in object-widths. */
@@ -619,18 +713,49 @@ var DECOY={k:'decoy', n:'Put Out a Decoy', d:'Furniture left in the dungeon over
 
 /* mimic variants — unlocked by room depth, so the early game stays legible */
 var VAR=[
-  {k:'plain',  n:'',           hp:1,   fuse:1,   pay:1,   col:'#C42B1C', from:0},
-  {k:'runner', n:'RUNNER',     hp:0.7, fuse:0.5, pay:1.8, col:'#D8562B', from:1},
-  {k:'brute',  n:'BRUTE',      hp:3.2, fuse:2.2, pay:2.6, col:'#8A2418', from:2},
-  {k:'golden', n:'GILDED',     hp:0.6, fuse:0.42,pay:7,   col:'#D8A63A', from:3},
-  {k:'howler', n:'HOWLER',     hp:1.4, fuse:1.2, pay:2.4, col:'#A03A7A', from:4},
-  {k:'splitter',n:'SPLITTER',  hp:1.6, fuse:1.5, pay:1.9, col:'#5E8A46', from:5}
+  {k:'plain',  n:'',           hp:1,   fuse:1,   pay:1,   col:'#C42B1C', from:0, w:0},
+  {k:'runner', n:'RUNNER',     hp:0.7, fuse:0.5, pay:1.8, col:'#D8562B', from:1, w:20, b:'runs early and fast, and kicks up dust'},
+  {k:'skitter',n:'SKITTER',    hp:0.55,fuse:0.8, pay:2.2, col:'#E08A2B', from:1, w:15, b:'slides out from under your hammer every half second'},
+  {k:'brute',  n:'BRUTE',      hp:3.2, fuse:2.2, pay:2.6, col:'#8A2418', from:2, w:16, b:'a third bigger, hops heavy, in no hurry at all'},
+  {k:'anvil',  n:'ANVIL',      hp:5.0, fuse:3.0, pay:3.4, col:'#4A5560', from:2, w:9, b:'plated — no hit takes more than a fifth of it, and every hit shoves it back'},
+  {k:'golden', n:'GILDED',     hp:0.6, fuse:0.42,pay:7,   col:'#D8A63A', from:3, w:8, b:'barely stops, sheds coins, pays seven times over'},
+  {k:'weevil', n:'WEEVIL',     hp:2.2, fuse:1.7, pay:2.8, col:'#7A8C3A', from:3, w:10, b:'heals 7% a second the moment you stop hitting it'},
+  {k:'snapper',n:'SNAPPER',    hp:1.3, fuse:1.9, pay:3.2, col:'#B03050', from:3, w:9, b:'only takes full damage on the open jaw. The shut jaw opens an eye'},
+  {k:'howler', n:'HOWLER',     hp:1.4, fuse:1.2, pay:2.4, col:'#A03A7A', from:4, w:12, b:'bites teeth out of your pocket, and the ring shows you it did'},
+  {k:'cuckoo', n:'CUCKOO',     hp:1.0, fuse:1.4, pay:3.0, col:'#3E7D8C', from:4, w:8, b:'swaps places with a piece of furniture every couple of seconds'},
+  {k:'splitter',n:'SPLITTER',  hp:1.6, fuse:1.5, pay:1.9, col:'#5E8A46', from:5, w:12, b:'leaves two spawns behind when it dies'},
+  {k:'hogshead',n:'HOGSHEAD',  hp:2.4, fuse:2.6, pay:2.0, col:'#8A5A2B', from:5, w:7, b:'eats the furniture next to it. Each mouthful makes it fatter and richer'},
+  {k:'chorister',n:'CHORISTER',hp:3.0, fuse:0,   pay:4.5, col:'#7A4BA8', from:6, w:6, b:'never runs. It opens every eye in the room instead'},
+  {k:'understudy',n:'UNDERSTUDY',hp:0.3,fuse:0.9,pay:0.3, col:'#9A9384', from:6, w:6, b:'dies in one hit, and the real one is already running'}
 ];
+/* plain stays common. everything else is weighted, or the rare ones would
+   turn up so seldom you would never learn what they do. */
 function pickVar(){
-  var pool=VAR.filter(function(v){ return v.from<=S.room; });
-  /* plain stays common; the exotic ones are the spice */
-  if(Math.random()<0.55||pool.length===1) return VAR[0];
-  return pool[ri(1,pool.length-1)];
+  var pool=[], tot=0, i;
+  for(i=1;i<VAR.length;i++) if(VAR[i].from<=S.room){ pool.push(VAR[i]); tot+=VAR[i].w||8; }
+  if(!pool.length||Math.random()<0.55) return VAR[0];
+  var r=Math.random()*tot;
+  for(i=0;i<pool.length;i++){ r-=(pool[i].w||8); if(r<=0) return pool[i]; }
+  return pool[pool.length-1];
+}
+/* ── elite prefixes ──
+   Rolled on top of any variant from the Armoury on. Four of these across
+   fourteen variants is more variety than any single new mimic buys. */
+var PREFIX=[
+  {k:'plated',   n:'PLATED',    pay:1.4},
+  {k:'restless', n:'RESTLESS',  pay:1.3},
+  {k:'gorged',   n:'GORGED',    pay:2.0, hp:2},
+  {k:'screaming',n:'SCREAMING', pay:1.5}
+];
+function pickPre(){
+  if(S.room<3||Math.random()>0.18) return null;
+  return PREFIX[ri(0,PREFIX.length-1)];
+}
+/* snapper's jaw. shut for a bit under half of every cycle. */
+function jawOpen(o){ return Math.sin(o.hopT*5)>-0.15; }
+function varName(k){
+  for(var i=0;i<VAR.length;i++) if(VAR[i].k===k) return VAR[i].n||'Plain';
+  return k;
 }
 
 /* Every variant drops its own fang. You socket them into the hammer head.
@@ -686,6 +811,14 @@ var FANGS={
   golden:  {n:'Gilded Fang',  d:'+30% teeth from every kill',         col:'#D8A63A', e:{teeth:0.30}},
   howler:  {n:'Howler Fang',  d:'Eyes open 15% slower',               col:'#A03A7A', e:{eye:-0.15}},
   splitter:{n:'Splitter Fang',d:'+28% area radius',                   col:'#5E8A46', e:{aoe:0.28}},
+  skitter: {n:'Skitter Fang', d:'+9% chance a swing crits',            col:'#E08A2B', e:{crit:0.09}},
+  anvil:   {n:'Anvil Fang',   d:'Every hit knocks a mimic back',       col:'#4A5560', e:{knock:0.12}},
+  weevil:  {n:'Weevil Fang',  d:'Eyes open 8% slower, +10% teeth',     col:'#7A8C3A', e:{eye:-0.08,teeth:0.10}},
+  snapper: {n:'Snapper Fang', d:'+18% damage, eyes open 6% faster',    col:'#B03050', e:{dmg:0.18,eye:0.06}},
+  cuckoo:  {n:'Cuckoo Fang',  d:'+14% aim radius, +12% teeth',         col:'#3E7D8C', e:{aim:0.14,teeth:0.12}},
+  hogshead:{n:'Hogshead Fang',d:'+20% teeth, −6% swing speed',         col:'#8A5A2B', e:{teeth:0.20,spd:-0.06}},
+  chorister:{n:'Chorister Fang',d:'The room mimic takes +35% damage',  col:'#7A4BA8', e:{roomdmg:0.35}},
+  understudy:{n:'Understudy Fang',d:'+12% chance a thing is a mimic',  col:'#9A9384', e:{mimic:0.12}},
   room:    {n:'Room Fang',    d:'+22% to everything. Eyes open 12% faster.', col:'#F4F1E6', e:{dmg:0.22,spd:0.22,teeth:0.22,aoe:0.22,eye:0.12}}
 };
 var FANGK=Object.keys(FANGS);
@@ -744,7 +877,7 @@ function HAM(){ return HAMMERS[Math.min(S.hammer||0,HAMMERS.length-1)]; }
 function dmg(){ return (1+U('head'))*HAM().dmg*(1+fx('dmg')); }
 function swingInt(){ return Math.max(0.040,0.19*Math.pow(0.88,U('wrist'))/HAM().spd/Math.max(0.4,1+fx('spd'))); }
 function aoeR(){ return HAM().aoe*baseSize()*1.05*(1+0.15*U('reach'))*(1+fx('aoe')); }
-function critChance(){ return 0.04*U('crit'); }
+function critChance(){ return 0.04*U('crit')+fx('crit'); }
 /* every open eye takes 4% off the fuse. This is the whole point of the eyes. */
 /* every set of teeth taken without banking makes the next one worth more */
 function haulMul(){ return Math.min(4,1+0.09*runKills); }
@@ -757,7 +890,7 @@ function addEyes(v){
 }
 function magnetK(){ return 1+0.4*U('magnet'); }
 function eyeRate(){ return 0.30*Math.pow(0.88,U('nerve'))*(S.room===5?1.6:1)*Math.max(0.25,1+fx('eye')); }
-function mimicChance(){ return Math.min(0.64,0.18+0.029*openEyes()+0.025*U('rep')); }
+function mimicChance(){ return Math.min(0.72,0.18+0.029*openEyes()+0.025*U('rep')+fx('mimic')); }
 function teethMult(){ return rankMult()*notesMult()*(1+0.25*U('pouch'))*(1+fx('teeth'))*ROOMS[S.room].pay; }
 function cost(def,lvl){ return Math.floor(def.base*Math.pow(def.r,lvl)); }
 /* a room is open if it's the first, or the one before it is cleared */
@@ -776,6 +909,10 @@ var eyes=0, held=false, holdT=0, frenzy=1, swings=0, freeze=0, shakeM=0,
 var interns=[], beams=[], rings=[], lensT=0, ordT=0, roomMim=null;
 var objs=[], parts=[], pops=[], eyeSpots=[], W=0,H=0,DPR=1;
 var px=-999, py=-999, hasPointer=false, hamRot=0.6, hamTarget=0.6, hamAnim=-1;
+/* touch: a fingertip covers roughly a whole object, so the aim point — and with it the
+   hammer, the spark and the danger dial — sits above the finger instead of under it. */
+var touchAim=false;
+function aimLift(){ return touchAim?clamp(baseSize()*0.62,40,80):0; }
 
 var cv=$('cv'), g=cv.getContext('2d');
 var grain=null, bg=null;
@@ -783,6 +920,22 @@ var MONO='ui-monospace,Menlo,Consolas,monospace';
 
 function openEyes(){ return Math.min(EYES,Math.floor(eyes)); }
 function spot(){ return ROOMS[S.room].spot; }
+
+/* ── spot-plate drain ──────────────────────────────────────────────
+   While a mimic is loose the room's spot plate slides toward its own
+   desaturated self, so the mimic's variant colour is the only saturated
+   thing on screen. Partial and eased: the room must stay recognisably
+   the Library, and a hard flip reads as a rendering fault. */
+var drain=0;                          /* 0 = full colour, 1 = fully drained */
+var DRAIN_DEPTH=0.60, DRAIN_RATE=4.0; /* how far it goes, and 1/seconds to get there */
+function hex2rgb(h){ var n=parseInt(h.slice(1),16); return [n>>16&255,n>>8&255,n&255]; }
+function rgb2hex(c){ return '#'+((1<<24)+(Math.round(c[0])<<16)+(Math.round(c[1])<<8)+Math.round(c[2])).toString(16).slice(1); }
+/* mixes toward the colour's own luminance — keeps hue, drops chroma */
+function desat(h,t){
+  var c=hex2rgb(h), l=c[0]*0.299+c[1]*0.587+c[2]*0.114;
+  return rgb2hex([c[0]+(l-c[0])*t, c[1]+(l-c[1])*t, c[2]+(l-c[2])*t]);
+}
+function drainedSpot(){ return drain<0.01?spot():desat(spot(),drain*DRAIN_DEPTH); }
 
 /* ══════════════ layout ══════════════ */
 function resize(){
@@ -794,38 +947,566 @@ function resize(){
   makeGrain(); makeBG();
   if($('ovTitle').classList.contains('on')) drawKeyArt();
 }
+
+/* ══════════════ the door ══════════════
+   Every room's door is the same shape in the same place — architrave, a leaf with
+   panels, a bone latch plate at hand height, hinges, a lit threshold, the Guild
+   exit plate above — with a different treatment per room. The surround is baked
+   into the backdrop; the leaf is drawn live, because it opens as the fuse empties. */
+function dwob(b,C,pts,j){
+  b.beginPath();
+  for(var i=0;i<pts.length;i++){
+    var x=pts[i][0]+(C.rng()*2-1)*j, y=pts[i][1]+(C.rng()*2-1)*j;
+    if(i===0) b.moveTo(x,y); else b.lineTo(x,y);
+  }
+}
+function dfin(b,C,m,o){
+  o=o||{};
+  if(m==='spot'){
+    if(o.nospot) return;
+    b.globalAlpha=o.sa==null?1:o.sa; b.fillStyle=o.sc||C.sc; b.fill(); b.globalAlpha=1; return;
+  }
+  if(o.noink) return;
+  if(o.ink){ b.globalAlpha=o.ia==null?1:o.ia; b.fillStyle='#231F1A'; b.fill(); b.globalAlpha=1; }
+  /* a light element that has to survive the leaf's dark fill */
+  if(o.fc){ b.globalAlpha=o.fa==null?1:o.fa; b.fillStyle=o.fc; b.fill(); b.globalAlpha=1; }
+  if(!o.nostroke){
+    b.globalAlpha=o.la==null?1:o.la; b.strokeStyle=o.lc||'#231F1A';
+    b.lineWidth=o.lw||1.9; b.lineJoin='round'; b.lineCap='round'; b.stroke(); b.globalAlpha=1;
+  }
+}
+function dR(b,C,m,x,y,w,h,o){
+  dwob(b,C,[[x,y],[x+w*0.5,y],[x+w,y],[x+w,y+h*0.5],[x+w,y+h],[x+w*0.5,y+h],[x,y+h],[x,y+h*0.5]],(o&&o.j)||0.55);
+  b.closePath(); dfin(b,C,m,o);
+}
+function dPG(b,C,m,pts,o){ dwob(b,C,pts,(o&&o.j)||0.55); b.closePath(); dfin(b,C,m,o); }
+function dE(b,C,m,cx,cy,rx,ry,o){
+  var pts=[],n=16;
+  for(var i=0;i<n;i++){ var a=i/n*6.2832; pts.push([cx+Math.cos(a)*rx,cy+Math.sin(a)*ry]); }
+  dwob(b,C,pts,(o&&o.j)||0.4); b.closePath(); dfin(b,C,m,o);
+}
+function dL(b,C,m,pts,o){
+  o=o||{}; if(m==='spot'&&!o.onspot){ C.rng(); return; }
+  dwob(b,C,pts,o.j==null?0.6:o.j);
+  b.globalAlpha=o.la==null?1:o.la; b.strokeStyle=(m==='spot')?(o.sc||C.sc):(o.lc||'#231F1A');
+  b.lineWidth=o.lw||1.7; b.lineJoin='round'; b.lineCap='round'; b.stroke(); b.globalAlpha=1;
+}
+function dArch(cx,base,rw,rise,spring){
+  var pts=[[cx-rw,base],[cx-rw,base-spring]];
+  for(var i=0;i<=14;i++){ var a=Math.PI-i/14*Math.PI; pts.push([cx+Math.cos(a)*rw, base-spring-Math.sin(a)*rise]); }
+  pts.push([cx+rw,base]);
+  return pts;
+}
+function dPanel(b,C,m,x,y,pw,ph){ dR(b,C,m,x,y,pw,ph,{nospot:1,lc:'#DED8C4',la:0.42,lw:1.4}); }
+function doorGeo(){
+  var ft=floorTop(), dw=clamp(W*0.105,48,120), dh=Math.min(H*0.34,ft*0.9);
+  var R=ROOMS[S.room];
+  return {x:DOOR[0]*W, ft:ft, dw:dw, dh:Math.max(dw*1.7,dh), style:R.door||'plank', arch:!!R.darch, dmin:R.dmin||0};
+}
+/* baked into the backdrop: everything that never moves */
+function doorSurround(b,C,m,G){
+  var dw=G.dw, dh=G.dh, cx=G.x, ft=G.ft, x0=cx-dw/2, top=ft-dh, fw=dw*0.14;
+  /* light under the door */
+  dPG(b,C,m,[[x0+dw*0.05,ft],[x0+dw*0.95,ft],[x0+dw*1.16,ft+dh*0.13],[x0-dw*0.16,ft+dh*0.13]],{sa:0.42,noink:1});
+  if(G.arch) dPG(b,C,m,dArch(cx,ft,dw/2+fw,dw*0.46,dh-dw*0.46),{sa:0.72,lw:2.5});
+  else {
+    dR(b,C,m,x0-fw,top-fw*0.8,dw+fw*2,dh+fw*0.8,{sa:0.72,lw:2.5});
+    dL(b,C,m,[[x0-fw*1.5,top-fw*0.8],[x0+dw+fw*1.5,top-fw*0.8]],{lw:2.6,onspot:1});
+  }
+  /* the dark of whatever is beyond it */
+  if(G.arch) dPG(b,C,m,dArch(cx,ft,dw/2,dw*0.38,dh-dw*0.38),{ink:1,ia:0.92,lw:2.2,nospot:1});
+  else dR(b,C,m,x0,top,dw,dh,{ink:1,ia:0.92,lw:2.2,nospot:1});
+  /* the Guild exit plate */
+  if(top-fw*2>4){
+    dR(b,C,m,cx-dw*0.3,top-fw*1.9,dw*0.6,fw*1.1,{sa:0.95,lw:1.8});
+    if(m==='ink'){
+      var ax=cx-dw*0.12, ay=top-fw*1.35;
+      dL(b,C,m,[[ax-dw*0.1,ay],[ax+dw*0.12,ay]],{lw:1.9,j:0});
+      dL(b,C,m,[[ax+dw*0.04,ay-fw*0.28],[ax+dw*0.12,ay],[ax+dw*0.04,ay+fw*0.28]],{lw:1.9,j:0});
+    }
+  }
+}
+/* drawn live, so it can swing */
+function doorLeaf(b,C,m,G,open){
+  var dw=G.dw, dh=G.dh, cx=G.x, ft=G.ft, x0=cx-dw/2, x1=cx+dw/2, top=ft-dh, style=G.style;
+  var bone='#F4F1E6', pale='#DED8C4', hand=ft-dh*0.42, lead=x0+dw*0.86;
+  var k=Math.max(0.06,1-open*0.85);
+  /* a pair of leaves is two doors: each one hinges on its own jamb and the
+     daylight arrives up the middle, which is the only way an open double reads */
+  if(style==='double'||style==='ajar'||style==='gilt'){
+    for(var lf=0;lf<2;lf++){
+      var hx=lf?x1:x0, lx=lf?cx:x0, lwid=dw/2;
+      b.save();
+      b.translate(hx,0); b.scale(k,1); b.translate(-hx,0);
+      dR(b,C,m,lx,top,lwid,dh,{ink:1,ia:0.9,lw:2.2,nospot:1});
+      dPanel(b,C,m,lx+lwid*0.16,top+dh*0.08,lwid*0.68,dh*0.34);
+      dPanel(b,C,m,lx+lwid*0.16,top+dh*0.5,lwid*0.68,dh*0.4);
+      /* push plate on the meeting edge, where a hand would land */
+      dR(b,C,m,lf?lx+lwid*0.08:lx+lwid*0.8,hand-dh*0.09,lwid*0.11,dh*0.18,
+         {sc:bone,sa:1,fc:bone,lw:1.4});
+      if(style==='gilt'){
+        /* half the Guild seal each, so opening it breaks the seal */
+        b.save();
+        b.beginPath(); b.rect(lx,top,lwid,dh); b.clip();
+        dE(b,C,m,cx,top+dh*0.42,dw*0.24,dh*0.16,{sa:0.95,fc:C.sc,lw:2.2});
+        b.restore();
+        dE(b,C,m,lf?lx+lwid*0.22:lx+lwid*0.78,hand+dh*0.06,dw*0.07,dw*0.07,{nospot:1,lw:2,lc:bone});
+      }
+      b.restore();
+    }
+    return;
+  }
+  b.save();
+  /* single leaf, hinged on the left: squeezing toward the jamb reads as a swing */
+  b.translate(x0,0); b.scale(k,1); b.translate(-x0,0);
+  if(G.arch) dPG(b,C,m,dArch(cx,ft,dw/2,dw*0.38,dh-dw*0.38),{ink:1,ia:0.9,lw:2.2,nospot:1});
+  else if(style!=='freestanding') dR(b,C,m,x0,top,dw,dh,{ink:1,ia:0.9,lw:2.2,nospot:1});
+
+  if(style==='cellar'||style==='plank'){
+    for(var v=1;v<4;v++) dL(b,C,m,[[x0+dw*(v/4),top+dh*0.08],[x0+dw*(v/4),ft]],{lc:pale,la:0.3,lw:1.3});
+    [0.24,0.62].forEach(function(t){ dL(b,C,m,[[x0+dw*0.08,top+dh*t],[x0+dw*0.92,top+dh*t]],{lc:pale,la:0.6,lw:3}); });
+    dL(b,C,m,[[x0+dw*0.1,top+dh*0.6],[x0+dw*0.9,top+dh*0.28]],{lc:pale,la:0.5,lw:2.4});
+    dE(b,C,m,lead,hand,dw*0.1,dw*0.1,{nospot:1,lw:2.2,lc:bone});
+    dE(b,C,m,lead,hand-dw*0.1,dw*0.05,dw*0.045,{sc:bone,sa:1,fc:bone,lw:1.6});
+  } else if(style==='banded'||style==='larder'){
+    [0.16,0.5,0.84].forEach(function(t){
+      dR(b,C,m,x0+dw*0.04,top+dh*t,dw*0.92,dh*0.08,{sc:pale,sa:0.75,fc:pale,fa:0.9,lw:1.6,la:0.8});
+      for(var sd=0;sd<4;sd++) dE(b,C,m,x0+dw*(0.14+sd*0.24),top+dh*(t+0.04),dw*0.024,dw*0.024,{sc:bone,sa:1,fc:bone,lw:1});
+    });
+    dR(b,C,m,cx-dw*0.2,top+dh*0.24,dw*0.4,dh*0.11,{sc:bone,sa:0.95,fc:bone,lw:1.8});
+    for(var bb=1;bb<4;bb++) dL(b,C,m,[[cx-dw*0.2+dw*0.1*bb,top+dh*0.24],[cx-dw*0.2+dw*0.1*bb,top+dh*0.35]],{lw:1.8});
+    dE(b,C,m,lead,hand,dw*0.09,dw*0.09,{nospot:1,lw:2.2,lc:bone});
+  } else if(style==='swing'){
+    dE(b,C,m,cx,top+dh*0.26,dw*0.19,dw*0.19,{sc:bone,sa:0.95,fc:'#FBFAF4',lw:2.2});
+    dR(b,C,m,x0+dw*0.06,ft-dh*0.16,dw*0.88,dh*0.12,{sc:pale,sa:0.7,fc:pale,fa:0.85,lw:1.5,la:0.7});
+    dR(b,C,m,x0+dw*0.02,hand-dh*0.05,dw*0.12,dh*0.1,{sc:pale,sa:0.6,fc:pale,fa:0.8,lw:1.3});
+  } else if(style==='glazed'){
+    dR(b,C,m,x0+dw*0.1,top+dh*0.08,dw*0.8,dh*0.36,{sc:bone,sa:0.92,fc:'#F7F4E9',lw:2});
+    dL(b,C,m,[[cx,top+dh*0.08],[cx,top+dh*0.44]],{lw:1.6});
+    dL(b,C,m,[[x0+dw*0.1,top+dh*0.26],[x0+dw*0.9,top+dh*0.26]],{lw:1.6});
+    dPanel(b,C,m,x0+dw*0.1,top+dh*0.5,dw*0.8,dh*0.3);
+    dR(b,C,m,x0+dw*0.06,ft-dh*0.14,dw*0.88,dh*0.1,{sc:pale,sa:0.65,fc:pale,fa:0.85,lw:1.4,la:0.7});
+    dR(b,C,m,lead-dw*0.06,hand-dh*0.05,dw*0.1,dh*0.12,{sc:bone,sa:1,fc:bone,lw:1.5});
+  } else if(style==='panelled'){
+    dPanel(b,C,m,x0+dw*0.12,top+dh*0.1,dw*0.76,dh*0.3);
+    dPanel(b,C,m,x0+dw*0.12,top+dh*0.46,dw*0.76,dh*0.36);
+    dR(b,C,m,lead-dw*0.07,hand-dh*0.06,dw*0.12,dh*0.14,{sc:bone,sa:1,fc:bone,lw:1.6});
+    dE(b,C,m,lead-dw*0.01,hand,dw*0.032,dw*0.032,{nospot:1,lw:1.7});
+  } else if(style==='freestanding'){
+    dPG(b,C,m,[[cx-dw*0.06,top+dh*0.04],[cx+dw*0.46,top+dh*0.1],[cx+dw*0.46,ft-dh*0.02],[cx-dw*0.06,ft]],
+        {sc:'#FBFAF4',sa:1,fc:'#FBFAF4',lw:2.2});
+    dR(b,C,m,x0,top,dw*0.46,dh,{ink:1,ia:0.9,lw:2.2,nospot:1});
+    dPanel(b,C,m,x0+dw*0.06,top+dh*0.1,dw*0.34,dh*0.32);
+    dPanel(b,C,m,x0+dw*0.06,top+dh*0.5,dw*0.34,dh*0.34);
+    dE(b,C,m,x0+dw*0.42,hand,dw*0.035,dw*0.035,{sc:bone,sa:1,fc:bone,lw:1.6});
+  }
+  /* hinges */
+  if(style!=='double'&&style!=='gilt'&&style!=='ajar'&&style!=='swing'){
+    [0.18,0.78].forEach(function(t){
+      dR(b,C,m,x0+dw*0.01,top+dh*t,dw*0.09,dh*0.07,{sc:pale,sa:0.8,fc:pale,fa:0.9,lw:1.3});
+    });
+  }
+  b.restore();
+}
+/* how far open it is: shut at rest, wider as something runs at it, slammed after */
+var doorOpen=0, doorTarget=0;
+function stepDoor(dt){
+  var lo=loose();
+  doorTarget=doorHold?0.66:doorGeo().dmin;
+  if(lo&&lo.fuseMax&&lo.flee>0) doorTarget=Math.max(doorTarget,0.14+0.52*(1-lo.flee/lo.fuseMax));
+  else if(S.cleared[S.room]) doorTarget=Math.max(doorTarget,0.16);
+  doorOpen+=(doorTarget-doorOpen)*Math.min(1,dt*(doorTarget>doorOpen?4.5:11));
+}
+function drawDoorLive(){
+  var G=doorGeo(), C={sc:drainedSpot(),rng:mk(97)};
+  var x0=G.x-G.dw/2, top=G.ft-G.dh;
+  if(doorOpen>0.02){
+    g.save();
+    g.fillStyle='#F4F1E6'; g.globalAlpha=clamp(0.3+doorOpen*0.85,0,0.9);
+    g.fillRect(x0,top,G.dw,G.dh);
+    g.globalAlpha=clamp(doorOpen*0.62,0,0.42);
+    g.beginPath(); g.moveTo(x0,G.ft); g.lineTo(x0+G.dw,G.ft);
+    g.lineTo(x0+G.dw*1.5,G.ft+G.dh*0.5); g.lineTo(x0-G.dw*0.45,G.ft+G.dh*0.5);
+    g.closePath(); g.fill();
+    g.restore();
+  }
+  C.rng=mk(97); g.save(); g.translate(1.6,1.6); doorLeaf(g,C,'spot',G,doorOpen); g.restore();
+  C.rng=mk(97); doorLeaf(g,C,'ink',G,doorOpen);
+}
+
+
+/* ══════════════ room art ══════════════
+   Every room used to share one backdrop: bone eye-wallpaper, four wobbly
+   floorboards, a door. These are the eight plates from the plate book, drawn
+   with the same two-plate printer as everything else — spot plate laid down
+   first and misregistered, ink plate over the top. Painted once into the
+   backdrop, so none of it costs a frame.
+   Two rules every plate keeps: the right-hand tenth is left clear for the door,
+   and the wall stays light enough that the fifteen live eyes read on top. */
+function dARC(b,C,m,cx,cy,r,a0,a1,o){
+  o=o||{}; if(m==='spot'&&!o.onspot) return;
+  b.beginPath(); b.arc(cx,cy,r,a0,a1);
+  b.globalAlpha=o.la==null?1:o.la; b.strokeStyle=(m==='spot')?(o.sc||C.sc):'#231F1A';
+  b.lineWidth=o.lw||1.7; b.stroke(); b.globalAlpha=1;
+}
+function dBricks(b,C,m,x0,y0,x1,y1,bw,bh,la){
+  if(m==='spot') return;
+  var row=0;
+  for(var y=y0;y<y1;y+=bh){
+    dL(b,C,m,[[x0,y],[x1,y]],{la:la,lw:1,j:0.5});
+    for(var x=x0+(row%2?bw/2:0);x<x1;x+=bw) dL(b,C,m,[[x,y],[x,Math.min(y+bh,y1)]],{la:la,lw:1,j:0.5});
+    row++;
+  }
+}
+function dCourses(b,C,m,x0,y0,x1,y1,bw,bh,la){
+  if(m==='spot') return;
+  var row=0;
+  for(var y=y0;y<y1;y+=bh){
+    dL(b,C,m,[[x0,y],[x1,y]],{la:la,lw:1.3,j:0.9});
+    for(var x=x0+(row%2?bw*0.55:0);x<x1;x+=bw) dL(b,C,m,[[x,y],[x,Math.min(y+bh,y1)]],{la:la,lw:1.3,j:0.9});
+    row++;
+  }
+}
+function dBoards(b,C,m,ft,h,w,n,la){
+  if(m==='spot') return;
+  for(var f=1;f<=n;f++){
+    var y=ft+(h-ft)*(f/(n+1)), x=0, pts=[[0,y]];
+    while(x<w){ x+=8+C.rng()*16; pts.push([x,y+(C.rng()*5-2.5)]); }
+    dL(b,C,m,pts,{la:la==null?0.26:la,lw:1});
+  }
+}
+function dSeams(b,C,m,ft,h,w,n,la){
+  if(m==='spot') return;
+  for(var i=1;i<=n;i++){
+    var x=w*(i/(n+1))+(C.rng()*26-13);
+    dL(b,C,m,[[x-6,ft],[x+(C.rng()*34-17),h]],{la:la==null?0.2:la,lw:1});
+  }
+}
+function dFlags(b,C,m,ft,h,w,la){
+  if(m==='spot') return;
+  var rows=4;
+  for(var r=0;r<rows;r++){
+    var y0=ft+(h-ft)*(r/rows), y1=ft+(h-ft)*((r+1)/rows), cw=w/(3.2+r*1.1);
+    dL(b,C,m,[[0,y1],[w,y1]],{la:la||0.22,lw:1.2});
+    for(var x=(r%2?cw*0.5:0);x<w;x+=cw) dL(b,C,m,[[x,y0],[x+(C.rng()*7-3.5),y1]],{la:la||0.22,lw:1.2});
+  }
+}
+function dChecker(b,C,m,ft,h,w,la,sc){
+  var rows=5;
+  for(var r=0;r<rows;r++){
+    var y0=ft+(h-ft)*Math.pow(r/rows,0.85), y1=ft+(h-ft)*Math.pow((r+1)/rows,0.85);
+    var cols=Math.round(5+r*1.8), cw=w/cols;
+    for(var c=0;c<cols;c++){
+      if((r+c)%2) continue;
+      if(m==='spot'&&!sc) continue;
+      dPG(b,C,m,[[c*cw,y0],[(c+1)*cw,y0],[(c+1)*cw+cw*0.06,y1],[c*cw-cw*0.06,y1]],
+          {ink:1,ia:la||0.14,nostroke:1,nospot:!sc,sa:0.2,j:0.9});
+    }
+  }
+}
+function dHerring(b,C,m,ft,h,w,la){
+  if(m==='spot') return;
+  var st=(h-ft)/6;
+  for(var y=ft;y<h+st;y+=st){
+    for(var x=-st;x<w+st;x+=st*1.9){
+      dL(b,C,m,[[x,y+st*0.5],[x+st*0.75,y]],{la:la||0.18,lw:1,j:0.4});
+      dL(b,C,m,[[x+st*0.75,y],[x+st*1.5,y+st*0.5]],{la:la||0.18,lw:1,j:0.4});
+    }
+  }
+}
+function dStipple(b,C,m,x0,y0,x1,y1,n,la,dot){
+  if(m==='spot') return;
+  b.globalAlpha=la||0.2; b.fillStyle='#231F1A';
+  for(var i=0;i<n;i++){
+    b.beginPath(); b.arc(x0+C.rng()*(x1-x0), y0+C.rng()*(y1-y0), (dot||1)*(0.5+C.rng()),0,6.3); b.fill();
+  }
+  b.globalAlpha=1;
+}
+function dTicks(b,C,m,x0,y0,x1,y1,n,len,la){
+  if(m==='spot') return;
+  for(var i=0;i<n;i++){
+    var x=x0+C.rng()*(x1-x0), y=y0+C.rng()*(y1-y0), l=len*(0.6+C.rng()*0.8);
+    dL(b,C,m,[[x,y],[x+(C.rng()*4-2),y-l]],{la:la||0.3,lw:1.2,j:0.3});
+  }
+}
+function dSkirt(b,C,m,ft,w){
+  if(m==='spot') return;
+  var pts=[[0,ft]];
+  for(var k=0;k<=w;k+=26) pts.push([k,ft+Math.sin(k*0.09)*1.8]);
+  dL(b,C,m,pts,{lw:2.3,j:0.3});
+}
+function dNiche(b,C,m,cx,base,rw,rise,spring,o){ dPG(b,C,m,dArch(cx,base,rw,rise,spring),o); }
+function dShelfWall(b,C,m,x,y,sw,sh,rows){
+  dR(b,C,m,x,y,sw,sh,{sa:0.14,lw:2.2});
+  for(var r=0;r<rows;r++){
+    var ry=y+sh*((r+1)/rows);
+    dL(b,C,m,[[x,ry],[x+sw,ry]],{lw:1.8});
+    var bx=x+2;
+    while(bx<x+sw-4){
+      var bwid=3+C.rng()*5, bh=(sh/rows)-4-C.rng()*(sh/rows)*0.25;
+      dR(b,C,m,bx,ry-bh-1,bwid,bh,{sa:0.7+C.rng()*0.3,lw:0.9,la:0.5,j:0.35});
+      bx+=bwid+1.4;
+    }
+  }
+}
+function dLamp(b,C,m,x,y,r){
+  dL(b,C,m,[[x,0],[x,y-r*1.1]],{lw:1.4,la:0.7});
+  dE(b,C,m,x,y,r*1.9,r*1.9,{sa:0.3,noink:1});
+  dPG(b,C,m,[[x-r*0.7,y-r*0.7],[x+r*0.7,y-r*0.7],[x+r,y+r*0.8],[x-r,y+r*0.8]],{sa:0.95,lw:1.8,ia:0.15,ink:1});
+}
+function dChand(b,C,m,x,y,arms,spread){
+  dL(b,C,m,[[x,0],[x,y]],{lw:1.5,la:0.75});
+  for(var i=0;i<arms;i++){
+    var a=Math.PI+(i/(arms-1))*Math.PI, ax=x+Math.cos(a)*spread, ay=y+Math.abs(Math.sin(a))*spread*0.22;
+    dL(b,C,m,[[x,y],[ax,ay+spread*0.1],[ax,ay-spread*0.18]],{lw:1.8});
+    dE(b,C,m,ax,ay-spread*0.3,spread*0.075,spread*0.13,{sa:1,lw:1.4});
+  }
+  dE(b,C,m,x,y,spread*0.11,spread*0.09,{ink:1,ia:0.8,lw:1.6,nospot:1});
+}
+function dFrame(b,C,m,x,y,fw,fh,style){
+  dR(b,C,m,x-fw/2,y-fh/2,fw,fh,{sa:0.28,lw:2.1});
+  dR(b,C,m,x-fw/2+fw*0.13,y-fh/2+fh*0.13,fw*0.74,fh*0.74,{sa:0.85,lw:1.3,la:0.7});
+  if(style==='land'&&m==='ink') dL(b,C,m,[[x-fw*0.3,y+fh*0.1],[x-fw*0.1,y-fh*0.12],[x+fw*0.08,y+fh*0.06],[x+fw*0.3,y-fh*0.1]],{la:0.55,lw:1.2});
+  if(style==='port'&&m==='ink') dE(b,C,m,x,y-fh*0.06,fw*0.13,fh*0.17,{la:0.6,lw:1.2,nospot:1});
+}
+function dBanner(b,C,m,x,y,bw,bh){
+  dPG(b,C,m,[[x-bw/2,y],[x+bw/2,y],[x+bw/2,y+bh],[x,y+bh*0.86],[x-bw/2,y+bh]],{sa:0.9,lw:1.9,la:0.9});
+}
+function dColumn(b,C,m,x,y0,y1,cw){
+  dR(b,C,m,x-cw/2,y0,cw,y1-y0,{sa:0.2,lw:2.2});
+  dR(b,C,m,x-cw*0.72,y0,cw*1.44,cw*0.42,{sa:0.5,lw:2});
+  dR(b,C,m,x-cw*0.66,y1-cw*0.3,cw*1.32,cw*0.3,{sa:0.5,lw:2});
+  for(var f=-1;f<=1;f++) dL(b,C,m,[[x+f*cw*0.26,y0+cw*0.5],[x+f*cw*0.26,y1-cw*0.36]],{la:0.4,lw:1.1});
+}
+function dRug(b,C,m,x0,y0,x1,y1,wid0,wid1){
+  dPG(b,C,m,[[x0-wid0,y0],[x0+wid0,y0],[x1+wid1,y1],[x1-wid1,y1]],{sa:0.55,lw:1.9,la:0.8});
+  dL(b,C,m,[[x0-wid0*0.7,y0],[x1-wid1*0.7,y1]],{la:0.4,lw:1.1});
+  dL(b,C,m,[[x0+wid0*0.7,y0],[x1+wid1*0.7,y1]],{la:0.4,lw:1.1});
+}
+function dPotRail(b,C,m,y,x0,x1,n){
+  dL(b,C,m,[[x0,y],[x1,y]],{lw:2.4});
+  for(var i=0;i<n;i++){
+    var x=x0+(x1-x0)*((i+0.5)/n), st=(x1-x0)/n*0.34*(0.7+C.rng()*0.6);
+    dL(b,C,m,[[x,y],[x,y+st*0.5]],{lw:1.3});
+    dPG(b,C,m,[[x-st,y+st*0.5],[x+st,y+st*0.5],[x+st*0.72,y+st*1.5],[x-st*0.72,y+st*1.5]],{sa:0.55,lw:1.6,la:0.8});
+  }
+}
+function dHills(b,C,m,y,w,h){
+  var pts=[[-4,y]];
+  for(var x=0;x<=w+8;x+=w/16) pts.push([x,y-Math.abs(Math.sin(x*0.011+1.2))*h*0.055-C.rng()*3]);
+  dL(b,C,m,pts,{la:0.4,lw:1.4,j:0.6});
+}
+function dThrone(b,C,m,cx,base,ht){
+  var hw=ht*0.5;
+  /* back, with a crest */
+  dPG(b,C,m,[[cx-hw*0.66,base],[cx-hw*0.66,base-ht*0.92],[cx-hw*0.3,base-ht*1.1],
+             [cx,base-ht*1.22],[cx+hw*0.3,base-ht*1.1],[cx+hw*0.66,base-ht*0.92],[cx+hw*0.66,base]],
+      {sa:0.85,lw:2.6});
+  dL(b,C,m,[[cx-hw*0.66,base-ht*0.66],[cx+hw*0.66,base-ht*0.66]],{lw:1.8,la:0.65});
+  dL(b,C,m,[[cx-hw*0.4,base-ht*0.86],[cx+hw*0.4,base-ht*0.86]],{lw:1.6,la:0.5});
+  /* seat and arms */
+  dR(b,C,m,cx-hw,base-ht*0.44,hw*2,ht*0.14,{sa:0.62,lw:2.3});
+  dR(b,C,m,cx-hw*1.02,base-ht*0.62,hw*0.26,ht*0.2,{sa:0.72,lw:2});
+  dR(b,C,m,cx+hw*0.76,base-ht*0.62,hw*0.26,ht*0.2,{sa:0.72,lw:2});
+  /* legs */
+  dR(b,C,m,cx-hw*0.88,base-ht*0.3,hw*0.2,ht*0.3,{sa:0.7,lw:2});
+  dR(b,C,m,cx+hw*0.68,base-ht*0.3,hw*0.2,ht*0.3,{sa:0.7,lw:2});
+}
+function dReg(b,C,m,x,y,r){
+  if(m==='spot') return;
+  b.save(); b.globalAlpha=0.45; b.strokeStyle='#231F1A'; b.lineWidth=1;
+  b.beginPath(); b.arc(x,y,r,0,6.3); b.stroke();
+  b.beginPath(); b.moveTo(x,y-r*1.7); b.lineTo(x,y+r*1.7); b.moveTo(x-r*1.7,y); b.lineTo(x+r*1.7,y); b.stroke();
+  b.restore();
+}
+function dColourBar(b,C,m,x,y,cw,ch){
+  var cols=[C.sc,'#C42B1C','#231F1A','#B4842A','#3A5AA0'];
+  for(var i=0;i<cols.length;i++){
+    if(m==='spot'&&i!==0) continue;
+    if(m==='ink'&&i===0) continue;
+    b.fillStyle=cols[i]; b.globalAlpha=0.9; b.fillRect(x+i*cw,y,cw-1.5,ch); b.globalAlpha=1;
+  }
+  if(m==='ink'){ b.strokeStyle='#231F1A'; b.lineWidth=1; b.strokeRect(x-0.5,y-0.5,cw*cols.length,ch+1); }
+}
+
+/* ── 1 · The Starter Cellar — Wine Undercroft (plate 1C) ── */
+function artCellar(b,C,m){
+  var w=C.w,h=C.h,ft=C.ft;
+  dCourses(b,C,m,-4,-6,w+6,ft,w*0.13,ft*0.2,0.14);
+  for(var i=0;i<4;i++){
+    var cx=w*(0.11+i*0.19);
+    dNiche(b,C,m,cx,ft*0.95,w*0.07,w*0.05,ft*0.34,{ink:1,ia:0.5,lw:2,nospot:1});
+    for(var r=0;r<3;r++) for(var c=0;c<3;c++)
+      dE(b,C,m,cx-w*0.034+c*w*0.034,ft*0.5+r*ft*0.16,w*0.011,w*0.011,{sa:0.85,fc:'#C8B98E',fa:0.85,lw:1,la:0.6});
+  }
+  dL(b,C,m,[[0,ft*0.08],[w,ft*0.08]],{lw:2.2,la:0.6});
+  dFlags(b,C,m,ft,h,w,0.24);
+  dE(b,C,m,w*0.62,ft+(h-ft)*0.72,w*0.026,w*0.012,{ink:1,ia:0.45,lw:1.4,nospot:1});
+  for(var sc=0;sc<3;sc++) dL(b,C,m,[[0,ft*(0.02+sc*0.05)],[w*(0.09+sc*0.04),ft*0.02]],{la:0.3,lw:1});
+}
+/* ── 2 · The Dining Hall — Chandelier Ruin (plate 2B) ── */
+function artDining(b,C,m){
+  var w=C.w,h=C.h,ft=C.ft;
+  dL(b,C,m,[[0,ft*0.16],[w,ft*0.16]],{lw:2.4});
+  dL(b,C,m,[[0,ft*0.21],[w,ft*0.21]],{lw:1.4,la:0.5});
+  dPG(b,C,m,[[w*0.05,ft*0.21],[w*0.28,ft*0.23],[w*0.24,ft*0.8],[w*0.09,ft*0.72]],{sa:0.2,lw:1.6,la:0.7});
+  dBricks(b,C,m,w*0.09,ft*0.27,w*0.24,ft*0.72,w*0.045,ft*0.11,0.3);
+  for(var t=0;t<3;t++) dL(b,C,m,[[w*(0.5+t*0.1),ft*0.21],[w*(0.48+t*0.1),ft*(0.4+C.rng()*0.28)],[w*(0.54+t*0.1),ft*0.25]],{la:0.45,lw:1.3});
+  dChand(b,C,m,w*0.42,ft*0.62,7,w*0.12);
+  dBoards(b,C,m,ft,h,w,3,0.22);
+  dPG(b,C,m,[[w*0.16,h*0.98],[w*0.56,h*0.86],[w*0.46,ft+(h-ft)*0.3],[w*0.22,ft+(h-ft)*0.36]],
+      {sc:'#F4F1E6',sa:0.95,fc:'#F4F1E6',fa:0.8,lw:1.8,la:0.6});
+  dPG(b,C,m,[[w*0.6,h*0.8],[w*0.8,h*0.87],[w*0.79,h*0.93],[w*0.59,h*0.86]],{sa:0.5,lw:2});
+  dL(b,C,m,[[w*0.63,h*0.87],[w*0.65,h*0.97]],{lw:2.2});
+  dL(b,C,m,[[w*0.76,h*0.9],[w*0.78,h*0.98]],{lw:2.2});
+}
+/* ── 3 · The Library — The Stacks (plate 3A) ── */
+function artLibrary(b,C,m){
+  var w=C.w,h=C.h,ft=C.ft;
+  dShelfWall(b,C,m,-4,ft*0.06,w*0.4,ft*0.94,4);
+  dShelfWall(b,C,m,w*0.42,ft*0.06,w*0.36,ft*0.94,4);
+  dL(b,C,m,[[0,ft*0.03],[w,ft*0.03]],{lw:2.4});
+  dL(b,C,m,[[0,ft*0.12],[w*0.8,ft*0.12]],{lw:2.6});
+  dL(b,C,m,[[w*0.28,ft*0.12],[w*0.24,ft]],{lw:2.4});
+  dL(b,C,m,[[w*0.35,ft*0.12],[w*0.31,ft]],{lw:2.4});
+  for(var r=0;r<5;r++) dL(b,C,m,[[w*0.282-w*0.008*r,ft*(0.24+r*0.19)],[w*0.352-w*0.008*r,ft*(0.24+r*0.19)]],{lw:1.8});
+  dBoards(b,C,m,ft,h,w,4,0.2);
+  dPG(b,C,m,[[w*0.55,h*0.94],[w*0.86,h*0.94],[w*0.83,ft+(h-ft)*0.44],[w*0.59,ft+(h-ft)*0.44]],{sa:0.42,lw:2.2});
+  dE(b,C,m,w*0.7,ft+(h-ft)*0.42,w*0.032,w*0.015,{sa:0.9,lw:1.8});
+  dL(b,C,m,[[w*0.7,ft+(h-ft)*0.42],[w*0.7,ft+(h-ft)*0.3]],{lw:1.6});
+}
+/* ── 4 · The Armoury — Gatehouse (plate 4B) ── */
+function artArmoury(b,C,m){
+  var w=C.w,h=C.h,ft=C.ft;
+  dCourses(b,C,m,-4,-6,w+6,ft,w*0.18,ft*0.26,0.16);
+  [0.08,0.2].forEach(function(fx){ dR(b,C,m,fx*w,ft*0.2,w*0.018,ft*0.3,{ink:1,ia:0.85,lw:1.8,nospot:1}); });
+  dBanner(b,C,m,w*0.34,ft*0.05,w*0.075,ft*0.44);
+  dBanner(b,C,m,w*0.5,ft*0.05,w*0.075,ft*0.44);
+  /* the winch that lifts the gate, chained down beside the door */
+  dE(b,C,m,w*0.78,ft*0.24,w*0.045,w*0.045,{sa:0.4,lw:2.2});
+  dL(b,C,m,[[w*0.735,ft*0.24],[w*0.825,ft*0.24]],{lw:2.4});
+  dL(b,C,m,[[w*0.78,ft*0.28],[w*0.78,ft*0.96]],{lw:1.6});
+  for(var c=0;c<5;c++) dE(b,C,m,w*0.78,ft*(0.36+c*0.13),w*0.01,w*0.013,{nospot:1,lw:1.4});
+  /* murder holes in the ceiling course */
+  for(var mh=0;mh<6;mh++) dR(b,C,m,w*(0.1+mh*0.12),0,w*0.03,ft*0.05,{ink:1,ia:0.7,lw:1.4,nospot:1});
+  dFlags(b,C,m,ft,h,w,0.24);
+  dL(b,C,m,[[w*0.3,ft+2],[w*0.27,h]],{la:0.35,lw:1.6});
+  dL(b,C,m,[[w*0.66,ft+2],[w*0.7,h]],{la:0.35,lw:1.6});
+}
+/* ── 5 · The Kitchens — The Hearth (plate 5A) ── */
+function artKitchens(b,C,m){
+  var w=C.w,h=C.h,ft=C.ft;
+  dBricks(b,C,m,-4,-6,w+6,ft,w*0.058,ft*0.13,0.12);
+  dPG(b,C,m,[[w*0.1,ft],[w*0.12,ft*0.1],[w*0.56,ft*0.1],[w*0.58,ft]],{sa:0.14,lw:2.4});
+  dNiche(b,C,m,w*0.34,ft,w*0.16,w*0.11,ft*0.36,{ink:1,ia:0.86,lw:2.6,nospot:1});
+  for(var f=0;f<7;f++){
+    var fx=w*(0.24+f*0.034), fh=ft*(0.16+C.rng()*0.16);
+    dPG(b,C,m,[[fx,ft],[fx+w*0.02,ft],[fx+w*0.01,ft-fh]],{sa:0.95,fc:'#E8A33A',fa:0.92,nostroke:1});
+  }
+  dL(b,C,m,[[w*0.18,ft*0.42],[w*0.39,ft*0.42],[w*0.39,ft*0.56]],{lw:2.4,lc:'#DED8C4',la:0.9});
+  dE(b,C,m,w*0.39,ft*0.72,w*0.05,w*0.042,{ink:1,ia:0.95,lw:2.6,lc:'#F4F1E6',nospot:1});
+  dL(b,C,m,[[w*0.34,ft*0.68],[w*0.44,ft*0.68]],{lw:2.2,lc:'#F4F1E6',la:0.9});
+  dPotRail(b,C,m,ft*0.24,w*0.62,w*0.8,3);
+  dChecker(b,C,m,ft,h,w,0.13,1);
+}
+/* ── 6 · The Gallery — Salon Hang (plate 6A) ── */
+function artGallery(b,C,m){
+  var w=C.w,h=C.h,ft=C.ft;
+  dL(b,C,m,[[0,ft*0.08],[w,ft*0.08]],{lw:2.4});
+  dL(b,C,m,[[0,ft*0.13],[w,ft*0.13]],{lw:1.3,la:0.5});
+  var tiers=[[0.28,0.14,null],[0.56,0.19,'land'],[0.82,0.12,'port']];
+  for(var t=0;t<tiers.length;t++){
+    var n=t===1?4:5;
+    for(var i=0;i<n;i++){
+      var fx=w*0.82*((i+0.5)/n);
+      dFrame(b,C,m,fx,ft*tiers[t][0],w*(tiers[t][1]*0.7),ft*tiers[t][1]*1.5,tiers[t][2]);
+    }
+  }
+  dHerring(b,C,m,ft,h,w,0.16);
+  var ry=ft+(h-ft)*0.3;
+  [0.12,0.42,0.72].forEach(function(fx){ dL(b,C,m,[[fx*w,ry],[fx*w,ry+(h-ft)*0.22]],{lw:2.4}); });
+  dARC(b,C,m,w*0.27,ry-(h-ft)*0.06,w*0.15,0.35,Math.PI-0.35,{lw:2.6,onspot:1});
+  dARC(b,C,m,w*0.57,ry-(h-ft)*0.06,w*0.15,0.35,Math.PI-0.35,{lw:2.6,onspot:1});
+}
+/* ── 7 · The Throne Room — The Dais (plate 7A) ── */
+function artThrone(b,C,m){
+  var w=C.w,h=C.h,ft=C.ft;
+  dCourses(b,C,m,-4,-6,w+6,ft,w*0.16,ft*0.3,0.1);
+  dL(b,C,m,[[0,ft*0.07],[w,ft*0.07]],{lw:2.6});
+  [0.14,0.3,0.54,0.7].forEach(function(fx){ dBanner(b,C,m,fx*w,ft*0.1,w*0.07,ft*0.42); });
+  [0.06,0.22,0.62,0.78].forEach(function(fx,i){ dColumn(b,C,m,fx*w,ft*0.05,ft*1.02,w*(i===0?0.062:0.05)); });
+  dFlags(b,C,m,ft,h,w,0.16);
+  /* the carpet runs from the door to the dais */
+  dRug(b,C,m,w*0.42,ft+(h-ft)*0.2,w*0.88,ft+(h-ft)*0.01,w*0.13,w*0.05);
+  /* the dais sits hard against the back wall and the throne rises past it,
+     so the clutter on the floor can never bury the thing the room is named for */
+  for(var s2=0;s2<3;s2++){
+    var sy=ft+(h-ft)*(0.04+s2*0.055), sw2=w*(0.2+s2*0.06);
+    dPG(b,C,m,[[w*0.42-sw2/2,sy],[w*0.42+sw2/2,sy],[w*0.42+sw2/2+w*0.016,sy+(h-ft)*0.055],[w*0.42-sw2/2-w*0.016,sy+(h-ft)*0.055]],{sa:0.3,lw:2.2});
+  }
+  dThrone(b,C,m,w*0.42,ft+(h-ft)*0.06,(h-ft)*0.46);
+}
+/* ── 8 · Outside — Unprinted Sky (plate 8A) ── */
+function artOutside(b,C,m){
+  var w=C.w,h=C.h,ft=C.ft;
+  dReg(b,C,m,w*0.14,ft*0.3,ft*0.1);
+  dColourBar(b,C,m,w*0.6,ft*0.14,w*0.042,ft*0.09);
+  dL(b,C,m,[[0,ft],[w,ft]],{lw:2.6});
+  dHills(b,C,m,ft,w,h);
+  dTicks(b,C,m,0,ft+2,w,h,80,h*0.026,0.26);
+  for(var i=0;i<3;i++){
+    var sx=w*(0.16+i*0.24);
+    dPG(b,C,m,[[sx,ft+(h-ft)*(0.4+i*0.14)],[sx+w*0.09,ft+(h-ft)*(0.4+i*0.14)],
+               [sx+w*0.24,ft+(h-ft)*(0.5+i*0.14)],[sx+w*0.09,ft+(h-ft)*(0.5+i*0.14)]],
+        {ink:1,ia:0.12,nostroke:1,nospot:1});
+  }
+}
+var ROOMART=[artCellar,artDining,artLibrary,artArmoury,artKitchens,artGallery,artThrone,artOutside];
+
 /* the room itself never changes mid-run, so it is painted once and blitted */
 function makeBG(){
   if(W<2||H<2) return;
   var c=document.createElement('canvas');
   c.width=Math.floor(W*DPR); c.height=Math.floor(H*DPR);
   var b=c.getContext('2d'); b.setTransform(DPR,0,0,DPR,0,0);
-  var ft=floorTop();
-  b.fillStyle='#CAC3A9'; b.fillRect(-8,-8,W+16,ft+8);
-  b.strokeStyle='rgba(35,31,26,.13)'; b.lineWidth=1.1;
-  var step=46, cols=Math.ceil(W/step)+1, rows=Math.ceil(ft/step)+1;
-  for(var r=0;r<rows;r++) for(var cc=0;cc<cols;cc++){
-    var bx=cc*step+(r%2?step/2:0), by=r*step;
-    b.beginPath(); b.moveTo(bx+23,by+7); b.quadraticCurveTo(bx+30,by+16,bx+23,by+24);
-    b.quadraticCurveTo(bx+16,by+16,bx+23,by+7); b.stroke();
-    b.beginPath(); b.arc(bx+23,by+31,2.2,0,6.3); b.stroke();
+  var ft=floorTop(), R=ROOMS[S.room];
+  /* paper stock, per room */
+  b.fillStyle=R.wallCol||'#CAC3A9'; b.fillRect(-8,-8,W+16,ft+8);
+  b.fillStyle=R.floorCol||'#DED8C4'; b.fillRect(-8,ft,W+16,H-ft+8);
+  var C={w:W,h:H,ft:ft,sc:spot(),rng:mk(R.seed||31)};
+  var art=ROOMART[S.room]||null;
+  if(art){
+    /* spot plate, misregistered by a hair, then the ink plate over it */
+    C.rng=mk(R.seed||31); b.save(); b.translate(1.7,1.7); art(b,C,'spot'); b.restore();
+    C.rng=mk(R.seed||31); art(b,C,'ink');
+  } else {
+    /* the old bone eye-wallpaper, kept as the fallback */
+    b.strokeStyle='rgba(35,31,26,.13)'; b.lineWidth=1.1;
+    var step=46, cols=Math.ceil(W/step)+1, rows=Math.ceil(ft/step)+1;
+    for(var r=0;r<rows;r++) for(var cc=0;cc<cols;cc++){
+      var bx=cc*step+(r%2?step/2:0), by=r*step;
+      b.beginPath(); b.moveTo(bx+23,by+7); b.quadraticCurveTo(bx+30,by+16,bx+23,by+24);
+      b.quadraticCurveTo(bx+16,by+16,bx+23,by+7); b.stroke();
+      b.beginPath(); b.arc(bx+23,by+31,2.2,0,6.3); b.stroke();
+    }
+    b.strokeStyle='rgba(35,31,26,.26)'; b.lineWidth=1;
+    for(var f=1;f<5;f++){
+      var fy=ft+(H-ft)*(f/5), xx=0;
+      b.beginPath(); b.moveTo(0,fy);
+      while(xx<W){ xx+=rr(8,18); b.quadraticCurveTo(xx-4,fy+rr(-2.5,2.5),xx,fy); }
+      b.stroke();
+    }
   }
-  b.fillStyle='#DED8C4'; b.fillRect(-8,ft,W+16,H-ft+8);
-  b.strokeStyle='rgba(35,31,26,.26)'; b.lineWidth=1;
-  for(var f=1;f<5;f++){
-    var fy=ft+(H-ft)*(f/5), xx=0;
-    b.beginPath(); b.moveTo(0,fy);
-    while(xx<W){ xx+=rr(8,18); b.quadraticCurveTo(xx-4,fy+rr(-2.5,2.5),xx,fy); }
+  /* the door fleeing mimics run for — surround only, the leaf is live */
+  var G=doorGeo(), DC={sc:spot(),rng:mk(97)};
+  DC.rng=mk(97); b.save(); b.translate(1.6,1.6); doorSurround(b,DC,'spot',G); b.restore();
+  DC.rng=mk(97); doorSurround(b,DC,'ink',G);
+  /* skirting, unless the room has no wall to skirt */
+  if(!R.noSkirt){
+    b.strokeStyle='#231F1A'; b.lineWidth=2.4; b.beginPath(); b.moveTo(0,ft);
+    for(var k=0;k<=W;k+=26) b.lineTo(k,ft+Math.sin(k*0.09)*1.8);
     b.stroke();
   }
-  /* the door fleeing mimics run for */
-  var dw=W*0.085, dh=H*0.30, dx=W*DOOR[0];
-  b.fillStyle='rgba(35,31,26,.82)'; b.strokeStyle='#231F1A'; b.lineWidth=2.4; b.lineJoin='round';
-  b.beginPath(); b.rect(dx-dw/2,ft-dh,dw,dh); b.fill(); b.stroke();
-  /* skirting */
-  b.strokeStyle='#231F1A'; b.lineWidth=2.4; b.beginPath(); b.moveTo(0,ft);
-  for(var k=0;k<=W;k+=26) b.lineTo(k,ft+Math.sin(k*0.09)*1.8);
-  b.stroke();
   bg=c;
 }
 function makeGrain(){
@@ -837,7 +1518,7 @@ function makeGrain(){
 window.addEventListener('resize',function(){ resize(); });
 if(window.visualViewport) window.visualViewport.addEventListener('resize',function(){ resize(); });
 
-var DOOR=[0.93,0.0];
+var DOOR=[0.91,0.0];
 var WALLKINDS=['painting','mirror','clock','cage','candela'];
 /* tall screens get a short wall and a deep floor; wide screens keep the theatre look */
 function floorTop(){ return H*clamp(0.26+0.10*(W/Math.max(1,H)),0.28,0.46); }
@@ -924,6 +1605,9 @@ function buildRoom(quiet){
   var wn=Math.round(clamp(W/150,2,6)*clamp(wallRoom/0.4,0.5,1.4));
   for(var wi=0;wi<wn;wi++) objs.push(newObj(null,true));
   eyeLayout();
+  /* the backdrop is per-room now, so it has to be repainted whenever the room
+     changes — not just on resize, which is the only thing that used to do it */
+  makeBG();
   eyes=0; dead=false; held=false; frenzy=1; holdT=0; swings=0;
   parts.length=0; pops.length=0; aimIdx=-1; jawT=0;
   interns.length=0; beams.length=0; rings.length=0; lensT=0.6; ordT=2; roomMim=null;
@@ -997,8 +1681,10 @@ function paintPiece(o,cx,cy,px,ink,spotCol,hopAmp){
   g.save();
   g.translate(cx,cy);
   var pop=o.spawn<1?(1-Math.pow(1-o.spawn,3)):1;
-  g.rotate(o.rot+(o.mimic?Math.sin(o.hopT*9)*0.09:0));
-  var hop=o.mimic?Math.abs(Math.sin(o.hopT*9))*(hopAmp||0):0;
+  var hr=o.hopR||9, ha=o.hopA==null?1:o.hopA;
+  var lean=(o.mimic&&o.vr&&(o.vr.k==='runner'||o.vr.k==='skitter'))?0.11:0;
+  g.rotate(o.rot+lean+(o.mimic?Math.sin(o.hopT*hr)*0.09:0));
+  var hop=o.mimic?Math.abs(Math.sin(o.hopT*hr))*(hopAmp||0)*ha:0;
   g.translate(0,-hop);
   g.scale(s*(0.6+0.4*pop),s*pop);
   if(o.squash>0){ var q=o.squash; g.scale(1+q*0.22,1-q*0.24); }
@@ -1024,11 +1710,16 @@ function paintPiece(o,cx,cy,px,ink,spotCol,hopAmp){
     g.fillStyle=ink; g.fillRect(10,y-8,28,16);
     g.fillStyle='#7C1712'; g.beginPath(); g.ellipse(25,y+4,9,4,0,0,6.3); g.fill();
     g.fillStyle='#F4F1E6'; g.strokeStyle=ink; g.lineWidth=1.1;
+    /* a snapper is only open for part of its cycle, and you can see which part */
+    var jo=(o.vr&&o.vr.k==='snapper')?(jawOpen(o)?1:0.12):1;
+    g.save(); g.translate(0,y); g.scale(1,jo); g.translate(0,-y);
     [o.teethTop,o.teethBot].forEach(function(tp){
       g.beginPath(); g.moveTo(tp[0][0],tp[0][1]);
       for(var q2=1;q2<tp.length;q2++) g.lineTo(tp[q2][0],tp[q2][1]);
       g.closePath(); g.fill(); g.stroke();
     });
+    g.restore();
+    if(jo<1){ g.strokeStyle='#F4F1E6'; g.lineWidth=2.2; g.beginPath(); g.moveTo(11,y); g.lineTo(37,y); g.stroke(); }
   }
 
   /* ink plate */
@@ -1039,6 +1730,63 @@ function paintPiece(o,cx,cy,px,ink,spotCol,hopAmp){
     g.stroke();
   }
 
+  /* ── variant signatures ──
+     A tint and a popup were never enough: each variant now keeps a mark on it
+     for as long as it is alive, so you can read the room without reading text. */
+  if(o.mimic&&o.vr){
+    var vk=o.vr.k, sm=K.seam;
+    if(vk==='golden'){
+      g.strokeStyle='#F6E7B0'; g.lineWidth=1.3;
+      g.save(); g.translate(-1.3,-1.3);
+      for(var gk=0;gk<K.p.length;gk++){ var gp=K.p[gk]; if(gp.t==='line') continue;
+        prim(gp,jit,mk(o.seed+gk)); g.stroke(); }
+      g.restore();
+    } else if(vk==='splitter'){
+      g.strokeStyle=ink; g.lineWidth=2.2; g.setLineDash([3,3]);
+      g.beginPath(); g.moveTo(24,6); g.lineTo(24,42); g.stroke(); g.setLineDash([]);
+    } else if(vk==='anvil'){
+      g.fillStyle='#DED8C4'; g.strokeStyle=ink; g.lineWidth=1.2;
+      [sm-13,sm+9].forEach(function(by){
+        g.fillRect(9,by,30,5); g.strokeRect(9,by,30,5);
+        g.fillStyle='#F4F1E6';
+        for(var st=0;st<4;st++){ g.beginPath(); g.arc(13+st*8,by+2.5,1.2,0,6.3); g.fill(); }
+        g.fillStyle='#DED8C4';
+      });
+    } else if(vk==='weevil'){
+      g.fillStyle='#C9D6A2'; g.strokeStyle=ink; g.lineWidth=1;
+      [[16,sm-11,3.4],[31,sm+8,2.8],[22,sm+14,2.2]].forEach(function(bl){
+        g.beginPath(); g.arc(bl[0],bl[1],bl[2],0,6.3); g.fill(); g.stroke();
+      });
+    } else if(vk==='skitter'){
+      g.strokeStyle=ink; g.lineWidth=1.6; g.globalAlpha=0.5;
+      for(var sk=0;sk<3;sk++){ g.beginPath(); g.moveTo(4-sk*3,sm-6+sk*7); g.lineTo(11-sk*3,sm-6+sk*7); g.stroke(); }
+      g.globalAlpha=1;
+    } else if(vk==='cuckoo'){
+      g.strokeStyle='#F4F1E6'; g.lineWidth=1.8; g.setLineDash([4,4]);
+      g.strokeRect(9,sm-14,30,28); g.setLineDash([]);
+    } else if(vk==='hogshead'){
+      g.strokeStyle=ink; g.lineWidth=2.6;
+      g.beginPath(); g.moveTo(8,sm+11); g.lineTo(40,sm+11); g.stroke();
+      g.fillStyle='#F4F1E6'; g.strokeStyle=ink; g.lineWidth=1.2;
+      g.fillRect(21,sm+8,6,6); g.strokeRect(21,sm+8,6,6);
+    } else if(vk==='chorister'){
+      g.strokeStyle='#F4F1E6'; g.lineWidth=1.8;
+      for(var ar=0;ar<3;ar++){ g.beginPath(); g.arc(24,sm-16,5+ar*4,Math.PI*1.15,Math.PI*1.85); g.stroke(); }
+    } else if(vk==='understudy'){
+      g.strokeStyle='#F4F1E6'; g.lineWidth=1.6; g.globalAlpha=0.8; g.setLineDash([2,4]);
+      for(var uk=0;uk<K.p.length;uk++){ var up=K.p[uk]; if(up.t==='line') continue;
+        prim(up,jit,mk(o.seed+uk)); g.stroke(); }
+      g.setLineDash([]); g.globalAlpha=1;
+    }
+    /* an elite wears its prefix too */
+    if(o.pre){
+      g.strokeStyle='#C42B1C'; g.lineWidth=2;
+      if(o.pre.k==='plated'){ g.strokeRect(8,sm-15,32,30); }
+      else if(o.pre.k==='gorged'){ g.beginPath(); g.arc(24,sm,17,0,6.3); g.stroke(); }
+      else if(o.pre.k==='restless'){ g.beginPath(); g.moveTo(6,sm-14); g.lineTo(2,sm-14); g.moveTo(6,sm); g.lineTo(1,sm); g.moveTo(6,sm+14); g.lineTo(2,sm+14); g.stroke(); }
+      else { g.setLineDash([2,3]); g.beginPath(); g.arc(24,sm,20,0,6.3); g.stroke(); g.setLineDash([]); }
+    }
+  }
   /* cracks */
   if(o.cracks.length){
     g.lineWidth=1.5;
@@ -1053,6 +1801,11 @@ function paintPiece(o,cx,cy,px,ink,spotCol,hopAmp){
 }
 function drawEye(x,y,s,open){
   g.save(); g.translate(x,y); g.scale(s,s);
+  /* shelves, brick and frames would swallow an eye, so it gets its own paper */
+  if(ROOMS[S.room].busy){
+    g.globalAlpha=0.22+0.34*clamp(open,0,1); g.fillStyle='#EDE8D8';
+    g.beginPath(); g.ellipse(0,0,11,7,0,0,6.3); g.fill(); g.globalAlpha=1;
+  }
   g.lineWidth=1.7; g.lineCap='round'; g.strokeStyle='#231F1A';
   if(open<=0.02){
     g.globalAlpha=0.34; g.beginPath(); g.moveTo(-9,-1); g.quadraticCurveTo(0,4,9,-1); g.stroke(); g.globalAlpha=1;
@@ -1135,7 +1888,9 @@ function drawHammer(){
     g.beginPath(); g.ellipse(axy[0],axy[1]-baseSize()*0.25,R,R*0.55,0,0,6.3); g.stroke();
     g.restore();
   }
-  paintHammer(Hm,px,py,clamp(Math.min(W,H)/560,0.62,1.25),hamRot);
+  /* on touch it has to read past a finger, so it is drawn a good deal bigger */
+  var hsc=clamp(Math.min(W,H)/560,0.62,1.25)*(touchAim?1.85:1);
+  paintHammer(Hm,px,py,hsc,hamRot);
 }
 function headShape(Hm,hw,hh){
   var ink='#231F1A';
@@ -1270,13 +2025,35 @@ function drawRoomFuse(){
   g.restore();
 }
 function drawFuse(){
-  var o=loose(); if(!o||!o.fuseMax||o.flee<=0) return;
+  var o=loose(); if(!o) return;
   var xy=objXY(o), s=baseSize()*objScale(o);
   var w=Math.max(52,s*0.95), h=8, x=xy[0]-w/2, y=xy[1]-s*1.12;
+  /* the name of the thing, in its own colour, for as long as it is alive.
+     This is the fix for variants you never noticed: it is written on it. */
+  var lbl=((o.pre?o.pre.n+' ':'')+((o.vr&&o.vr.n)||'MIMIC')).trim();
+  g.save();
+  g.font='700 '+Math.round(clamp(s*0.2,9,16))+'px '+MONO;
+  g.textAlign='center'; g.textBaseline='alphabetic';
+  g.lineJoin='round'; g.lineWidth=3.5; g.strokeStyle='#F4F1E6';
+  g.strokeText(lbl,xy[0],y-6);
+  g.fillStyle=(o.vr&&o.vr.col)||'#C42B1C';
+  g.fillText(lbl,xy[0],y-6);
+  g.restore();
+  if(!o.fuseMax||o.flee<=0){
+    /* it is not running anywhere — say so where the bar would be */
+    g.save();
+    g.font='700 '+Math.round(clamp(s*0.15,8,12))+'px '+MONO;
+    g.textAlign='center'; g.globalAlpha=0.75;
+    g.fillStyle='#231F1A'; g.fillText('NOT RUNNING',xy[0],y+6);
+    g.restore();
+    return;
+  }
   var p=clamp(o.flee/o.fuseMax,0,1);
   var urgent=o.flee<2.2;
   g.save();
   if(urgent && Math.floor(o.flee*9)%2===0) g.globalAlpha=0.55;
+  var fast=o.vr&&(o.vr.k==='runner'||o.vr.k==='skitter'||o.vr.k==='golden');
+  if(fast){ w*=1.35; h=6; x=xy[0]-w/2; }
   g.fillStyle='#F4F1E6'; g.fillRect(x,y,w,h);
   g.fillStyle='#C42B1C'; g.fillRect(x+1.5,y+1.5,(w-3)*p,h-3);
   g.strokeStyle='#231F1A'; g.lineWidth=2; g.strokeRect(x,y,w,h);
@@ -1286,20 +2063,11 @@ function drawFuse(){
   g.beginPath(); g.moveTo(ax,ay-5); g.lineTo(ax+9,ay); g.lineTo(ax,ay+5); g.closePath(); g.fill();
   g.restore();
   /* and mark the door itself while something is running for it */
-  var dx=DOOR[0]*W, dy=floorTop();
+  var G=doorGeo();
   g.save();
   g.globalAlpha=urgent?0.9:0.45+0.25*Math.sin(o.flee*7);
   g.strokeStyle='#C42B1C'; g.lineWidth=4;
-  g.strokeRect(dx-W*0.0455,dy-H*0.30,W*0.091,H*0.30);
-  g.restore();
-}
-function drawDoor(){
-  var x=W*0.93, y=floorTop();
-  g.save();
-  g.strokeStyle='#231F1A'; g.lineWidth=2.4; g.lineJoin='round';
-  var h=H*0.30, w=W*0.085;
-  g.fillStyle='rgba(35,31,26,.82)';
-  g.beginPath(); g.rect(x-w/2,y-h,w,h); g.fill(); g.stroke();
+  g.strokeRect(G.x-G.dw*0.62,G.ft-G.dh*1.08,G.dw*1.24,G.dh*1.08);
   g.restore();
 }
 
@@ -1310,7 +2078,7 @@ function addShards(o,n,verm){
   for(var i=0;i<n;i++){
     parts.push({k:'sh', x:xy[0]+rr(-s*0.2,s*0.2), y:xy[1]-s*0.4+rr(-s*0.2,s*0.2),
       vx:rr(-190,190), vy:rr(-320,-90), t:0, life:rr(0.6,0.95),
-      r:rr(0,6.3), vr:rr(-9,9), sz:rr(4,8)*(s/70), c:verm?'#C42B1C':spot(), f:ri(0,2)});
+      r:rr(0,6.3), vr:rr(-9,9), sz:rr(4,8)*(s/70), c:verm?'#C42B1C':drainedSpot(), f:ri(0,2)});
   }
 }
 function teethTarget(){
@@ -1339,7 +2107,7 @@ function addSpl(o,n,total){
   for(var i=0;i<n;i++){
     parts.push({k:'sp', x:xy[0]+rr(-s*0.15,s*0.15), y:xy[1]-s*0.4,
       vx:rr(-160,160), vy:rr(-300,-110), t:0, burst:rr(0.2,0.34),
-      tx:tg[0], ty:tg[1], val:total/n, r:rr(0,6.3), vr:rr(-10,10), sz:rr(3,5)});
+      tx:tg[0], ty:tg[1], val:total/n, r:rr(0,6.3), vr:rr(-10,10), sz:rr(4,6.5)});
   }
 }
 var PCAP=440;
@@ -1421,10 +2189,14 @@ function drawParts(){
       g.lineTo(p.sz*0.4,p.sz); g.lineTo(-p.sz*0.4,p.sz); g.closePath();
       g.fill(); g.stroke(); g.restore();
     } else if(p.k==='sp'){
+      /* a pale wood sliver with an ink edge. It used to be drawn in the room's
+         own spot colour at 3px, which made it invisible against the furniture. */
       g.save(); g.translate(p.x,p.y); g.rotate(p.r);
-      g.fillStyle=spot(); g.strokeStyle='#231F1A'; g.lineWidth=1;
-      g.fillRect(-p.sz,-p.sz*0.35,p.sz*2,p.sz*0.7);
-      g.strokeRect(-p.sz,-p.sz*0.35,p.sz*2,p.sz*0.7); g.restore();
+      g.fillStyle='#C8B98E'; g.strokeStyle='#231F1A'; g.lineWidth=1.2; g.lineJoin='round';
+      g.beginPath();
+      g.moveTo(-p.sz*1.5,-p.sz*0.34); g.lineTo(p.sz*1.5,-p.sz*0.12);
+      g.lineTo(p.sz*1.5,p.sz*0.2); g.lineTo(-p.sz*1.5,p.sz*0.42);
+      g.closePath(); g.fill(); g.stroke(); g.restore();
     } else if(p.k==='sk'){
       var t=p.t/p.life;
       g.save(); g.globalAlpha=1-t; g.strokeStyle='#231F1A'; g.lineWidth=2.6; g.lineCap='round';
@@ -1455,9 +2227,7 @@ function drawParts(){
 
 /* ══════════════ render ══════════════ */
 function render(){
-  var ink='#231F1A', sp=spot(), hot=false;
-  for(var i=0;i<objs.length;i++) if(objs[i].mimic){ hot=true; break; }
-  if(hot) sp='#928C7C';
+  var ink='#231F1A', sp=drainedSpot();
 
   g.setTransform(DPR,0,0,DPR,0,0);
   var sx=0, sy=0;
@@ -1466,6 +2236,7 @@ function render(){
   g.save(); g.translate(sx,sy);
 
   if(bg) g.drawImage(bg,0,0,W,H);
+  drawDoorLive();
 
   /* eyes */
   for(var e=0;e<EYES;e++){
@@ -1536,7 +2307,7 @@ function crackFor(o){
 function aimAt2(x,y){
   var i=objAt(x,y);
   if(i>=0) return i;
-  var best=-1, bd=1e9, R=baseSize()*1.35;
+  var best=-1, bd=1e9, R=baseSize()*1.35*(1+fx('aim'));
   for(var j=0;j<objs.length;j++){
     var o=objs[j]; if(o.dead) continue;
     var q=objXY(o), s=baseSize()*objScale(o);
@@ -1568,22 +2339,45 @@ function reveal(o,forced){
   o.teethBot=teethPts(KIT[o.kind].seam,false,rng);
   /* fuse scales with time-to-kill, so it stays fair as both sides grow */
   var dps=dmg()/swingInt();
-  o.fuseMax=U('rep')>=3?0:clamp((4.6+(o.hp/dps)*2.5)*o.vr.fuse*fuseMul(),1.7,16);
+  /* fuse 0 on the variant means it never runs at all — the clock becomes the room */
+  o.fuseMax=(U('rep')>=3||o.vr.fuse<=0)?0:clamp((4.6+(o.hp/dps)*2.5)*o.vr.fuse*fuseMul(),1.7,16);
   o.flee=o.fuseMax; o.sx=o.fx; o.sy=o.fy; o.tick=0; o.bolting=false;
+  /* an elite prefix on top, from the Armoury on */
+  o.pre=forced?null:pickPre();
+  if(o.pre){
+    if(o.pre.hp){ o.max=Math.round(o.max*o.pre.hp); o.hp=o.max; }
+    if(o.pre.k==='restless'&&o.fuseMax) o.flee=o.fuseMax*0.7;
+  }
+  /* per-variant signature state */
+  o.hopR=o.vr.k==='brute'?5.2:o.vr.k==='runner'?13:o.vr.k==='skitter'?15:9;
+  o.hopA=o.vr.k==='brute'?1.55:o.vr.k==='hogshead'?1.3:o.vr.k==='runner'?0.75:1;
+  if(o.vr.k==='brute'||o.vr.k==='hogshead') o.sz*=1.3;
+  o.dodgeT=0; o.hitT=0; o.swapT=0; o.eatT=0; o.singT=0; o.fat=0;
   freeze=0.28; flashT=1; shake(14); SFX.scream();
   var xy=objXY(o); pop(xy[0],xy[1]-baseSize()*objScale(o)*0.7,'TEETH!',true);
-  if(o.vr.k!=='plain'){ pop(xy[0],xy[1]-baseSize()*objScale(o)*1.05,o.vr.n); }
+  var lbl=(o.pre?o.pre.n+' ':'')+(o.vr.n||'');
+  if(lbl){ pop(xy[0],xy[1]-baseSize()*objScale(o)*1.05,lbl.trim()); }
   say(o.vr.k==='golden'?'<b>Gilded.</b> Worth a fortune and barely stopping.'
      :o.vr.k==='brute'?'<b>A brute.</b> Slow, enormous, unbothered.'
      :o.vr.k==='howler'?'<b>A howler.</b> It is waking the whole room.'
      :o.vr.k==='splitter'?'<b>A splitter.</b> Killing it will not be the end of it.'
+     :o.vr.k==='skitter'?'<b>A skitter.</b> It will not stay under your hammer.'
+     :o.vr.k==='anvil'?'<b>An anvil.</b> Plated — no single hit does much. Swing faster, not harder.'
+     :o.vr.k==='weevil'?'<b>A weevil.</b> Leave it alone for a second and it heals.'
+     :o.vr.k==='snapper'?'<b>A snapper.</b> Hit it on the open jaw. The shut jaw opens eyes.'
+     :o.vr.k==='cuckoo'?'<b>A cuckoo.</b> It swaps places with the furniture. Keep your eyes on it.'
+     :o.vr.k==='hogshead'?'<b>A hogshead.</b> It is eating the room. Every mouthful is worth more.'
+     :o.vr.k==='chorister'?'<b>A chorister.</b> It is not going anywhere — it is opening every eye in here.'
+     :o.vr.k==='understudy'?'<b>It screams.</b> Something about it is not right.'
+     :o.pre&&o.pre.k==='plated'?'<b>Plated.</b> Your best hit is capped. Land more of them.'
      :o.fuseMax?'<b>It screams — and it runs.</b> Break it before it reaches the door.'
      :'<b>It screams.</b> It is not going anywhere. Break it.');
   if(!S.seen[o.kind]){ S.seen[o.kind]=1; }
 }
 function killMimic(o){
   var xy=objXY(o), sc=objScale(o);
-  var gain=9*frenzy*(1+openEyes()*(1/6+0.02*U('haul')))*teethMult()*haulMul()*((o.vr&&o.vr.pay)||1);
+  var gain=9*frenzy*(1+openEyes()*(1/6+0.02*U('haul')))*teethMult()*haulMul()*((o.vr&&o.vr.pay)||1)
+          *(o.pre?o.pre.pay:1)*(1+0.3*(o.fat||0));
   var n=clamp(Math.round(6+Math.log10(Math.max(10,gain))*4),6,22);
   addTeeth(o,n,gain);
   addShards(o,10,true);
@@ -1602,6 +2396,20 @@ function killMimic(o){
       kid.fx=clamp(o.fx+rr(-0.1,0.1),0.07,0.93); kid.fy=clamp(o.fy+rr(-0.08,0.08),0.03,0.97);
       kid.child=true; kid.dead=false; kid.spawn=0.001;
       reveal(kid,{k:'runner',n:'SPAWN',hp:0.4,fuse:0.8,pay:0.6,col:'#5E8A46'});
+    }
+  }
+  /* the understudy was never the mimic. the real one is already running. */
+  if(o.vr&&o.vr.k==='understudy'&&!o.child){
+    var pool2=[];
+    for(var ui=0;ui<objs.length;ui++){
+      var c2=objs[ui];
+      if(c2!==o&&!c2.mimic&&!c2.dead&&!c2.wall) pool2.push(c2);
+    }
+    if(pool2.length){
+      var real=pool2[ri(0,pool2.length-1)];
+      real.child=true;
+      reveal(real,{k:'plain',n:'THE REAL ONE',hp:1,fuse:0.75,pay:1.7,col:'#C42B1C'});
+      say('<b>That was not it.</b> The real one is already moving.');
     }
   }
   /* every variant leaves a fang behind, sometimes */
@@ -1653,7 +2461,7 @@ function clearRoom(){
 function breakJunk(o){
   var amt=(1+ri(1,3))*(1+0.4*U('scav'));
   if(Math.random()<0.011) findLore();
-  addSpl(o,4,amt);
+  addSpl(o,7,amt);
   addShards(o,parts.length>200?3:7,false);
   var xy=objXY(o);
   shake(4.5); freeze=Math.max(freeze,0.05); throttled(function(){ SFX.brk(); });
@@ -1697,9 +2505,34 @@ function hitObj(i,amount,byIntern){
   if(dead||i<0||i>=objs.length) return;
   var o=objs[i]; if(!o||o.dead) return;
   o.squash=1; crackFor(o);
+  /* the rules this particular mimic puts on your swing */
+  if(o.mimic){
+    var vk=o.vr&&o.vr.k;
+    if(vk==='anvil'||(o.pre&&o.pre.k==='plated')){
+      var cap=Math.max(1,Math.round(o.max*(vk==='anvil'?0.18:0.20)));
+      if(amount>cap){
+        amount=cap;
+        if(!byIntern&&swings%6===0){ var cxy=objXY(o); pop(cxy[0],cxy[1]-baseSize()*0.95,'PLATED'); }
+      }
+    }
+    if(vk==='snapper'&&!jawOpen(o)){
+      amount=Math.max(1,Math.round(amount*0.25));
+      if(!byIntern){
+        addEyes(0.12);
+        if(swings%4===0){ var jxy=objXY(o); pop(jxy[0],jxy[1]-baseSize()*0.95,'SHUT'); }
+      }
+    }
+    /* knockback: anvils, and anyone running the Anvil Fang */
+    var kb=(vk==='anvil'?0.3:0)+fx('knock');
+    if(kb>0&&o.fuseMax&&o.flee>0){
+      o.flee=Math.min(o.fuseMax,o.flee+kb);
+      if(!byIntern){ var kxy=objXY(o); addRing(kxy[0],kxy[1]-baseSize()*0.25,baseSize()*0.9,'#F4F1E6',3); }
+    }
+    o.hitT=0;
+  }
   o.hp-=amount;
   if(roomMim){
-    roomMim.hp-=amount;
+    roomMim.hp-=amount*(1+fx('roomdmg'));
     if(roomMim.hp<=0){ killRoom(); return; }
   }
   if(!byIntern){
@@ -1786,7 +2619,7 @@ function mimicEscaped(o){
   var keepPct=U('pouch')>=6?0.6:0.3;
   var kept=S.teeth*keepPct, lost=S.teeth-kept;
   S.banked+=kept; S.spl+=lost/4; S.teeth=0;
-  SFX.flee(); SFX.eat(); shake(16); flashT=1;
+  SFX.flee(); SFX.eat(); shake(16); flashT=1; doorOpen=1; doorTarget=0;
   var xy=objXY(o); pop(xy[0],xy[1]-50,'GOT AWAY',true);
   $('escKept').textContent=fmt(kept);
   $('escProg').textContent=S.cleared[S.room]
@@ -1819,14 +2652,16 @@ function localPt(e){
 cv.addEventListener('pointerdown',function(e){
   if(!running||dead) return;
   e.preventDefault();
-  var p=localPt(e); px=p[0]; py=p[1]; hasPointer=true;
+  touchAim=(e.pointerType==='touch');
+  var p=localPt(e); px=p[0]; py=p[1]-aimLift(); hasPointer=true;
   try{ cv.setPointerCapture(e.pointerId); }catch(err){}
   /* pressing anywhere starts swinging — the hammer finds something */
   aimIdx=aimAt2(px,py);
   held=true; holdT=0; swings=0; swingAcc=swingInt();
 });
 cv.addEventListener('pointermove',function(e){
-  var p=localPt(e); px=p[0]; py=p[1]; hasPointer=true;
+  touchAim=(e.pointerType==='touch');
+  var p=localPt(e); px=p[0]; py=p[1]-aimLift(); hasPointer=true;
   if(!running||dead) return;
   aimIdx=aimAt2(px,py);
 });
@@ -1840,7 +2675,128 @@ cv.addEventListener('pointerleave',function(){ if(!held){ hasPointer=false; aimI
 window.addEventListener('blur',release);
 
 /* ══════════════ UI ══════════════ */
-var TABS=['ovShop','ovMap','ovBest','ovCat','ovHelp'];
+
+/* ══════════════ debug ══════════════
+   Not a player-facing feature: five taps on the rank in the top bar (which is
+   also visible behind the title card), or D on a keyboard. Once opened, the
+   rank keeps a small mark so it can be found again. */
+var dbgTaps=0, dbgTapT=0;
+function dbgTap(){
+  var now=performance.now();
+  if(now-dbgTapT>1600) dbgTaps=0;
+  dbgTapT=now; dbgTaps++;
+  if(dbgTaps>=5){ dbgTaps=0; openDbg(); }
+}
+function openDbg(){
+  S.dbg=1;
+  document.body.classList.add('dbg');
+  hide('ovTitle'); running=true;
+  togglePanel('ovDbg',buildDbg);
+}
+function dbgBtn(act,label,arg){
+  return '<button class="dbtn" data-d="'+act+'"'+(arg!==undefined?' data-a="'+arg+'"':'')+'>'+label+'</button>';
+}
+function buildDbg(){
+  var h='';
+  h+='<div class="dstat">'+
+     [['Room',ROOMS[S.room].n],['Rank',S.rank+1],['Banked',fmt(S.banked)],['Splinters',fmt(S.spl)],
+      ['Larvae',S.larvae],['Hammer','H'+((S.hammer||0)+1)],['Eyes',eyes.toFixed(1)+'/'+EYES],
+      ['Objects',objs.length],['Parts',parts.length],['Canvas',W+'×'+H+' @'+DPR]]
+     .map(function(r){ return '<div><span>'+r[0]+'</span><b>'+r[1]+'</b></div>'; }).join('')+'</div>';
+
+  h+='<div class="grp">Panels moved in here</div>';
+  h+='<div class="drow">'+dbgBtn('art','Art catalogue')+dbgBtn('sbx',S.sandbox?'Leave sandbox':'Sandbox · max everything')+'</div>';
+
+  h+='<div class="grp">Jump to a room</div><div class="drow">';
+  ROOMS.forEach(function(R,i){ h+=dbgBtn('room','R'+(i+1)+' · '+R.n,i); });
+  h+='</div>';
+
+  h+='<div class="grp">Give</div><div class="drow">'+
+     dbgBtn('give','+10k banked','bank10k')+dbgBtn('give','+1M banked','bank1m')+
+     dbgBtn('give','+5k splinters','spl')+dbgBtn('give','+100 larvae','larv')+
+     dbgBtn('give','+10k carrying','carry')+dbgBtn('give','3 of every fang','fangs')+
+     dbgBtn('give','Max all tech','tech')+dbgBtn('give','Next hammer','hammer')+
+     dbgBtn('give','Last hammer','hammerMax')+dbgBtn('give','Clear every room','clearAll')+
+     dbgBtn('give','+1 rank','rank')+
+     '</div>';
+
+  h+='<div class="grp">Spawn a mimic on the nearest thing</div><div class="drow">';
+  VAR.forEach(function(v){ h+=dbgBtn('spawn',(v.n||'PLAIN'),v.k); });
+  h+='</div><div class="drow">';
+  PREFIX.forEach(function(P){ h+=dbgBtn('pre',P.n,P.k); });
+  h+='</div>';
+  h+='<div class="key">A prefix applies to whatever is loose, or to the next thing you spawn.</div>';
+
+  h+='<div class="grp">Danger</div><div class="drow">'+
+     dbgBtn('eyes','Eyes 0','0')+dbgBtn('eyes','Eyes half','half')+dbgBtn('eyes','Eyes full','full')+
+     dbgBtn('scream','Room scream')+dbgBtn('killall','Kill what is loose')+
+     dbgBtn('escape','Force an escape')+dbgBtn('eaten','Force being eaten')+
+     '</div>';
+
+  h+='<div class="grp">Doors and art</div><div class="drow">'+
+     dbgBtn('door','Door: hold open')+dbgBtn('door','Door: release','shut')+
+     dbgBtn('rebuild','Restock the room')+dbgBtn('rebuildbg','Repaint the backdrop')+
+     '</div>';
+
+  h+='<div class="grp">Save</div><div class="drow">'+
+     dbgBtn('save','Save now')+dbgBtn('reload','Reload the page')+dbgBtn('offdbg','Hide the debug mark')+
+     '</div>';
+  $('dbgBody').innerHTML=h;
+}
+var dbgPre=null;
+function dbgDo(act,a){
+  if(act==='art'){ togglePanel('ovCat',buildCat); return; }
+  if(act==='sbx'){ if(S.sandbox) exitSandbox(); else enterSandbox(); buildDbg(); refreshUI(); return; }
+  if(act==='room'){ S.room=+a; runKills=0; buildRoom(); save(); refreshUI(); buildDbg(); return; }
+  if(act==='give'){
+    if(a==='bank10k') S.banked+=10000;
+    else if(a==='bank1m') S.banked+=1e6;
+    else if(a==='spl') S.spl+=5000;
+    else if(a==='larv') S.larvae+=100;
+    else if(a==='carry'){ S.teeth+=10000; S.cycleTeeth+=10000; }
+    else if(a==='fangs'){ FANGK.forEach(function(k){ S.fangs[k]=(S.fangs[k]||0)+3; }); }
+    else if(a==='tech'){ TECH.forEach(function(t){ S.upg[t.k]=t.max; }); }
+    else if(a==='hammer'){ S.hammer=Math.min(HAMMERS.length-1,(S.hammer||0)+1); }
+    else if(a==='hammerMax'){ S.hammer=HAMMERS.length-1; }
+    else if(a==='clearAll'){ ROOMS.forEach(function(R,i){ S.cleared[i]=1; S.prog[i]=R.quota; }); }
+    else if(a==='rank'){ S.rank=Math.min(RANKS.length-1,S.rank+1); }
+    save(); refreshUI(); buildDbg(); return;
+  }
+  if(act==='spawn'){
+    var v=null;
+    for(var i=0;i<VAR.length;i++) if(VAR[i].k===a) v=VAR[i];
+    var lo=loose(); if(lo){ lo.dead=true; }
+    var pool=[];
+    for(var j=0;j<objs.length;j++){ var o=objs[j]; if(!o.mimic&&!o.dead&&!o.wall) pool.push(o); }
+    if(!pool.length){ say('Nothing left to turn.'); return; }
+    var t=pool[ri(0,pool.length-1)];
+    hide('ovDbg'); syncTabs();
+    reveal(t,v);
+    if(dbgPre){ t.pre=dbgPre; if(dbgPre.hp){ t.max=Math.round(t.max*dbgPre.hp); t.hp=t.max; } dbgPre=null; }
+    return;
+  }
+  if(act==='pre'){
+    for(var pi=0;pi<PREFIX.length;pi++) if(PREFIX[pi].k===a) dbgPre=PREFIX[pi];
+    var l2=loose();
+    if(l2&&dbgPre){ l2.pre=dbgPre; if(dbgPre.hp){ l2.max=Math.round(l2.max*dbgPre.hp); l2.hp=l2.max; } dbgPre=null; say('Prefix applied to what is loose.'); }
+    else say('Next mimic you spawn will be '+a.toUpperCase()+'.');
+    return;
+  }
+  if(act==='eyes'){ eyes=(a==='0'?0:a==='half'?EYES/2:EYES-0.95); refreshUI(); buildDbg(); return; }
+  if(act==='scream'){ hide('ovDbg'); syncTabs(); eyes=EYES; roomScream(); return; }
+  if(act==='killall'){ var k2=loose(); if(k2) killMimic(k2); refreshUI(); return; }
+  if(act==='escape'){ var e2=loose(); hide('ovDbg'); syncTabs(); if(e2) mimicEscaped(e2); else say('Nothing is loose.'); return; }
+  if(act==='eaten'){ hide('ovDbg'); syncTabs(); getEaten(); return; }
+  if(act==='door'){ if(a==='shut'){ doorHold=false; } else { doorHold=true; hide('ovDbg'); syncTabs(); } return; }
+  if(act==='rebuild'){ buildRoom(true); refreshUI(); buildDbg(); return; }
+  if(act==='rebuildbg'){ makeBG(); return; }
+  if(act==='save'){ save(); say('Saved.'); return; }
+  if(act==='reload'){ save(); location.reload(); return; }
+  if(act==='offdbg'){ S.dbg=0; document.body.classList.remove('dbg'); hide('ovDbg'); syncTabs(); save(); return; }
+}
+var doorHold=false;
+
+var TABS=['ovShop','ovMap','ovBest','ovCat','ovHelp','ovDbg'];
 function anyPanel(){ return !!document.querySelector('.ov.on'); }
 function syncTabs(){
   var t=document.querySelectorAll('#bot .tab');
@@ -1984,6 +2940,12 @@ function buildShop(){
      [1,10,'max'].map(function(v){
        return '<button class="bn'+(buyN===v?' on':'')+'" data-buy="'+v+'">'+(v==='max'?'Max':'×'+v)+'</button>';
      }).join('')+'</div>';
+  /* the colours mean one thing each, and here is that one thing */
+  h+='<div class="legend">'+
+     '<span><i class="sw buy"></i>you can afford it now</span>'+
+     '<span><i class="sw act"></i>already yours</span>'+
+     '<span><i class="sw off"></i>out of reach for now</span>'+
+     '</div>';
 
   h+='<div class="grp">The Forge — hammers, bought with banked teeth and larvae</div>';
   var cur=HAM();
@@ -1993,10 +2955,14 @@ function buildShop(){
   var nx=HAMMERS[(S.hammer||0)+1];
   if(nx){
     var okT=S.banked>=nx.cost, okL=S.larvae>=nx.larv, can=okT&&okL;
+    var lack=[];
+    if(!okT) lack.push(fmt(nx.cost-S.banked)+' teeth');
+    if(!okL) lack.push((nx.larv-S.larvae)+' larvae');
     h+='<button class="card '+(can?'ok':'')+'" data-t="forge" '+(can?'':'disabled')+'>'+
        '<span class="ci">'+hammerIcon(nx)+'</span><div class="cb">'+
        '<div class="cn">Forge the '+nx.n+'</div><div class="cd">'+nx.d+'</div>'+
-       '<div class="cc">'+fmt(nx.cost)+' teeth'+(nx.larv?' <s>+</s> '+nx.larv+' larvae':'')+'</div>'+
+       '<div class="cc">'+fmt(nx.cost)+' teeth'+(nx.larv?' <s>+</s> '+nx.larv+' larvae':'')+
+       (can?'':' <span class="short">· '+lack.join(' and ')+' short</span>')+'</div>'+
        '<div class="key">×'+nx.dmg+' dmg (now ×'+cur.dmg+') · ×'+nx.spd.toFixed(2)+' swing · '+(nx.aoe?'area '+nx.aoe.toFixed(2):'no area')+'</div>'+
        (okL?'':'<div class="key" style="color:#8C846F">Larvae come from decoys, while you are away.</div>')+
        '</div></button>';
@@ -2012,24 +2978,36 @@ function buildShop(){
       var p=planBuy(t,lv,S.banked);
       var can=!maxed&&p.k>0&&S.banked>=p.c;
       var owned='';
-      for(var k2 in t.key) if(lv>=+k2) owned+='<div class="key" style="color:#9FBF8A">Active: '+t.key[k2]+'</div>';
+      for(var k2 in t.key) if(lv>=+k2) owned+='<div class="key act">&#10003; '+t.key[k2]+'</div>';
       var nextKey='';
       for(var kk in t.key) if(+kk>lv) { nextKey='<div class="key">Lv '+kk+': '+t.key[kk]+'</div>'; break; }
+      var one=maxed?0:costN(t,lv,1);
       var label=maxed?'<s>Fully upgraded</s>'
-        :(p.k>1?fmt(p.c)+' teeth for '+p.k+' levels':fmt(costN(t,lv,1))+' teeth');
-      h+='<button class="card '+(can?'ok':'')+(lv?' bought':'')+'" data-t="'+t.k+'" '+(can?'':'disabled')+'>'+
+        :(p.k>1&&can?fmt(p.c)+' teeth for '+p.k+' levels':fmt(one)+' teeth');
+      if(!maxed&&!can) label+=' <span class="short">· '+fmt(one-S.banked)+' short</span>';
+      h+='<button class="card '+(can?'ok':'')+(maxed?' done':'')+(lv?' bought':'')+'" data-t="'+t.k+'" '+(can?'':'disabled')+'>'+
          '<div class="cb"><div class="cn">'+t.n+'</div><div class="cd">'+t.d+'</div>'+
          '<div class="cc">'+label+'</div>'+owned+nextKey+'</div>'+
          '<span class="lv">'+lv+'/'+t.max+'</span></button>';
     });
   });
 
-  var dl=U('decoy'), dp=planBuy(DECOY,dl,S.spl), dcan=dl<DECOY.max&&dp.k>0&&S.spl>=dp.c;
-  h+='<div class="grp">Decoys — built from splinters, work while you are away</div>'+
-     '<button class="card '+(dcan?'ok':'')+(dl?' bought':'')+'" data-t="decoy" '+(dcan?'':'disabled')+'>'+
-     '<div class="cb"><div class="cn">'+DECOY.n+'</div><div class="cd">'+DECOY.d+'</div>'+
-     '<div class="cc">'+(dl>=DECOY.max?'<s>The dungeon is full</s>':fmt(dp.c)+' splinters'+(dp.k>1?' for '+dp.k:''))+'</div>'+
-     '<div class="key">'+dl+' out · about '+fmt(dl*14)+' splinters and '+(dl*0.9).toFixed(1)+' larvae an hour</div></div>'+
+  var dl=U('decoy'), dp=planBuy(DECOY,dl,S.spl), dmax=dl>=DECOY.max;
+  var done1=costN(DECOY,dl,1), dcan=!dmax&&dp.k>0&&S.spl>=dp.c;
+  var dlabel=dmax?'<s>The dungeon is full</s>'
+    :((dp.k>1&&dcan)?fmt(dp.c)+' splinters for '+dp.k:fmt(done1)+' splinters');
+  if(!dmax&&!dcan) dlabel+=' <span class="short">· '+fmt(done1-S.spl)+' short</span>';
+  h+='<div class="grp">Decoys — the only thing splinters buy, and the only source of larvae</div>'+
+     '<button class="card '+(dcan?'ok':'')+(dmax?' done':'')+(dl?' bought':'')+'" data-t="decoy" '+(dcan?'':'disabled')+'>'+
+     '<div class="cb"><div class="cn">'+DECOY.n+'</div>'+
+     '<div class="cd">You nail junk furniture back together and leave it standing in the dungeon. '+
+     'While the game is <b>closed</b>, things move into it — up to 24 hours\' worth. '+
+     'Each decoy brings back about <b>14 splinters and 0.9 larvae an hour</b>.</div>'+
+     '<div class="cc">'+dlabel+'</div>'+
+     (dl?'<div class="key act">'+dl+' out · '+fmt(dl*14)+' splinters and '+(dl*0.9).toFixed(1)+' larvae an hour while you are away</div>'
+        :'<div class="key">None out yet. Splinters do nothing else — anything you are hoarding is doing nothing.</div>')+
+     '<div class="key">Larvae are the <b>only</b> way to forge the last four hammers. Teeth cannot buy them.</div>'+
+     '</div>'+
      '<span class="lv">'+dl+'/'+DECOY.max+'</span></button>';
 
   $('shopBody').innerHTML=h;
@@ -2273,21 +3251,41 @@ function drawKeyArt(){
 function hsec(t){ return '<div class="grp">'+t+'</div>'; }
 function hp(t){ return '<p class="hb">'+t+'</p>'; }
 function hrow(a,b){ return '<div class="hrow"><span>'+a+'</span><b>'+b+'</b></div>'; }
+/* A handbook table that survives a phone: a grid on a wide screen, a stack of
+   labelled lines on a narrow one. cols are {n:label, num:1 for a short number}. */
+function htab(cols,rows){
+  var h='<div class="htab c'+cols.length+'"><div class="hh">';
+  cols.forEach(function(c){ h+='<span>'+c.n+'</span>'; });
+  h+='</div>';
+  rows.forEach(function(r){
+    h+='<div class="hr">';
+    for(var j=0;j<cols.length;j++){
+      var cell=r[j], v=(cell&&cell.v!==undefined)?cell.v:cell, st=(cell&&cell.s)?cell.s:'';
+      h+='<span'+(cols[j].num?' class="num"':'')+' data-l="'+cols[j].n+'"'+(st?' style="'+st+'"':'')+'>'+v+'</span>';
+    }
+    h+='</div>';
+  });
+  return h+'</div>';
+}
 function buildHelp(){
   var h='';
 
   h+=hsec('Records — '+S.lore+' of '+LORE.length+' recovered');
   if(!S.lore) h+=hp('Documents turn up in the furniture, and the Guild releases one every time you sign off a room. Read in order, they are almost an explanation.');
-  for(var li=S.lore-1;li>=0;li--){
-    var L=LORE[li];
-    h+='<details class="doc"'+(li===S.lore-1?' open':'')+'><summary><b>'+L.t+'</b><i>'+L.src+'</i></summary><div>'+L.b+'</div></details>';
+  if(S.lore){
+    h+='<div class="docs">';
+    for(var li=S.lore-1;li>=0;li--){
+      var L=LORE[li];
+      h+='<details class="doc"'+(li===S.lore-1?' open':'')+'><summary><b>'+L.t+'</b><i>'+L.src+'</i></summary><div>'+L.b+'</div></details>';
+    }
+    h+='</div>';
   }
   if(S.lore<LORE.length) h+='<div class="hint">'+(LORE.length-S.lore)+' still out there.</div>';
   S.loreSeen=S.lore; save();
 
   h+=hsec('The job');
   h+=hp('You are a Mimicologist, third class. An unhelpful percentage of the furniture in this dungeon is alive, and the Guild pays you per set of teeth recovered. Ordinary furniture is worthless — it is the chaff you break through to find the live ones.');
-  h+=hp('<b>Hold</b> anywhere on the floor. Your hammer swings by itself and follows your finger, so you can sweep across the clutter without ever letting go. You never need to tap twice.');
+  h+=hp('<b>Hold</b> anywhere on the floor. Your hammer swings by itself and follows your finger, so you can sweep across the clutter without ever letting go. You never need to tap twice. On a touchscreen it lands a little above your fingertip, so you can see what you are hitting.');
 
   h+=hsec('The bar above the room — the only thing that can kill you');
   h+=hp('Every eye in the wallpaper opens while your finger is down, and <b>every open eye shortens the fuse</b> on anything that screams. That is the whole risk system: the more the room is watching, the less time you get when a mimic turns.');
@@ -2303,11 +3301,17 @@ function buildHelp(){
   h+=hsec('When furniture screams');
   h+=hp('An object takes a few swings to break. On the swing that would break it, roughly one in five turns out to be a mimic instead. It gains health, grows teeth, and <b>starts running for the door on a visible fuse</b>. Kill it for teeth. Let it reach the door and it leaves with your whole haul and <b>the run is over</b> — you keep 30%.');
   h+=hp('Only one is ever loose at a time, so you are never asked to be in two places at once.');
-  h+='<div class="htab"><div class="hh"><span>Variant</span><span>Health</span><span>Fuse</span><span>Pays</span><span>From</span></div>';
+  h+=hp('Whatever turns, its <b>name is printed above it in its own colour</b> for as long as it lives, and each variant carries a mark you can read without reading: a plated one wears bands, a snapper shows you its jaw, a cuckoo is outlined in dashes. <b>The door opens as the fuse empties</b> — you can see how much time is left without looking at the bar.');
+  h+=htab([{n:'Variant'},{n:'Health',num:1},{n:'Fuse',num:1},{n:'Pays',num:1},{n:'From',num:1}],
+    VAR.map(function(v){
+      return [{v:v.n||'Plain',s:'color:'+v.col},'×'+v.hp,(v.fuse?'×'+v.fuse:'never runs'),'×'+v.pay,'room '+(v.from+1)];
+    }));
+  h+='<div class="grp">What they actually do</div>';
   VAR.forEach(function(v){
-    h+='<div class="hr"><span style="color:'+v.col+'">'+(v.n||'Plain')+'</span><span>×'+v.hp+'</span><span>×'+v.fuse+'</span><span>×'+v.pay+'</span><span>room '+(v.from+1)+'</span></div>';
+    if(!v.b) return;
+    h+=hrow('<span style="color:'+v.col+'">'+v.n+'</span>',v.b);
   });
-  h+='</div>';
+  h+=hp('From the <b>Armoury</b> on, any of them can also turn up with a prefix — <b>PLATED</b> (your best hit is capped), <b>RESTLESS</b> (it started running before you noticed), <b>GORGED</b> (twice the health, twice the money) or <b>SCREAMING</b> (it opens eyes twice as fast). The prefix prints in front of the name and pays extra.');
 
   h+=hsec('Why you would ever walk out');
   h+=hp('Every set of teeth you take <b>without banking</b> makes the next one worth more — the <b>haul bonus</b>, shown next to what you are carrying. It climbs to ×4 and it only exists while the teeth are still in your pocket.');
@@ -2320,20 +3324,18 @@ function buildHelp(){
 
   h+=hsec('Rooms and contracts');
   h+=hp('Each room asks for a number of sets of teeth. Fill it and the room is <b>cleared for good</b>, which unlocks the next one — you never pay to enter. Cleared rooms stay open to farm. <b>You cannot fail a room</b>: being eaten costs teeth, never contract progress.');
-  h+='<div class="htab"><div class="hh"><span>Room</span><span>Contract</span><span>Pays</span><span>Rule</span></div>';
-  ROOMS.forEach(function(R,i){
-    h+='<div class="hr"><span>'+R.n+'</span><span>'+R.quota+'</span><span>×'+R.pay+'</span><span style="opacity:.7">'+R.rule+'</span></div>';
-  });
-  h+='</div>';
+  h+=htab([{n:'Room'},{n:'Contract',num:1},{n:'Pays',num:1},{n:'Rule'}],
+    ROOMS.map(function(R){ return [R.n,R.quota,'×'+R.pay,{v:R.rule,s:'opacity:.72'}]; }));
 
   h+=hsec('Your hammer');
   h+=hp('Hammers are forged in the Store with banked teeth, and the later ones also need larvae. Each tier hits harder, swings faster, and most of them add <b>area damage</b> — a radius around whatever you aim at, shown as a dashed ring.');
   h+=hp('Every hammer has <b>one socket per tier</b>. Mimic variants drop <b>fangs</b>, and what you socket is your build. <b>Three of the same fang doubles that fang\'s effect.</b> Sockets show up as teeth on the hammer head.');
-  h+='<div class="htab"><div class="hh"><span>Fang</span><span>Dropped by</span><span>Effect</span></div>';
-  FANGK.forEach(function(k){
-    h+='<div class="hr"><span style="color:'+FANGS[k].col+'">'+FANGS[k].n+'</span><span>'+(k==='room'?'the Room Mimic':(k==='plain'?'any plain mimic':k))+'</span><span>'+FANGS[k].d+'</span></div>';
-  });
-  h+='</div>';
+  h+=htab([{n:'Fang'},{n:'Dropped by'},{n:'Effect'}],
+    FANGK.map(function(k){
+      return [{v:FANGS[k].n,s:'color:'+FANGS[k].col},
+              (k==='room'?'the Room Mimic':(k==='plain'?'any plain mimic':varName(k))),
+              FANGS[k].d];
+    }));
 
   h+=hsec('Automation');
   h+=hp('<b>Squires</b> carry their own hammers and work on their own. The <b>Aetheric Lens</b> drops a beam from the ceiling onto whatever has the most health left. <b>Guild Ordnance</b> detonates charges in the clutter, and chains them at level 4. None of it can raise the danger bar on its own, so automation is safe income — it is your floor, and holding the hammer is your ceiling.');
@@ -2341,9 +3343,10 @@ function buildHelp(){
 
   h+=hsec('Getting promoted');
   h+=hp('Clear every room and Walk Out becomes <b>Accept promotion</b>. The dungeon closes its mouth, digests you, and you wake one rank higher inside a bigger one. You lose your teeth, your tech and your hammer. You keep <b>field notes</b>, which are a permanent multiplier on everything, and your bestiary.');
-  h+='<div class="htab"><div class="hh"><span>#</span><span>Rank</span></div>';
-  RANKS.forEach(function(r,i){ h+='<div class="hr"><span>'+(i+1)+'</span><span'+(i===S.rank?' style="color:#E8825F"':'')+'>'+r+(i===S.rank?' — you':'')+'</span></div>'; });
-  h+='</div>';
+  h+=htab([{n:'#',num:1},{n:'Rank'}],
+    RANKS.map(function(r,i){
+      return [i+1,{v:r+(i===S.rank?' — you':''),s:i===S.rank?'color:#E8825F':''}];
+    }));
 
   h+=hsec('Controls');
   h+=hrow('Hold anywhere','swing. The hammer finds a target');
@@ -2572,9 +3575,21 @@ $('xShop').addEventListener('click',function(){ hide('ovShop'); });
 $('xMap').addEventListener('click',function(){ hide('ovMap'); });
 $('xBest').addEventListener('click',function(){ hide('ovBest'); });
 $('xCat').addEventListener('click',function(){ hide('ovCat'); });
+$('xDbg').addEventListener('click',function(){ hide('ovDbg'); });
+$('dbgBody').addEventListener('click',function(e){
+  var b=e.target.closest('.dbtn'); if(!b) return;
+  dbgDo(b.dataset.d,b.dataset.a);
+});
+/* the way in: five taps on the rank, or D on a keyboard */
+$('rank').addEventListener('click',dbgTap);
+window.addEventListener('keydown',function(e){
+  if(e.key==='d'||e.key==='D'){
+    if(document.activeElement&&document.activeElement.tagName==='INPUT') return;
+    if($('ovDbg').classList.contains('on')) hide('ovDbg'); else openDbg();
+  }
+});
 $('xHelp').addEventListener('click',function(){ hide('ovHelp'); });
 $('help').addEventListener('click',function(){ togglePanel('ovHelp',buildHelp); });
-$('catBtn').addEventListener('click',function(){ togglePanel('ovCat',buildCat); });
 $('eatOk').addEventListener('click',function(){ hide('ovEaten'); runKills=0; buildRoom(); refreshUI(); });
 $('escOk').addEventListener('click',function(){ hide('ovEsc'); runKills=0; buildRoom(); refreshUI(); });
 $('promoOk').addEventListener('click',function(){ hide('ovPromo'); buildRoom(); refreshUI(); });
@@ -2589,7 +3604,6 @@ function begin(){
   hide('ovTitle'); running=true;
   var c=ac(); if(c&&c.state==='suspended') c.resume();
 }
-$('sbxBtn').addEventListener('click',function(){ begin(); enterSandbox(); });
 $('contBtn').addEventListener('click',function(){ begin(); offline(); });
 $('rulesBtn').addEventListener('click',function(){ begin(); buildHelp(); show('ovHelp'); });
 var wipeArmed=false;
@@ -2634,10 +3648,110 @@ var last=performance.now(), acc=0, sacc=0;
 function frame(now){
   var dt=Math.min((now-last)/1000,0.05); last=now;
   if(running && !anyPanel()) step(dt); else refreshNums();
+  /* outside step(), so an open panel can't strand the room half-drained */
+  var want=0;
+  for(var dq=0;dq<objs.length;dq++) if(objs[dq].mimic){ want=1; break; }
+  drain+=(want-drain)*Math.min(1,dt*DRAIN_RATE);
   render();
   requestAnimationFrame(frame);
 }
+
+/* ══ what each variant does while it is loose ══
+   All of it hangs off state the object already carries, so nothing here needs
+   a new system: the flee path, the aim point, the eye gauge, the room's junk. */
+function stepVariant(o,dt){
+  var vk=o.vr&&o.vr.k;
+  /* skitter: slides out from under your hammer */
+  if(vk==='skitter'){
+    o.dodgeT+=dt;
+    if(o.dodgeT>0.5){
+      o.dodgeT=0;
+      var away=(o.fx*W<px)?-1:1;
+      if(o.fx<0.12) away=1; else if(o.fx>0.88) away=-1;
+      var jump=rr(0.08,0.14)*away;
+      o.sx=clamp(o.sx+jump,0.07,0.93); o.fx=clamp(o.fx+jump,0.07,0.93);
+      addShards(o,3,false);
+      throttled(function(){ tone(620,0.07,'triangle',0.03,900); });
+    }
+  }
+  /* weevil: heals back whatever you walk away from */
+  if(vk==='weevil'){
+    o.hitT+=dt;
+    if(o.hitT>0.7&&o.hp<o.max){
+      o.hp=Math.min(o.max,o.hp+o.max*0.07*dt);
+      if(Math.random()<dt*2.5) addShards(o,1,true);
+    }
+  }
+  /* cuckoo: swaps places with a piece of furniture, keeping its fuse */
+  if(vk==='cuckoo'){
+    o.swapT+=dt;
+    if(o.swapT>2.2){
+      o.swapT=0;
+      var pool=[];
+      for(var ci=0;ci<objs.length;ci++){
+        var c=objs[ci];
+        if(c!==o&&!c.mimic&&!c.dead&&!c.wall) pool.push(c);
+      }
+      if(pool.length){
+        var t=pool[ri(0,pool.length-1)], ox=o.fx, oy=o.fy;
+        addShards(o,6,false); addShards(t,6,false);
+        o.fx=t.fx; o.fy=t.fy; t.fx=ox; t.fy=oy;
+        o.sx=o.fx; o.sy=o.fy;                 /* rebase the run from where it landed */
+        var sxy=objXY(o);
+        pop(sxy[0],sxy[1]-baseSize()*0.85,'THERE');
+        aimIdx=-1;
+        throttled(function(){ tone(300,0.1,'square',0.035,520); });
+      }
+    }
+  }
+  /* hogshead: eats the room and gets worth more for it */
+  if(vk==='hogshead'){
+    o.eatT+=dt;
+    if(o.eatT>2){
+      o.eatT=0;
+      var best=null, bd=9;
+      for(var hi=0;hi<objs.length;hi++){
+        var q=objs[hi];
+        if(q===o||q.mimic||q.dead||q.wall) continue;
+        var d=Math.hypot(q.fx-o.fx,(q.fy-o.fy)*0.6);
+        if(d<bd){ bd=d; best=q; }
+      }
+      if(best){
+        var exy=objXY(best);
+        addShards(best,9,false);
+        best.dead=true;
+        (function(bo){ setTimeout(function(){ if(!dead) newObj(bo); },1400); })(best);
+        o.max=Math.round(o.max*1.35); o.hp=Math.round(o.hp*1.35);
+        o.sz=Math.min(2.2,o.sz*1.1); o.fat++;
+        pop(exy[0],exy[1]-baseSize()*0.7,'EATEN');
+        shake(4); throttled(function(){ tone(110,0.18,'sawtooth',0.055,60); });
+      }
+    }
+  }
+  /* chorister: never runs. it just sings the wallpaper open. */
+  if(vk==='chorister'){
+    eyes=Math.min(EYES,eyes+0.5*dt);
+    o.singT+=dt;
+    if(o.singT>0.9){
+      o.singT=0;
+      var cxy2=objXY(o);
+      addRing(cxy2[0],cxy2[1]-baseSize()*0.3,baseSize()*2.6,o.vr.col,3);
+      throttled(function(){ tone(880,0.22,'sine',0.028,1320); });
+    }
+    if(eyes>=EYES) roomScream();
+  }
+  /* a runner is the only thing in here that kicks up dust */
+  if(vk==='runner'&&o.flee>0&&Math.random()<dt*9) addShards(o,1,false);
+  /* a gilded one sheds money the whole time it is alive */
+  if(vk==='golden'&&Math.random()<dt*6) addShards(o,1,true);
+  /* SCREAMING elites do what the name says */
+  if(o.pre&&o.pre.k==='screaming'){
+    eyes=Math.min(EYES,eyes+eyeRate()*dt);
+    if(eyes>=EYES) roomScream();
+  }
+}
 function step(dt){
+  stepDoor(dt);
   /* hammer pose */
   if(hamAnim>=0){
     hamAnim+=dt/swingInt();
@@ -2682,8 +3796,14 @@ function step(dt){
             say('<b>It bit you.</b> That came out of your pocket.');
           }
           shake(3); throttled(function(){ tone(150,0.12,'sawtooth',0.05,80); });
+          /* a howler's bite is visible: the ring washes over the wallpaper */
+          if(o.vr&&o.vr.k==='howler'){
+            var hxy=objXY(o);
+            addRing(hxy[0],hxy[1]-baseSize()*0.3,baseSize()*3.2,o.vr.col,4);
+          }
         }
       }
+      stepVariant(o,dt);
     }
   }
 
@@ -2715,8 +3835,15 @@ function step(dt){
       /* stepping back genuinely buys you fuse back now */
       frenzy=Math.max(1,frenzy-(U('nerve')>=3?0.75:1.5)*dt);
       if(!roomMim){
-        var slow=loose()&&U('nerve')<6;
-        eyes=Math.max(0,eyes-(slow?0.45:0.95)*dt);
+        /* a chorister is singing whether your hand is down or not, so letting
+           go stops buying you eyes back — unless your nerve is keystoned. */
+        var chor=false;
+        for(var zc=0;zc<objs.length;zc++){
+          var zo=objs[zc];
+          if(zo.mimic&&!zo.dead&&zo.vr&&zo.vr.k==='chorister'){ chor=true; break; }
+        }
+        var cool=chor?(U('nerve')>=6?0.3:0):(loose()&&U('nerve')<6?0.45:0.95);
+        if(cool>0) eyes=Math.max(0,eyes-cool*dt);
       }
     }
     if(U('staff')>0) stepInterns(dt);
@@ -2777,6 +3904,7 @@ function step(dt){
 
 /* ══════════════ boot ══════════════ */
 var hadSave=load();
+if(S.dbg) document.body.classList.add('dbg');
 if(S.sandbox){ exitSandbox(true); }
 resize();
 buildRoom();
