@@ -1,0 +1,2789 @@
+<title>Mimic Season</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#231F1A">
+
+<style>
+:root{
+  --vellum:#DED8C4; --deckle:#CAC3A9; --ink:#231F1A; --ink2:#5C544400;
+  --spot:#B4842A; --verm:#C42B1C; --bone:#F4F1E6; --gloss:#7C1712;
+  --disp:"Impact","Haettenschweiler","Arial Narrow",system-ui,sans-serif;
+  --body:Georgia,"Iowan Old Style","Times New Roman",serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{height:100%; margin:0; overscroll-behavior:none}
+body{
+  background:var(--ink); color:var(--bone); font-family:var(--body);
+  user-select:none; -webkit-user-select:none; touch-action:manipulation;
+  display:flex; flex-direction:column; overflow:hidden;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+button{font:inherit; color:inherit; background:none; border:0; cursor:pointer}
+
+/* ── top bar ── */
+#top{
+  display:flex; justify-content:space-between; align-items:center; gap:8px;
+  padding:6px 10px; background:var(--ink); font-family:var(--mono);
+  font-size:clamp(10px,2.7vw,12.5px); letter-spacing:.11em; text-transform:uppercase; flex:none;
+}
+body.sbx #top{background:#3A1E16}
+body.sbx #top .rk{color:#FFB38A}
+#top .rk{color:#E8825F; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+#top .rm{display:flex; align-items:center; gap:6px; opacity:.8; white-space:nowrap}
+#top .ic{width:11px; height:11px; border:1px solid rgba(244,241,230,.5)}
+#top #help{color:#E8825F; border:1px solid #5E5647; opacity:1}
+#top button{font-family:var(--mono); font-size:clamp(10px,2.7vw,12.5px); letter-spacing:.12em; opacity:.65; padding:3px 5px}
+#top button:hover{opacity:1}
+#top .pg{color:#E8D9BC; font-weight:700}
+#top .pg.done{color:#9FBF8A}
+#rbwrap{height:3px; background:#3A342B; flex:none}
+#roomBar{height:100%; width:0%; background:#E8825F; transition:width .25s ease-out}
+#roomBar.done{background:#9FBF8A}
+
+/* job sheet — end-of-run punctuation, no modal */
+#ban{
+  position:absolute; left:50%; top:34%; transform:translate(-50%,-50%) scale(.9);
+  background:var(--ink); color:var(--bone); border:2px solid var(--bone);
+  padding:12px 20px; text-align:center; pointer-events:none; opacity:0; z-index:15;
+  max-width:88%;
+}
+#ban.go{animation:ban 2.1s cubic-bezier(.2,1.3,.4,1) forwards}
+#ban .bt{font-family:var(--disp); font-size:clamp(19px,5vw,24px); letter-spacing:.05em; text-transform:uppercase}
+#ban .bl{font-family:var(--mono); font-size:clamp(11.5px,3vw,13px); letter-spacing:.07em; text-transform:uppercase; color:#B9B09A; margin-top:4px; line-height:1.5}
+#ban .bl i{color:#E8825F; font-style:normal; font-weight:700}
+@keyframes ban{
+  0%{opacity:0; transform:translate(-50%,-50%) scale(.82)}
+  9%{opacity:1; transform:translate(-50%,-50%) scale(1.02)}
+  16%{transform:translate(-50%,-50%) scale(1)}
+  76%{opacity:1; transform:translate(-50%,-50%) scale(1)}
+  100%{opacity:0; transform:translate(-50%,-72px) scale(.96)}
+}
+@media (prefers-reduced-motion:reduce){ #ban.go{animation:banr 2.1s linear forwards} @keyframes banr{0%,90%{opacity:1}100%{opacity:0}} }
+
+/* ── stats ── */
+#stats{
+  display:flex; align-items:center; gap:0; background:var(--deckle); color:var(--ink);
+  font-family:var(--mono); flex:none; border-top:2px solid var(--ink); border-bottom:2px solid var(--ink);
+}
+.stat{flex:1; padding:4px 6px 5px; text-align:center; border-right:1px solid rgba(35,31,26,.22); min-width:0}
+.stat:last-child{border-right:0}
+.stat .k{display:block; font-size:clamp(9.5px,2.5vw,11.5px); letter-spacing:.14em; opacity:.6}
+.stat .v{display:block; font-size:clamp(16px,4.8vw,23px); font-weight:700; font-variant-numeric:tabular-nums; line-height:1.15}
+.stat .v.verm{color:var(--verm)}
+.stat.kick .v{animation:kick .2s ease-out}
+@keyframes kick{0%{transform:scale(1)}45%{transform:scale(1.4); color:var(--verm)}100%{transform:scale(1)}}
+#fwrap{height:5px; background:rgba(35,31,26,.2); flex:none}
+#dwrap{
+  position:relative; height:22px; flex:none; background:#2C2820;
+  border-top:2px solid var(--ink); border-bottom:2px solid var(--ink); overflow:hidden;
+}
+#dbar{position:absolute; left:0; top:0; bottom:0; width:0%; background:#8A7A55; transition:width .1s linear}
+#dwrap.hot #dbar{background:var(--verm)}
+#dzone{position:absolute; left:80%; top:0; bottom:0; right:0; border-left:2px dashed rgba(244,241,230,.45); background:rgba(196,43,28,.16)}
+#dlbl{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:clamp(11px,2.9vw,13px); font-weight:700; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--bone); text-shadow:0 1px 2px rgba(35,31,26,.9); pointer-events:none;
+}
+#dwrap.warn{animation:dpulse .5s ease-in-out infinite}
+@keyframes dpulse{0%,100%{filter:none}50%{filter:brightness(1.5)}}
+@media (prefers-reduced-motion:reduce){ #dwrap.warn{animation:none} }
+#fbar{height:100%; width:0%; background:var(--ink)}
+#fbar.max{background:var(--verm)}
+
+/* ── stage ── */
+#wrap{position:relative; flex:1; min-height:0; background:var(--vellum); overflow:hidden}
+#cv{display:block; width:100%; height:100%; touch-action:none}
+#say{
+  position:absolute; left:0; right:0; bottom:0; padding:6px 10px;
+  font-family:var(--mono); font-size:clamp(11.5px,3vw,13px); line-height:1.45; letter-spacing:.02em;
+  color:var(--ink); background:rgba(222,216,196,.86); pointer-events:none;
+}
+#say b{color:var(--verm)}
+
+/* ── bottom ── */
+#bot{display:flex; gap:2px; background:var(--ink); flex:none; padding:5px}
+#bot button{
+  position:relative; flex:1; padding:13px 3px;
+  font-family:var(--disp); font-size:clamp(12.5px,3.5vw,16px); letter-spacing:.03em;
+  text-transform:uppercase; background:#2C2820; color:#B9B09A; border:1px solid #4B4438;
+}
+#bot .sep{width:6px; flex:none}
+#bot .tab.on{background:#E8D9BC; color:var(--ink); border-color:#E8D9BC}
+#bot .tab.on::after{
+  content:""; position:absolute; left:0; right:0; top:-6px; height:3px; background:#E8825F;
+}
+#bot button:active{transform:translateY(1px)}
+#bot #walk{background:var(--bone); color:var(--ink); border-color:var(--bone); flex:1.7; line-height:1.05}
+#bot #walk i{
+  display:block; font-family:var(--mono); font-size:10px; font-style:normal;
+  letter-spacing:.1em; opacity:.62; margin-top:3px; text-transform:uppercase;
+}
+#bot #walk.idle{background:#3A342B; color:#8C846F; border-color:#4B4438}
+#bot #walk.promo{background:var(--verm); color:#fff; border-color:var(--verm); animation:throb 1s ease-in-out infinite}
+#bot button:disabled{opacity:.35}
+@keyframes throb{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+.badge{
+  display:inline-block; min-width:16px; margin-left:5px; padding:0 4px; border-radius:9px;
+  background:var(--verm); color:#fff; font-family:var(--mono); font-size:11.5px; vertical-align:1px;
+}
+
+/* ── overlays ── */
+.ov{
+  position:absolute; inset:0; z-index:20; background:#231F1A;
+  display:none; flex-direction:column; padding:0;
+}
+#scrim{position:absolute; inset:0; z-index:15; background:rgba(35,31,26,.5); display:none}
+#scrim.on{display:block}
+/* on a real screen a sheet does not need the whole room */
+@media (min-width:720px){
+  .ov.sheet{
+    left:auto; right:0; top:0; bottom:0; width:min(560px,54%);
+    border-top:0; border-left:3px solid #E8825F;
+    box-shadow:-20px 0 46px rgba(0,0,0,.5);
+  }
+  .ov.sheet#ovCat{width:min(940px,78%)}
+  .ovb{padding-bottom:74px}
+}
+@media (min-width:1180px){
+  .ov.sheet{width:min(620px,42%)}
+}
+.ov.on{display:flex}
+.ovh{
+  background:#1B1812;
+  display:flex; justify-content:space-between; align-items:center; gap:10px;
+  padding:10px 12px; border-bottom:2px solid #5A5241; flex:none;
+}
+.ovh h2{margin:0; font-family:var(--disp); font-size:clamp(22px,5.4vw,27px); letter-spacing:.04em; text-transform:uppercase; font-weight:400; line-height:1.05}
+.ovh .htxt{min-width:0}
+.ovh .where{
+  display:block; font-family:var(--mono); font-size:11px; letter-spacing:.13em;
+  text-transform:uppercase; color:#8C846F; margin-top:3px;
+}
+.ovh .x{
+  flex:none; font-family:var(--disp); font-size:15.5px; letter-spacing:.05em; text-transform:uppercase;
+  background:#E8D9BC; color:var(--ink); border:0; padding:12px 18px;
+}
+.ovh .x:active{transform:translateY(1px)}
+/* the panels are sheets over a room that is still there, not places you travel to */
+.ov{border-top:3px solid #E8825F}
+.ovb{padding-bottom:70px}
+.backstrip{
+  position:absolute; left:0; right:0; bottom:0; padding:10px 12px;
+  background:linear-gradient(to top,rgba(35,31,26,.98) 62%,rgba(35,31,26,0));
+  pointer-events:none;
+}
+.backstrip button{
+  pointer-events:auto; width:100%; padding:15px; background:#E8D9BC; color:var(--ink);
+  font-family:var(--disp); font-size:17px; letter-spacing:.05em; text-transform:uppercase;
+}
+.ovb{flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:14px 16px 28px}
+.ovf{padding:12px 15px; border-top:2px solid #5A5241; background:#1B1812; font-family:var(--mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:#CFC4A6; flex:none}
+.ovf em{color:#E8825F; font-style:normal; font-weight:700}
+
+.card{
+  display:flex; gap:12px; align-items:flex-start; width:100%; text-align:left;
+  border:1px solid #5A5241; background:#332E24; padding:13px; margin-bottom:8px;
+}
+/* unaffordable is communicated by the price, not by making the card unreadable */
+.card:hover:not(:disabled){background:#3D3729; border-color:#7A7059}
+.card:disabled{background:#292418; border-color:#443E31; cursor:not-allowed}
+.card:disabled .cc{color:#A0926F}
+.card:disabled .cn{color:#D8CFB8}
+.card .ci{flex:none; width:34px; height:34px}
+.card .cb{flex:1; min-width:0}
+.card .cn{font-family:var(--mono); font-size:13px; font-weight:700; letter-spacing:.09em; text-transform:uppercase}
+.card .cd{font-size:15px; color:#DCD3BD; line-height:1.45; margin-top:2px}
+.card .cc{font-family:var(--mono); font-size:13px; margin-top:5px; color:#E8825F; font-weight:700}
+.card .cc s{color:#8C846F; text-decoration:none; font-weight:400}
+.card.bought{border-color:#8A7C60}
+.card.ok{border-color:#E8825F; background:#3A3327; box-shadow:inset 4px 0 0 #E8825F}
+.card.ok:hover{background:#463D2D}
+
+.card .lv{
+  font-family:var(--mono); font-size:11px; letter-spacing:.09em; border:1px solid #7A7059;
+  padding:2px 6px; color:#D8CFB8; flex:none; align-self:flex-start;
+}
+.card.bought .lv{border-color:var(--verm); color:#E8825F}
+.carrywarn{
+  position:absolute; left:0; right:0; bottom:56px; z-index:3;
+  margin:0 12px; padding:9px 11px; background:#3A2118; border:1px solid var(--verm);
+  font-size:14.5px; line-height:1.5; color:#E8CFC6;
+}
+.carrywarn b{color:#FFB38A}
+.stats2{display:grid; grid-template-columns:repeat(auto-fit,minmax(98px,1fr)); gap:1px; background:#5A5241; border:1px solid #5A5241; margin-bottom:12px}
+.stats2 div{background:#332E24; padding:7px 9px; font-family:var(--mono)}
+.stats2 span{display:block; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:#B3A98F}
+.stats2 b{font-size:16px; color:#FFF8E6; font-variant-numeric:tabular-nums}
+.buyrow{display:flex; align-items:center; gap:8px; margin-bottom:16px; font-family:var(--mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:#B3A98F}
+.buyrow .bn{border:1px solid #7A7059; color:#DCD3BD; padding:7px 14px; font-family:var(--mono); font-size:12px; letter-spacing:.08em}
+.buyrow .bn.on{background:#E8825F; border-color:#E8825F; color:#231F1A; font-weight:700}
+.card .pbar{height:4px; background:#443E32; margin-top:6px}
+.card .pbar i{display:block; height:100%; background:#E8825F}
+.card.flash{animation:cf .35s ease-out}
+@keyframes cf{0%{background:var(--verm)}100%{background:#2C2820}}
+.grp{font-family:var(--mono); font-size:11.5px; letter-spacing:.15em; text-transform:uppercase; color:#D2C7A8; margin:22px 0 10px; padding-bottom:7px; border-bottom:1px solid #5A5241}
+.grp:first-child{margin-top:0}
+.key{font-size:13.5px; line-height:1.45; color:#F49B74; margin-top:4px; font-family:var(--mono); letter-spacing:.04em}
+
+.big{font-family:var(--disp); font-size:clamp(30px,11vw,58px); line-height:.94; text-transform:uppercase; letter-spacing:.01em; margin:0 0 10px}
+.big .v{color:var(--verm)}
+.mid{max-width:34em; font-size:16px; line-height:1.5; color:#E4DCC7; margin:0 0 14px}
+.mid b{color:var(--bone)}
+.cta{
+  display:inline-block; font-family:var(--disp); font-size:18px; letter-spacing:.05em; text-transform:uppercase;
+  background:var(--bone); color:var(--ink); padding:13px 26px; margin-top:4px;
+}
+.cta.v{background:var(--verm); color:#fff}
+.mid.st{font-family:var(--mono); font-size:12.5px; letter-spacing:.06em; text-transform:uppercase; color:#B9B09A}
+.mid.st i{color:#E8825F; font-style:normal; font-weight:700}
+.ov.center{
+  position:fixed; inset:0; z-index:60;
+  align-items:center; justify-content:center;
+  padding:calc(16px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right))
+          calc(16px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left));
+  background:rgba(18,16,12,.93); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px);
+}
+/* the start menu blacks the chrome out completely — nothing to read behind it yet */
+#ovTitle{background:#12100C; backdrop-filter:none; -webkit-backdrop-filter:none}
+#keyart{position:absolute; inset:0; width:100%; height:100%; display:block; z-index:0}
+.katint{
+  position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:
+    radial-gradient(ellipse 54% 44% at 50% 46%, rgba(18,16,12,.92) 0%, rgba(18,16,12,.66) 58%, rgba(18,16,12,.30) 100%),
+    linear-gradient(to bottom, rgba(18,16,12,.80) 0%, rgba(18,16,12,.42) 34%, rgba(18,16,12,.52) 66%, rgba(18,16,12,.88) 100%);
+}
+#ovTitle .menu{
+  position:relative; z-index:2; background:rgba(28,25,20,.96);
+  box-shadow:0 30px 90px rgba(0,0,0,.85), 0 0 0 1px rgba(232,130,95,.18);
+}
+.ov.center > div:not(.katint){
+  width:min(500px,100%); max-height:92%; overflow-y:auto; -webkit-overflow-scrolling:touch;
+  background:#231F1A; border:1px solid #4B4438; border-top:4px solid var(--verm);
+  padding:22px 20px 18px; box-shadow:0 26px 70px rgba(0,0,0,.65);
+}
+.ov.center .big{font-size:clamp(34px,9vw,50px)}
+.ov.center .mid{font-size:16px; margin-bottom:16px}
+.eyebrow{font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:#8C846F; margin:0 0 12px}
+.btns{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px}
+.btns .cta{flex:1; min-width:150px; margin:0; text-align:center; padding:16px 18px; font-size:17.5px}
+.cta.ghost{background:#3A342B; color:var(--bone)}
+.btns.sub{gap:14px; margin:10px 0 0; align-items:center}
+.lnk{
+  font-family:var(--mono); font-size:12px; letter-spacing:.11em; text-transform:uppercase;
+  color:#B9B09A; border-bottom:1px solid #5E5647; padding:2px 0;
+}
+.lnk:hover{color:var(--bone); border-color:var(--bone)}
+.lnk.danger{color:#C4705C}
+.lnk.danger:hover{color:#E8825F; border-color:#E8825F}
+.foot{font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#6E6754; margin:14px 0 0; line-height:1.6}
+
+.cat{display:grid; grid-template-columns:repeat(auto-fill,minmax(134px,1fr)); gap:7px; margin-bottom:4px}
+.ci2{border:1px solid #5A5241; background:#332E24; padding:6px 5px 7px; text-align:center; position:relative}
+.ci2 canvas{display:block; margin:0 auto; image-rendering:auto}
+.ci2 .cid{
+  position:absolute; top:3px; left:4px; font-family:var(--mono); font-size:10px; font-weight:700;
+  letter-spacing:.08em; color:var(--ink); background:#E8825F; padding:0 3px;
+}
+.ci2 .nm2{font-family:var(--mono); font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:#E8D9BC; line-height:1.3; margin-top:4px}
+.ci2 .sub{font-family:var(--mono); font-size:10.5px; color:#B3A98F; line-height:1.3; margin-top:2px}
+.ci2.wide{grid-column:span 2}
+.doc{border:1px solid #5A5241; background:#332E24; margin-bottom:7px}
+.doc summary{padding:9px 11px; cursor:pointer; list-style:none; display:flex; flex-direction:column; gap:2px}
+.doc summary::-webkit-details-marker{display:none}
+.doc summary b{font-family:var(--mono); font-size:13px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:#E8D9BC}
+.doc summary i{font-family:var(--mono); font-size:11px; letter-spacing:.08em; color:#B3A98F; font-style:normal}
+.doc[open] summary{border-bottom:1px solid #4B4438}
+.doc > div{padding:14px; font-size:15.5px; line-height:1.6; color:#E4DCC7; font-style:italic}
+.hb{font-size:15.5px; line-height:1.6; color:#E4DCC7; margin:0 0 10px; max-width:60em}
+.hb b{color:var(--bone)}
+.hrow{display:flex; justify-content:space-between; gap:12px; padding:6px 0; border-bottom:1px solid #4E4636; font-size:15px; color:#DCD3BD}
+.hrow span{flex:1}
+.hrow b{flex:1.4; text-align:right; color:#FFF8E6; font-weight:400}
+.htab{border:1px solid #5A5241; margin:8px 0 12px; overflow-x:auto}
+.htab .hh,.htab .hr{display:grid; grid-template-columns:1.5fr .7fr .7fr .7fr 1.6fr; gap:9px; padding:8px 10px; font-size:13.5px; align-items:baseline}
+.htab .hh{background:#4A4335; font-family:var(--mono); font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; color:#D2C7A8}
+.htab .hr{border-top:1px solid #4E4636; color:#DCD3BD}
+.htab .hr span:first-child{color:#FFF8E6}
+.kit{display:flex; gap:12px; align-items:flex-start; border:1px solid #5A5241; background:#332E24; padding:10px; margin-bottom:8px}
+.kitart{flex:none}
+.kitinfo{min-width:0}
+.socks{display:grid; grid-template-columns:repeat(auto-fit,minmax(78px,1fr)); gap:7px; margin-bottom:8px}
+.sock{border:1px solid #5A5241; background:#332E24; padding:9px 5px 8px; text-align:center}
+.sock.full{border-color:#7A6E55}
+.sock span{display:block; font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:#B3A98F; margin-top:3px}
+.sock.full span{color:#E8D9BC}
+.hint{font-family:var(--mono); font-size:12px; line-height:1.6; letter-spacing:.04em; color:#B3A98F; margin:0 0 12px}
+.fangs{display:grid; grid-template-columns:repeat(auto-fill,minmax(152px,1fr)); gap:8px; margin-bottom:4px}
+.fang{border:1px solid #5A5241; background:#332E24; padding:10px}
+.fang .fn{font-family:var(--mono); font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#E8D9BC; margin-top:4px}
+.fang .fd{font-size:14px; color:#DCD3BD; line-height:1.35; margin-top:2px}
+.fang .fc{font-family:var(--mono); font-size:11.5px; color:#E8825F; margin-top:4px}
+.owned{display:grid; grid-template-columns:repeat(auto-fill,minmax(164px,1fr)); gap:1px; background:#5A5241; border:1px solid #5A5241; margin-bottom:4px}
+.ow{background:#332E24; padding:8px 10px; display:flex; justify-content:space-between; gap:8px; font-family:var(--mono); font-size:12.5px; color:#A0967D}
+.ow.has{color:#FFF8E6}
+.ow b{color:#B3A98F}
+.ow.has b{color:#E8825F}
+.bx{display:grid; grid-template-columns:repeat(auto-fill,minmax(106px,1fr)); gap:8px}
+.bxi{border:1px solid #5A5241; background:#332E24; padding:8px 6px; text-align:center}
+.bxi.got{border-color:var(--verm)}
+.bxi svg{width:100%; height:34px; display:block; margin-bottom:5px}
+.bxi .nm{font-family:var(--mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:#A0967D; line-height:1.3}
+.bxi.got .nm{color:#E8D9BC}
+
+@media (min-width:620px){
+  .card .cd{font-size:15.5px}
+  #bot button{font-size:17px; padding:16px 8px}
+}
+@media (prefers-reduced-motion:reduce){
+  #bot #walk.promo,.stat.kick .v,.card.flash{animation:none}
+}
+</style>
+
+<div id="top">
+  <span class="rk" id="rank">Mimicologist, Third Class</span>
+  <span class="rm"><i class="ic" id="inkChip"></i><span id="roomName">The Starter Cellar</span><span class="pg" id="roomProg">0/8</span></span>
+  <button id="help" type="button" title="The Guild Handbook">?&nbsp;Handbook</button>
+  <button id="sound" type="button">Sound on</button>
+</div>
+<div id="rbwrap"><div id="roomBar"></div></div>
+
+<div id="stats">
+  <div class="stat" id="sTeeth"><span class="k" id="kTeeth">Carrying</span><span class="v verm" id="vTeeth">0</span></div>
+  <div class="stat" id="sBank"><span class="k">Banked</span><span class="v" id="vBank">0</span></div>
+  <div class="stat" id="sSpl"><span class="k">Splinters</span><span class="v" id="vSpl">0</span></div>
+  <div class="stat" id="sEyes"><span class="k" id="kEyes">Eyes</span><span class="v" id="vEyes">0/15</span></div>
+</div>
+<div id="fwrap"><div id="fbar"></div></div>
+<div id="dwrap"><div id="dbar"></div><div id="dzone"></div><span id="dlbl">Safe</span></div>
+
+<div id="wrap">
+  <canvas id="cv"></canvas>
+  <div id="scrim"></div>
+  <div id="ban"><div class="bt" id="banT">Job sheet</div><div class="bl" id="banL"></div></div>
+  <div id="say">Hold on the furniture. Most of it is furniture.</div>
+
+  <!-- room cleared -->
+  <div class="ov center" id="ovClear">
+    <div>
+      <p class="mid st" style="margin-bottom:8px">Guild work order · discharged</p>
+      <h2 class="big">Room<br><span class="v">cleared</span></h2>
+      <p class="mid"><b id="clrRoom">—</b> has produced the sets of teeth the Guild asked for. <span id="clrNext"></span></p>
+      <button class="cta v" id="clrOk" type="button">Sign it</button>
+    </div>
+  </div>
+
+  <!-- shop -->
+  <div class="ov sheet" id="ovShop">
+    <div class="ovh"><div class="htxt"><h2>The Guild Store</h2><span class="where"></span></div><button class="x" id="xShop" type="button">&larr; Room</button></div>
+    <div class="ovb" id="shopBody"></div>
+    <div class="carrywarn" id="carryWarn" hidden></div>
+    <div class="backstrip"><button type="button" data-back="ovShop">Back to the room</button></div>
+    <div class="ovf">Banked <em id="shopBank">0</em> teeth · splinters <em id="shopSpl">0</em> · teeth in your pocket buy nothing</div>
+  </div>
+
+  <!-- map -->
+  <div class="ov sheet" id="ovMap">
+    <div class="ovh"><div class="htxt"><h2>The Dungeon</h2><span class="where"></span></div><button class="x" id="xMap" type="button">&larr; Room</button></div>
+    <div class="ovb" id="mapBody"></div>
+    <div class="backstrip"><button type="button" data-back="ovMap">Back to the room</button></div>
+    <div class="ovf">Banked <em id="mapBank">0</em> teeth</div>
+  </div>
+
+  <!-- bestiary -->
+  <div class="ov sheet" id="ovBest">
+    <div class="ovh"><div class="htxt"><h2>Your Kit</h2><span class="where"></span></div><button class="x" id="xBest" type="button">&larr; Room</button></div>
+    <div class="ovb" id="bestBody"></div>
+    <div class="backstrip"><button type="button" data-back="ovBest">Back to the room</button></div>
+    <div class="ovf">Field notes <em id="bestNotes">0</em> · global <em id="bestMult">×1.0</em></div>
+  </div>
+
+  <!-- handbook -->
+  <div class="ov sheet" id="ovHelp">
+    <div class="ovh"><div class="htxt"><h2>Guild Handbook</h2><span class="where"></span></div>
+      <button class="x" id="xHelp" type="button">&larr; Room</button></div>
+    <div class="ovb" id="helpBody"></div>
+    <div class="backstrip"><button type="button" data-back="ovHelp">Back to the room</button></div>
+  </div>
+
+  <!-- art catalogue -->
+  <div class="ov sheet" id="ovCat">
+    <div class="ovh"><div class="htxt"><h2>Art Catalogue</h2><span class="where"></span></div><button class="x" id="xCat" type="button">&larr; Room</button></div>
+    <div class="ovb" id="catBody"></div>
+    <div class="backstrip"><button type="button" data-back="ovCat">Back to the room</button></div>
+    <div class="ovf">Every asset drawn by the live game code · quote a code to have one redone</div>
+  </div>
+
+  <!-- eaten -->
+  <div class="ov center" id="ovEaten">
+    <div>
+      <h2 class="big">The room<br><span class="v">was a mimic</span></h2>
+      <p class="mid">It had been the room the entire time. You kept <b id="eatKept">0</b> teeth and the rest of you is splinters now.</p>
+      <p class="mid st">Splinters recovered <i id="eatSpl">0</i></p>
+      <p class="mid" id="eatProg" style="color:#9FBF8A"></p>
+      <button class="cta" id="eatOk" type="button">Get up</button>
+    </div>
+  </div>
+
+  <!-- escaped -->
+  <div class="ov center" id="ovEsc">
+    <div>
+      <h2 class="big">It got out<br><span class="v">through the door</span></h2>
+      <p class="mid">It went through the door with everything you were carrying. You have <b id="escKept">0</b> teeth left and a form to fill in.</p>
+      <p class="mid" id="escProg" style="color:#9FBF8A"></p>
+      <button class="cta" id="escOk" type="button">File the report</button>
+    </div>
+  </div>
+
+  <!-- promotion -->
+  <div class="ov center" id="ovPromo">
+    <div>
+      <h2 class="big">You have been<br><span class="v">promoted</span></h2>
+      <p class="mid">The dungeon closed its mouth, digested you thoroughly, and spat you out one rank higher inside a bigger one. Your tools are gone. Your notes are not.</p>
+      <p class="mid st">New rank <i id="promoRank">—</i> · field notes <i id="promoNotes">0</i> · global <i id="promoMult">×1.0</i></p>
+      <button class="cta v" id="promoOk" type="button">Report for duty</button>
+    </div>
+  </div>
+
+  <!-- offline -->
+  <div class="ov center" id="ovIdle">
+    <div>
+      <h2 class="big">Something<br><span class="v">moved in</span></h2>
+      <p class="mid" id="idleTxt">You left decoys out. They are no longer empty.</p>
+      <p class="mid st" id="idleStat"></p>
+      <button class="cta" id="idleOk" type="button">Collect</button>
+    </div>
+  </div>
+
+  <!-- title -->
+  <div class="ov center on" id="ovTitle">
+    <canvas id="keyart"></canvas>
+    <div class="katint"></div>
+    <div class="menu">
+      <p class="eyebrow">Guild of Ambiguous Furniture · provisional licence, class III</p>
+      <h2 class="big">Mimic<br><span class="v">Season</span></h2>
+      <p class="mid">It is not that <b>some</b> of the furniture is alive. It is that an unhelpful percentage of it is.</p>
+      <p class="mid" style="font-size:14.5px;color:#B9B09A">Hold to break things. The longer you stay without banking, the more each set of teeth is worth — and the more you lose if the room takes you.</p>
+      <div class="btns">
+        <button class="cta v" id="startBtn" type="button">Take the job</button>
+        <button class="cta ghost" id="contBtn" type="button" hidden>Continue</button>
+      </div>
+      <div class="btns sub">
+        <button class="lnk" id="rulesBtn" type="button">How to play</button>
+        <button class="lnk" id="sbxBtn" type="button">Sandbox · max everything</button>
+        <button class="lnk danger" id="wipeBtn" type="button" hidden>New game</button>
+      </div>
+      <p class="foot" id="saveLine"></p>
+    </div>
+  </div>
+</div>
+
+<div id="bot">
+  <button id="walk" type="button">Walk out</button>
+  <span class="sep"></span>
+  <button class="tab" id="shopBtn" data-panel="ovShop" type="button">Store</button>
+  <button class="tab" id="mapBtn"  data-panel="ovMap"  type="button">Rooms</button>
+  <button class="tab" id="bestBtn" data-panel="ovBest" type="button">Kit</button>
+  <button class="tab" id="catBtn"  data-panel="ovCat"  type="button">Art</button>
+</div>
+
+<script>
+"use strict";
+(function(){
+
+/* ══════════════ helpers ══════════════ */
+var $=function(id){ return document.getElementById(id); };
+function mk(s){ return function(){ s|=0; s=s+0x6D2B79F5|0; var t=Math.imul(s^s>>>15,1|s); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function rr(a,b){ return a+Math.random()*(b-a); }
+function ri(a,b){ return Math.floor(rr(a,b+1)); }
+function clamp(v,a,b){ return v<a?a:v>b?b:v; }
+function fmt(n){ n=Math.floor(n);
+  if(n<10000) return n.toLocaleString('en-US');
+  if(n<1e6) return (n/1e3).toFixed(n<1e5?1:0)+'k';
+  if(n<1e9) return (n/1e6).toFixed(2)+'M';
+  if(n<1e12) return (n/1e9).toFixed(2)+'B';
+  return (n/1e12).toFixed(2)+'T';
+}
+var REDUCED=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ══════════════ audio (synthesised, no assets) ══════════════ */
+var AC=null, muted=false;
+function ac(){ if(AC===null){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ AC=false; } } return AC; }
+function tone(f,dur,type,gain,to,delay){
+  var c=ac(); if(!c||muted) return;
+  var t=c.currentTime+(delay||0);
+  var o=c.createOscillator(), g=c.createGain();
+  o.type=type||'triangle'; o.frequency.setValueAtTime(f,t);
+  if(to) o.frequency.exponentialRampToValueAtTime(Math.max(20,to),t+dur);
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.exponentialRampToValueAtTime(gain||0.05,t+0.006);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g); g.connect(c.destination); o.start(t); o.stop(t+dur+0.03);
+}
+var nbuf=null;
+function noise(dur,gain,freq,q){
+  var c=ac(); if(!c||muted) return;
+  if(!nbuf){ var n=Math.floor(c.sampleRate*0.9); nbuf=c.createBuffer(1,n,c.sampleRate);
+    var d=nbuf.getChannelData(0); for(var i=0;i<n;i++) d[i]=Math.random()*2-1; }
+  var s=c.createBufferSource(); s.buffer=nbuf; s.loop=true;
+  var f=c.createBiquadFilter(); f.type='bandpass'; f.frequency.value=freq||900; f.Q.value=q||1.2;
+  var g=c.createGain(), t=c.currentTime;
+  g.gain.setValueAtTime(gain||0.06,t); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  s.connect(f); f.connect(g); g.connect(c.destination); s.start(t); s.stop(t+dur+0.02);
+}
+var SFX={
+  swing:function(n){ var s=Math.min(14,n); tone(174*Math.pow(2,s/12),0.075,'triangle',0.05); noise(0.04,0.03,1400,2.5); },
+  brk:function(){ noise(0.2,0.085,430,1); tone(112,0.15,'sine',0.05,66); },
+  scream:function(){ tone(780,0.6,'sawtooth',0.08,92); noise(0.55,0.05,2300,0.7); tone(1170,0.35,'square',0.025,140,0.02); },
+  tooth:function(n){ tone(660*Math.pow(2,Math.min(16,n)/17),0.055,'square',0.032); },
+  kill:function(){ tone(523,0.1,'square',0.045); tone(784,0.12,'square',0.04,null,0.06); tone(1046,0.2,'square',0.035,null,0.12); },
+  buy:function(){ tone(880,0.06,'square',0.05); tone(1320,0.12,'square',0.045,null,0.06); },
+  eat:function(){ tone(170,0.9,'sawtooth',0.1,38); noise(0.8,0.09,280,0.6); },
+  flee:function(){ tone(400,0.3,'triangle',0.045,150); },
+  promo:function(){ [523,659,784,1046].forEach(function(f,i){ tone(f,0.35,'triangle',0.05,null,i*0.11); }); },
+  open:function(){ tone(300,0.08,'sine',0.03); },
+  tick:function(p){ tone(520+p*760,0.045,'square',0.03+p*0.035); },
+  bolt:function(){ tone(220,0.5,'sawtooth',0.07,900); noise(0.3,0.05,1800,0.8); },
+  roomScream:function(){ tone(300,1.5,'sawtooth',0.11,48); tone(452,1.3,'square',0.05,70,0.05);
+    noise(1.3,0.09,900,0.5); tone(60,1.6,'sine',0.09); }
+};
+
+/* ══════════════ content ══════════════ */
+var KIT={
+  chest:{seam:24,p:[{t:'poly',pts:[[8,24],[14,15],[34,15],[40,24]]},{t:'rect',x:8,y:24,w:32,h:17},{t:'rect',x:21,y:27,w:6,h:7,ink:1},{t:'line',pts:[[8,24],[40,24]]}]},
+  barrel:{seam:21,p:[{t:'rect',x:13,y:10,w:22,h:31,r:8},{t:'line',pts:[[11,21],[37,21]]},{t:'line',pts:[[11,32],[37,32]]}]},
+  urn:{seam:21,p:[{t:'ell',cx:24,cy:30,rx:12,ry:11},{t:'rect',x:19,y:13,w:10,h:8},{t:'rect',x:15,y:9,w:18,h:5,r:2},{t:'line',pts:[[13,21],[35,21]]}]},
+  crate:{seam:20,p:[{t:'rect',x:9,y:13,w:30,h:28},{t:'line',pts:[[9,20],[39,20]]},{t:'line',pts:[[9,20],[39,41]]},{t:'line',pts:[[39,20],[9,41]]}]},
+  stool:{seam:23,p:[{t:'rect',x:9,y:17,w:30,h:6,r:2},{t:'rect',x:13,y:23,w:4,h:18},{t:'rect',x:31,y:23,w:4,h:18},{t:'line',pts:[[9,23],[39,23]]}]},
+  sack:{seam:19,p:[{t:'poly',pts:[[15,19],[11,32],[15,41],[33,41],[37,32],[33,19]]},{t:'rect',x:17,y:10,w:14,h:9,r:4},{t:'line',pts:[[15,19],[33,19]]}]},
+  shelf:{seam:21,p:[{t:'rect',x:11,y:8,w:26,h:33},{t:'line',pts:[[11,21],[37,21]]},{t:'line',pts:[[11,31],[37,31]]}]},
+  bucket:{seam:22,p:[{t:'poly',pts:[[13,19],[35,19],[32,41],[16,41]]},{t:'rect',x:11,y:14,w:26,h:5,r:2},{t:'line',pts:[[12,22],[36,22]]}]},
+  plate:{seam:26,p:[{t:'ell',cx:24,cy:28,rx:15,ry:13},{t:'ell',cx:24,cy:28,rx:9,ry:7.5},{t:'line',pts:[[9,26],[39,26]]}]},
+  book:{seam:24,p:[{t:'rect',x:12,y:12,w:24,h:29},{t:'rect',x:12,y:12,w:6,h:29,ink:1},{t:'line',pts:[[12,24],[36,24]]}]},
+  helm:{seam:25,p:[{t:'poly',pts:[[12,26],[14,14],[34,14],[36,26],[33,38],[15,38]]},{t:'rect',x:15,y:22,w:18,h:5,ink:1},{t:'line',pts:[[12,25],[36,25]]}]},
+  wardrobe:{seam:22,p:[{t:'rect',x:8,y:5,w:32,h:37},{t:'line',pts:[[24,5],[24,42]]},{t:'line',pts:[[8,22],[40,22]]},{t:'rect',x:20,y:24,w:3,h:6,ink:1}]},
+  clock:{seam:20,p:[{t:'rect',x:13,y:4,w:22,h:38,r:3},{t:'ell',cx:24,cy:15,rx:8,ry:8},{t:'line',pts:[[24,15],[24,10]]},{t:'line',pts:[[24,15],[28,17]]},{t:'line',pts:[[13,20],[35,20]]}]},
+  mirror:{seam:24,p:[{t:'ell',cx:24,cy:22,rx:13,ry:18},{t:'ell',cx:24,cy:22,rx:8,ry:13},{t:'rect',x:20,y:38,w:8,h:4},{t:'line',pts:[[11,24],[37,24]]}]},
+  candela:{seam:26,p:[{t:'poly',pts:[[18,42],[30,42],[27,32],[21,32]]},{t:'rect',x:22,y:14,w:4,h:18},{t:'rect',x:12,y:10,w:5,h:6},{t:'rect',x:31,y:10,w:5,h:6},{t:'line',pts:[[12,14],[36,14]]},{t:'line',pts:[[14,26],[34,26]]}]},
+  painting:{seam:23,p:[{t:'rect',x:7,y:9,w:34,h:26},{t:'rect',x:12,y:14,w:24,h:16},{t:'line',pts:[[7,23],[41,23]]},{t:'line',pts:[[24,35],[24,42]]}]},
+  cauldron:{seam:24,p:[{t:'ell',cx:24,cy:28,rx:15,ry:13},{t:'rect',x:9,y:20,w:30,h:5,r:2},{t:'line',pts:[[9,24],[39,24]]},{t:'line',pts:[[16,41],[16,36]]},{t:'line',pts:[[32,41],[32,36]]}]},
+  cage:{seam:22,p:[{t:'poly',pts:[[12,40],[14,16],[34,16],[36,40]]},{t:'line',pts:[[19,16],[18,40]]},{t:'line',pts:[[29,16],[30,40]]},{t:'line',pts:[[13,22],[35,22]]},{t:'ell',cx:24,cy:12,rx:6,ry:4}]},
+  ladder:{seam:21,p:[{t:'rect',x:12,y:4,w:4,h:38},{t:'rect',x:32,y:4,w:4,h:38},{t:'line',pts:[[12,13],[36,13]]},{t:'line',pts:[[12,21],[36,21]]},{t:'line',pts:[[12,30],[36,30]]}]},
+  throne:{seam:24,p:[{t:'rect',x:11,y:6,w:26,h:22},{t:'rect',x:8,y:28,w:32,h:8,r:2},{t:'rect',x:11,y:36,w:5,h:6},{t:'rect',x:32,y:36,w:5,h:6},{t:'line',pts:[[11,24],[37,24]]},{t:'poly',pts:[[17,6],[24,1],[31,6]]}]}
+};
+var KITN=Object.keys(KIT);
+
+/* quota = sets of teeth the Guild wants out of this room before it counts as cleared */
+var ROOMS=[
+  {n:'The Starter Cellar', spot:'#B4842A', quota:8,  kinds:['chest','barrel','crate','stool','urn','sack','bucket','shelf'], count:11, hp:4,   pay:1,   rule:'Chests. Just chests. For now.'},
+  {n:'The Dining Hall',    spot:'#6E7F86', quota:14, kinds:['plate','bucket','urn','stool'],       count:20, hp:3,   pay:0.9, rule:'Swarms. Small, fast, plentiful.'},
+  {n:'The Library',        spot:'#3A5AA0', quota:18, kinds:['book','shelf','crate','stool'],       count:13, hp:8,   pay:1.8, rule:'Some books do something when opened.'},
+  {n:'The Armoury',        spot:'#5A6157', quota:22, kinds:['helm','crate','barrel','shelf'],      count:12, hp:16,  pay:3.0, rule:'These bite. A loose mimic opens eyes on its own.'},
+  {n:'The Kitchens',       spot:'#D08A16', quota:26, kinds:['plate','sack','bucket','urn'],        count:16, hp:34,  pay:4.4, rule:'Edible. Every set of teeth closes an eye.'},
+  {n:'The Gallery',        spot:'#6B4076', quota:30, kinds:['wardrobe','shelf','stool','book'],    count:14, hp:78,  pay:7,   rule:'They watch. Eyes open 60% faster.'},
+  {n:'The Throne Room',    spot:'#C9A227', quota:34, kinds:['wardrobe','chest','helm','urn'],      count:14, hp:190, pay:11,  rule:'Something here has been reigning for 400 years.'},
+  {n:'Outside',            spot:'#DED8C4', quota:40, kinds:['wardrobe','shelf','chest','barrel'],  count:15, hp:520, pay:18,  rule:'No ink at all. The sky is unprinted.'}
+];
+
+/* the ladder of hammers. aoe is in object-widths. */
+var HAMMERS=[
+  {n:'Guild Issue',        d:'Wood. Provisional. Yours on loan.',                       dmg:1,   spd:1,    aoe:0,    cost:0,      larv:0,   col:'#E4D6AE', sil:'plain', hd:1,    ring:0},
+  {n:'Iron Persuader',     d:'Heavier than the job requires.',                          dmg:2.0, spd:1.0,  aoe:0,    cost:1400,   larv:0,   col:'#C4C9CE', sil:'banded', hd:1.12, ring:0},
+  {n:'The Splitter',       d:'Cracks whatever is standing next to it.',                 dmg:3.4, spd:1.08, aoe:0.6,  cost:11000,  larv:0,   col:'#B4842A', sil:'wedge', hd:1.24, ring:1},
+  {n:'Brass Widowmaker',   d:'Guild-condemned. Reinstated on appeal.',                  dmg:6.5, spd:1.14, aoe:0.95, cost:78000,  larv:3,   col:'#D8A63A', sil:'flared', hd:1.38, ring:1},
+  {n:'Larvaeforged',       d:'Grown, not made. It is warm.',                            dmg:13,  spd:1.22, aoe:1.3,  cost:520000, larv:14,  col:'#9FBF8A', sil:'organic', hd:1.5,  ring:2},
+  {n:'The Toothbreaker',   d:'Fitted with somebody else\'s teeth.',                     dmg:30,  spd:1.32, aoe:1.75, cost:4.2e6,  larv:50,  col:'#C42B1C', sil:'toothed', hd:1.66, ring:2},
+  {n:'Sunderer of Rooms',  d:'Rated for load-bearing furniture.',                       dmg:78,  spd:1.44, aoe:2.3,  cost:3.6e7,  larv:150, col:'#7C1712', sil:'massive', hd:1.84, ring:3},
+  {n:'The Hammer That Is Also A Mimic', d:'It has always been a mimic. It is very hurt that you never noticed.', dmg:210, spd:1.6, aoe:3.1, cost:4e8, larv:500, col:'#C42B1C', sil:'mimic', hd:2.05, ring:3, eye:true}
+];
+
+var RANKS=['Mimicologist, Third Class','Licensed Mimicologist','Chartered Mimicologist','Tenured Mimicologist','Mimicologist Emeritus','Professor of Things That Bite'];
+
+var TECH=[
+  {k:'head', g:'Arm',        n:'Heavier Head',   d:'+1 damage every swing',              base:45,   r:2.15, max:8, key:{3:'Swings splash to the nearest object'}},
+  {k:'wrist',g:'Wrist',      n:'Faster Wrist',   d:'Swing 12% quicker',                  base:80,   r:2.25, max:8, key:{6:'Every 8th swing hits twice'}},
+  {k:'nerve',g:'Nerve',      n:'Steady Nerve',   d:'Eyes open 12% slower',               base:110,  r:2.20, max:8, key:{3:'Frenzy bleeds away half as fast when you let go',6:'Eyes keep closing at full speed even with a mimic loose'}},
+  {k:'rep',  g:'Reputation', n:'Loud Reputation',d:'+2.5% chance a thing is a mimic',    base:150,  r:2.30, max:8, key:{3:'Screaming mimics stop running for the door'}},
+  {k:'pouch',g:'Salvage',    n:'Tooth Pouch',    d:'+25% teeth from every kill',         base:190,  r:2.25, max:8, key:{3:'Walking out at 13+ eyes banks double',6:'Being eaten keeps 60%'}},
+  {k:'staff',g:'Staff',      n:'Hire a Squire',  d:'+1 intern with their own hammer',    base:300,  r:2.70, max:6, key:{3:'Interns learn to work quietly'}},
+  {k:'clutter',g:'Requisition',n:'More Furniture',d:'+2 objects in every room',          base:420,  r:2.10, max:8, key:{4:'The Guild starts delivering the good stuff'}},
+  {k:'magnet',g:'Salvage',   n:'Tooth Magnet',   d:'Teeth and splinters come in twice as fast', base:1100, r:2.20, max:5, key:{}},
+  {k:'lens',  g:'Aetherics', n:'Aetheric Lens',  d:'A beam fires from the ceiling on its own', base:3400, r:2.35, max:8, key:{3:'The beam forks to a second target',6:'The beam sweeps the whole floor'}},
+  {k:'ord',   g:'Ordnance',  n:'Guild Ordnance', d:'A charge detonates in the clutter, on a timer', base:7000, r:2.45, max:8, key:{4:'Detonations chain into each other'}},
+  {k:'reach', g:'Arm',        n:'Long Reach',     d:'+15% area radius',                    base:1900, r:2.20, max:6, key:{4:'Area hits count as full-strength'}},
+  {k:'crit',  g:'Arm',        n:'Lucky Swing',    d:'+4% chance a swing lands for ×8',     base:2400, r:2.30, max:6, key:{6:'Crits also crack everything nearby'}},
+  {k:'haul',  g:'Salvage',    n:'Greedy Ledger',  d:'Each open eye is worth +2% more teeth', base:2800, r:2.30, max:6, key:{}},
+  {k:'scav',  g:'Salvage',    n:'Scavenger',      d:'+40% splinters from junk',            base:800,  r:2.10, max:5, key:{}}
+];
+var DECOY={k:'decoy', n:'Put Out a Decoy', d:'Furniture left in the dungeon overnight. Things move in.', base:60, r:1.85, max:12};
+
+/* mimic variants — unlocked by room depth, so the early game stays legible */
+var VAR=[
+  {k:'plain',  n:'',           hp:1,   fuse:1,   pay:1,   col:'#C42B1C', from:0},
+  {k:'runner', n:'RUNNER',     hp:0.7, fuse:0.5, pay:1.8, col:'#D8562B', from:1},
+  {k:'brute',  n:'BRUTE',      hp:3.2, fuse:2.2, pay:2.6, col:'#8A2418', from:2},
+  {k:'golden', n:'GILDED',     hp:0.6, fuse:0.42,pay:7,   col:'#D8A63A', from:3},
+  {k:'howler', n:'HOWLER',     hp:1.4, fuse:1.2, pay:2.4, col:'#A03A7A', from:4},
+  {k:'splitter',n:'SPLITTER',  hp:1.6, fuse:1.5, pay:1.9, col:'#5E8A46', from:5}
+];
+function pickVar(){
+  var pool=VAR.filter(function(v){ return v.from<=S.room; });
+  /* plain stays common; the exotic ones are the spice */
+  if(Math.random()<0.55||pool.length===1) return VAR[0];
+  return pool[ri(1,pool.length-1)];
+}
+
+/* Every variant drops its own fang. You socket them into the hammer head.
+   Sockets = hammer tier. Three of a kind doubles that fang's contribution. */
+/* ══ the Guild is paperwork, so the lore is paperwork. Found in order, never random. ══ */
+var LORE=[
+ {t:'Form 14-C · Provisional Licence',src:'issued with your hammer',
+  b:'You are licensed to strike furniture. You are not licensed to strike anything that strikes back. Please refer such cases to your supervisor.<br><br>Your supervisor is currently a vacancy.'},
+ {t:'Safety Notice 9',src:'nailed to a crate',
+  b:'Do not put your hand in it.<br><br>This notice replaces Safety Notice 8, which read: do not put your hand in it twice.'},
+ {t:'Expenses · Rejected',src:'folded into a sack',
+  b:'Claim for one (1) replacement hammer: <b>rejected</b>. The hammer is Guild property and cannot be lost, only mislaid.<br><br>Please locate it. It is looking for you as well.'},
+ {t:'Memorandum · On the wallpaper',src:'behind a painting',
+  b:'Several members have asked about the pattern in the upper rooms.<br><br>The pattern is decorative. Do not count it.'},
+ {t:'Incident 41',src:'in a bucket',
+  b:'A chair was observed being polite.<br><br>Reclassified as furniture pending further politeness.'},
+ {t:'From the Ledger',src:'under a stool',
+  b:'Third Class pay is calculated per set of teeth, not per mimic. A mimic with two mouths is therefore twice as valuable and half as survivable.<br><br>Congratulations either way.'},
+ {t:'Memorandum · Noise',src:'slid under a door',
+  b:'Members report a dragging sound from the cellar after hours. The Guild has inspected the cellar.<br><br>The cellar has inspected the Guild.'},
+ {t:'On advancement',src:'pinned to a shelf',
+  b:'Advancement requires the clearing of every room. Members frequently ask what happens next.<br><br>The answer is in the following memorandum, which is sealed.'},
+ {t:'The sealed memorandum',src:'inside a wardrobe',
+  b:'It is not sealed. There is simply nothing written in it.<br><br>Several members have found this reassuring.'},
+ {t:'Field note · week four',src:'a predecessor\'s hand',
+  b:'The hammer feels warmer than it did. I have started leaving it in the other room at night.<br><br>It is not always in the other room in the morning.'},
+ {t:'Re: Decoys',src:'a damp notice',
+  b:'Furniture left overnight remains Guild property, along with anything that moves into it. Larvae are to be surrendered on return.<br><br>No member has ever surrendered a larva.'},
+ {t:'Department of Structural Cases',src:'an internal directory',
+  b:'The Department handles rooms rather than objects. The Department has one member.<br><br>The Department has always had one member.'},
+ {t:'Field note · the man before me',src:'a predecessor\'s hand',
+  b:'I asked what happened to the man before me. They said he was promoted. I asked where he was posted.<br><br>They said upstairs. There is no upstairs.'},
+ {t:'Procurement · the door',src:'a requisition slip',
+  b:'The door in every room is the same door. This is a procurement efficiency and is not a cause for concern.<br><br>It has been reported to open on its own. This is also an efficiency.'},
+ {t:'Field observation',src:'a torn page',
+  b:'Mimicry is not disguise. The chest is not pretending to be a chest. The chest <i>is</i> a chest, that is also hungry.<br><br>This distinction has cost us four members.'},
+ {t:'Ledger correction',src:'an accounts memo',
+  b:'Teeth recovered this quarter: 41,880. Teeth issued to members: 41,880.<br><br>We do not know what this means. We have filed it.'},
+ {t:'Field note · the last one',src:'a predecessor\'s hand',
+  b:'It is not that some of the furniture is alive. It is that an unhelpful percentage of it is.<br><br>Including, I now suspect, the percentage.'},
+ {t:'On rank',src:'a promotion pamphlet',
+  b:'Emeritus members are not seen about the building because they are not in this building. They are in a larger one.<br><br>We are, presumably, in someone\'s.'},
+ {t:'Final notice',src:'still warm',
+  b:'Congratulations on your promotion. Please return your hammer.<br><br>Please return your hammer. Please retur—'},
+ {t:'Found inside a chest',src:'your own handwriting',
+  b:'Don\'t take the job.<br><br>— You'}
+];
+
+var FANGS={
+  plain:   {n:'Common Fang',  d:'+12% damage',                        col:'#C42B1C', e:{dmg:0.12}},
+  runner:  {n:'Runner Fang',  d:'+10% swing speed',                   col:'#D8562B', e:{spd:0.10}},
+  brute:   {n:'Brute Fang',   d:'+28% damage, −8% swing speed',       col:'#8A2418', e:{dmg:0.28,spd:-0.08}},
+  golden:  {n:'Gilded Fang',  d:'+30% teeth from every kill',         col:'#D8A63A', e:{teeth:0.30}},
+  howler:  {n:'Howler Fang',  d:'Eyes open 15% slower',               col:'#A03A7A', e:{eye:-0.15}},
+  splitter:{n:'Splitter Fang',d:'+28% area radius',                   col:'#5E8A46', e:{aoe:0.28}},
+  room:    {n:'Room Fang',    d:'+22% to everything. Eyes open 12% faster.', col:'#F4F1E6', e:{dmg:0.22,spd:0.22,teeth:0.22,aoe:0.22,eye:0.12}}
+};
+var FANGK=Object.keys(FANGS);
+function socketCount(){ return Math.min(8,(S.hammer||0)+1); }
+function socketed(){
+  var c={},i,k;
+  for(i=0;i<socketCount();i++){ k=S.socket[i]; if(k&&FANGS[k]) c[k]=(c[k]||0)+1; }
+  return c;
+}
+function fx(key){
+  var c=socketed(), t=0;
+  for(var k in c){
+    var f=FANGS[k]; if(!f.e[key]) continue;
+    t+=f.e[key]*c[k]*(c[k]>=3?2:1);   /* matched set of three: doubled */
+  }
+  return t;
+}
+function fangsHeld(k){ return (S.fangs&&S.fangs[k])||0; }
+function fangsFree(k){
+  var used=0;
+  for(var i=0;i<socketCount();i++) if(S.socket[i]===k) used++;
+  return fangsHeld(k)-used;
+}
+
+var BEAST=[
+  {kind:'chest',    n:'Chest Mimic'},      {kind:'barrel', n:'Barrel Mimic'},
+  {kind:'crate',    n:'Crate Mimic'},      {kind:'stool',  n:'Stool Mimic'},
+  {kind:'urn',      n:'Urn Mimic'},        {kind:'sack',   n:'Sack Mimic'},
+  {kind:'bucket',   n:'Bucket Mimic'},     {kind:'shelf',  n:'Shelf Mimic'},
+  {kind:'plate',    n:'Plate Mimic'},      {kind:'book',   n:'Book Mimic'},
+  {kind:'helm',     n:'Armour Mimic'},     {kind:'wardrobe',n:'Wardrobe Mimic'}
+];
+
+/* ══════════════ state ══════════════ */
+var S={
+  v:2, teeth:0, banked:0, spl:0, room:0, rank:0, notes:0,
+  upg:{head:0,wrist:0,nerve:0,rep:0,pouch:0,staff:0,decoy:0,clutter:0,magnet:0,lens:0,ord:0,reach:0,crit:0,haul:0,scav:0},
+  seen:{}, cleared:{}, prog:{}, cycleTeeth:0, larvae:0, hammer:0, sandbox:0, fangs:{}, socket:[], lore:0, loreSeen:0, t:Date.now()
+};
+function save(){ if(S.sandbox) return; S.t=Date.now(); try{ localStorage.setItem('mimicSeason',JSON.stringify(S)); }catch(e){} }
+function load(){
+  try{ var r=localStorage.getItem('mimicSeason'); if(!r) return false;
+    var o=JSON.parse(r); if(!o||o.v!==2) return false;
+    for(var k in S) if(o[k]!==undefined) S[k]=o[k];
+    if(!S.fangs) S.fangs={}; if(!S.socket) S.socket=[];
+    if(S.lore===undefined) S.lore=0; if(S.loreSeen===undefined) S.loreSeen=0;
+    for(var u in {head:1,wrist:1,nerve:1,rep:1,pouch:1,staff:1,decoy:1,clutter:1,magnet:1,lens:1,ord:1,reach:1,crit:1,haul:1,scav:1}) if(S.upg[u]===undefined) S.upg[u]=0;
+    return true;
+  }catch(e){ return false; }
+}
+
+function U(k){ return S.upg[k]||0; }
+function notesMult(){ return 1+S.notes*0.12; }
+function rankMult(){ return Math.pow(1.7,S.rank); }
+function HAM(){ return HAMMERS[Math.min(S.hammer||0,HAMMERS.length-1)]; }
+function dmg(){ return (1+U('head'))*HAM().dmg*(1+fx('dmg')); }
+function swingInt(){ return Math.max(0.040,0.19*Math.pow(0.88,U('wrist'))/HAM().spd/Math.max(0.4,1+fx('spd'))); }
+function aoeR(){ return HAM().aoe*baseSize()*1.05*(1+0.15*U('reach'))*(1+fx('aoe')); }
+function critChance(){ return 0.04*U('crit'); }
+/* every open eye takes 4% off the fuse. This is the whole point of the eyes. */
+/* every set of teeth taken without banking makes the next one worth more */
+function haulMul(){ return Math.min(4,1+0.09*runKills); }
+function fuseMul(){ return clamp(1-0.04*eyes,0.38,1); }
+function addEyes(v){
+  if(!held) return;
+  var cap=EYES-0.9;
+  if(eyes>=cap) return;
+  eyes=Math.min(cap,eyes+v);
+}
+function magnetK(){ return 1+0.4*U('magnet'); }
+function eyeRate(){ return 0.30*Math.pow(0.88,U('nerve'))*(S.room===5?1.6:1)*Math.max(0.25,1+fx('eye')); }
+function mimicChance(){ return Math.min(0.64,0.18+0.029*openEyes()+0.025*U('rep')); }
+function teethMult(){ return rankMult()*notesMult()*(1+0.25*U('pouch'))*(1+fx('teeth'))*ROOMS[S.room].pay; }
+function cost(def,lvl){ return Math.floor(def.base*Math.pow(def.r,lvl)); }
+/* a room is open if it's the first, or the one before it is cleared */
+function roomOpen(i){ return i===0 || !!S.cleared[i-1]; }
+/* only ever one mimic loose: the fuse ends the run, so two at once would be unwinnable */
+function loose(){ for(var i=0;i<objs.length;i++) if(objs[i].mimic&&!objs[i].dead) return objs[i]; return null; }
+function prog(i){ return S.prog[i]||0; }
+function clearedCount(){ var n=0; for(var i=0;i<ROOMS.length;i++) if(S.cleared[i]) n++; return n; }
+function promoReady(){ return clearedCount()>=ROOMS.length && S.rank<RANKS.length-1; }
+
+/* ══════════════ run state ══════════════ */
+var EYES=15;
+var eyes=0, held=false, holdT=0, frenzy=1, swings=0, freeze=0, shakeM=0,
+    aimIdx=-1, swingAcc=0, dead=false, running=false, internT=0, flashT=0,
+    doubleTick=0, runKills=0, critNow=false, haul=1;
+var interns=[], beams=[], rings=[], lensT=0, ordT=0, roomMim=null;
+var objs=[], parts=[], pops=[], eyeSpots=[], W=0,H=0,DPR=1;
+var px=-999, py=-999, hasPointer=false, hamRot=0.6, hamTarget=0.6, hamAnim=-1;
+
+var cv=$('cv'), g=cv.getContext('2d');
+var grain=null, bg=null;
+var MONO='ui-monospace,Menlo,Consolas,monospace';
+
+function openEyes(){ return Math.min(EYES,Math.floor(eyes)); }
+function spot(){ return ROOMS[S.room].spot; }
+
+/* ══════════════ layout ══════════════ */
+function resize(){
+  var w=$('wrap');
+  W=w.clientWidth; H=w.clientHeight;
+  DPR=Math.min(2,window.devicePixelRatio||1);
+  cv.width=Math.floor(W*DPR); cv.height=Math.floor(H*DPR);
+  g.setTransform(DPR,0,0,DPR,0,0);
+  makeGrain(); makeBG();
+  if($('ovTitle').classList.contains('on')) drawKeyArt();
+}
+/* the room itself never changes mid-run, so it is painted once and blitted */
+function makeBG(){
+  if(W<2||H<2) return;
+  var c=document.createElement('canvas');
+  c.width=Math.floor(W*DPR); c.height=Math.floor(H*DPR);
+  var b=c.getContext('2d'); b.setTransform(DPR,0,0,DPR,0,0);
+  var ft=floorTop();
+  b.fillStyle='#CAC3A9'; b.fillRect(-8,-8,W+16,ft+8);
+  b.strokeStyle='rgba(35,31,26,.13)'; b.lineWidth=1.1;
+  var step=46, cols=Math.ceil(W/step)+1, rows=Math.ceil(ft/step)+1;
+  for(var r=0;r<rows;r++) for(var cc=0;cc<cols;cc++){
+    var bx=cc*step+(r%2?step/2:0), by=r*step;
+    b.beginPath(); b.moveTo(bx+23,by+7); b.quadraticCurveTo(bx+30,by+16,bx+23,by+24);
+    b.quadraticCurveTo(bx+16,by+16,bx+23,by+7); b.stroke();
+    b.beginPath(); b.arc(bx+23,by+31,2.2,0,6.3); b.stroke();
+  }
+  b.fillStyle='#DED8C4'; b.fillRect(-8,ft,W+16,H-ft+8);
+  b.strokeStyle='rgba(35,31,26,.26)'; b.lineWidth=1;
+  for(var f=1;f<5;f++){
+    var fy=ft+(H-ft)*(f/5), xx=0;
+    b.beginPath(); b.moveTo(0,fy);
+    while(xx<W){ xx+=rr(8,18); b.quadraticCurveTo(xx-4,fy+rr(-2.5,2.5),xx,fy); }
+    b.stroke();
+  }
+  /* the door fleeing mimics run for */
+  var dw=W*0.085, dh=H*0.30, dx=W*DOOR[0];
+  b.fillStyle='rgba(35,31,26,.82)'; b.strokeStyle='#231F1A'; b.lineWidth=2.4; b.lineJoin='round';
+  b.beginPath(); b.rect(dx-dw/2,ft-dh,dw,dh); b.fill(); b.stroke();
+  /* skirting */
+  b.strokeStyle='#231F1A'; b.lineWidth=2.4; b.beginPath(); b.moveTo(0,ft);
+  for(var k=0;k<=W;k+=26) b.lineTo(k,ft+Math.sin(k*0.09)*1.8);
+  b.stroke();
+  bg=c;
+}
+function makeGrain(){
+  var c=document.createElement('canvas'); c.width=Math.max(1,Math.floor(W/2)); c.height=Math.max(1,Math.floor(H/2));
+  var gg=c.getContext('2d'), im=gg.createImageData(c.width,c.height), d=im.data;
+  for(var i=0;i<d.length;i+=4){ var v=200+Math.random()*55; d[i]=d[i+1]=d[i+2]=v; d[i+3]=26; }
+  gg.putImageData(im,0,0); grain=c;
+}
+window.addEventListener('resize',function(){ resize(); });
+if(window.visualViewport) window.visualViewport.addEventListener('resize',function(){ resize(); });
+
+var DOOR=[0.93,0.0];
+var WALLKINDS=['painting','mirror','clock','cage','candela'];
+/* tall screens get a short wall and a deep floor; wide screens keep the theatre look */
+function floorTop(){ return H*clamp(0.26+0.10*(W/Math.max(1,H)),0.28,0.46); }
+function baseSize(){ return clamp(Math.min(W,H)*0.235,46,124); }
+function objXY(o){
+  if(o.wall) return [o.fx*W, H*0.11+o.fy*Math.max(10,floorTop()-H*0.20)];
+  return [o.fx*W, floorTop()+8+o.fy*(H-floorTop()-26)];
+}
+function objScale(o){
+  if(o.wall) return 0.78*o.sz;
+  var deep=clamp((1-floorTop()/Math.max(1,H))/0.62,0.75,1.25);
+  return (0.62+o.fy*0.72*deep)*o.sz;
+}
+
+/* ══════════════ room build ══════════════ */
+function eyeLayout(){
+  eyeSpots=[]; var tries=0;
+  while(eyeSpots.length<EYES && tries<600){
+    tries++;
+    var x=rr(0.04,0.94), y=rr(0.05,0.86), ok=true;
+    for(var i=0;i<eyeSpots.length;i++){
+      if(Math.abs(eyeSpots[i].x-x)<0.085 && Math.abs(eyeSpots[i].y-y)<0.15){ ok=false; break; }
+    }
+    if(ok) eyeSpots.push({x:x,y:y,s:rr(0.7,1.35),o:0});
+  }
+  while(eyeSpots.length<EYES) eyeSpots.push({x:rr(0.05,0.93),y:rr(0.05,0.86),s:1,o:0});
+}
+function scatterPt(exclude){
+  var clumps=[[0.19,0.32],[0.5,0.68],[0.8,0.4]], best=null, bd=-1;
+  for(var t=0;t<40;t++){
+    var x,y;
+    if(Math.random()<0.74){ var c=clumps[ri(0,2)]; x=c[0]+rr(-0.17,0.17); y=c[1]+rr(-0.32,0.32); }
+    else { x=rr(0,1); y=rr(0,1); }
+    x=clamp(x,0.08,0.92); y=clamp(y,0.03,0.97);
+    var m=9;
+    for(var i=0;i<objs.length;i++){
+      if(objs[i]===exclude||objs[i].dead) continue;
+      var dx=objs[i].fx-x, dy=(objs[i].fy-y)*0.55;
+      m=Math.min(m,dx*dx+dy*dy);
+    }
+    if(m>bd){ bd=m; best=[x,y]; }
+    if(m>0.011) break;
+  }
+  return best;
+}
+function wallPt(o){
+  var best=[rr(0.08,0.92),rr(0.05,0.95)], bd=-1;
+  for(var t=0;t<26;t++){
+    var x=rr(0.08,0.92), y=rr(0.05,0.95), m=9;
+    for(var i=0;i<objs.length;i++){
+      var q=objs[i]; if(q===o||q.dead||!q.wall) continue;
+      if(x>0.84&&y<0.55){ m=0; break; }
+      var dx=q.fx-x, dy=(q.fy-y)*0.6; m=Math.min(m,dx*dx+dy*dy);
+    }
+    if(m>bd){ bd=m; best=[x,y]; }
+    if(m>0.024) break;
+  }
+  return best;
+}
+function newObj(o,wall){
+  var R=ROOMS[S.room];
+  o=o||{};
+  if(wall===undefined) wall=!!o.wall;
+  o.wall=wall;
+  var p=wall?wallPt(o):scatterPt(o);
+  o.kind=wall?WALLKINDS[ri(0,WALLKINDS.length-1)]:R.kinds[ri(0,R.kinds.length-1)];
+  o.fx=p[0]; o.fy=p[1];
+  o.seed=ri(1,1e9); o.rot=rr(-0.13,0.13); o.sz=rr(0.86,1.16);
+  o.max=R.hp; o.hp=R.hp; o.mimic=false; o.dead=false; o.cracks=[];
+  o.teethTop=null; o.teethBot=null; o.flee=0; o.hopT=Math.random()*6; o.vr=null; o.child=false;
+  o.biteT=0; o.spawn=0.001; o.squash=0; o.splashed=false;
+  return o;
+}
+/* one visit to a room = one run. Walking out or being eaten both end it and restock. */
+function buildRoom(quiet){
+  objs=[];
+  var n=ROOMS[S.room].count+U('clutter')*2;
+  /* keep the floor from looking like a jumble sale on a phone */
+  var area=Math.max(1,W*H)/(560*400);
+  n=Math.round(n*clamp(Math.sqrt(area),0.55,1.15));
+  n=clamp(n,6,26);
+  for(var i=0;i<n;i++) objs.push(newObj(null,false));
+  var wallRoom=floorTop()/Math.max(1,H);
+  var wn=Math.round(clamp(W/150,2,6)*clamp(wallRoom/0.4,0.5,1.4));
+  for(var wi=0;wi<wn;wi++) objs.push(newObj(null,true));
+  eyeLayout();
+  eyes=0; dead=false; held=false; frenzy=1; holdT=0; swings=0;
+  parts.length=0; pops.length=0; aimIdx=-1; jawT=0;
+  interns.length=0; beams.length=0; rings.length=0; lensT=0.6; ordT=2; roomMim=null;
+  $('inkChip').style.background=spot();
+  if(!quiet) say(ROOMS[S.room].rule);
+  refreshRoomLabel();
+}
+function refreshRoomLabel(){
+  var R=ROOMS[S.room], p=prog(S.room), done=!!S.cleared[S.room];
+  $('roomName').textContent=R.n;
+  $('roomProg').textContent=done?'cleared':(p+'/'+R.quota);
+  $('roomProg').className=done?'pg done':'pg';
+  $('roomBar').style.width=(done?100:Math.min(100,p/R.quota*100))+'%';
+  $('roomBar').className=done?'done':'';
+}
+/* the job sheet — punctuation at the end of every run, without a modal */
+var banT=0;
+function banner(title,lines){
+  $('banT').textContent=title;
+  $('banL').innerHTML=lines;
+  var b=$('ban'); b.classList.remove('go'); void b.offsetWidth; b.classList.add('go');
+}
+
+/* ══════════════ drawing ══════════════ */
+function wpoly(pts,jit,rng){
+  g.beginPath();
+  for(var i=0;i<pts.length;i++){
+    var x=pts[i][0]+(rng()*2-1)*jit, y=pts[i][1]+(rng()*2-1)*jit;
+    if(i===0) g.moveTo(x,y); else g.lineTo(x,y);
+  }
+  g.closePath();
+}
+function rectPts(p){
+  var x=p.x,y=p.y,w=p.w,h=p.h;
+  return [[x,y],[x+w*0.5,y],[x+w,y],[x+w,y+h*0.5],[x+w,y+h],[x+w*0.5,y+h],[x,y+h],[x,y+h*0.5]];
+}
+function prim(p,jit,rng,mode){
+  if(p.t==='rect'){ wpoly(rectPts(p),jit,rng); }
+  else if(p.t==='poly'){ wpoly(p.pts,jit,rng); }
+  else if(p.t==='ell'){
+    var pts=[],n=14;
+    for(var i=0;i<n;i++){ var a=i/n*Math.PI*2; pts.push([p.cx+Math.cos(a)*p.rx,p.cy+Math.sin(a)*p.ry]); }
+    wpoly(pts,jit*0.8,rng);
+  }
+  else if(p.t==='line'){
+    g.beginPath();
+    for(var j=0;j<p.pts.length;j++){
+      var x=p.pts[j][0]+(rng()*2-1)*jit, y=p.pts[j][1]+(rng()*2-1)*jit;
+      if(j===0) g.moveTo(x,y); else g.lineTo(x,y);
+    }
+    return 'stroke';
+  }
+  return mode;
+}
+function teethPts(y,up,rng){
+  var x=10, root=up?y-8:y+8, tip=up?y-1:y+1, n=7, pts=[[x,root]];
+  for(var i=0;i<n;i++){ var w=28/n;
+    pts.push([x+w*0.5+(rng()*2-1),tip+(rng()*2.6-1.3)*(up?1:-1)]);
+    x+=w; pts.push([x,root+(rng()*2-1)]);
+  }
+  return pts;
+}
+function drawObj(o,ink,spotCol){
+  var xy=objXY(o);
+  paintPiece(o,xy[0],xy[1],baseSize()*objScale(o),ink,spotCol,baseSize()*0.11);
+}
+/* px = drawn height in pixels. Everything below is the real in-game art. */
+function paintPiece(o,cx,cy,px,ink,spotCol,hopAmp){
+  var s=px/48;
+  var K=KIT[o.kind], rng=mk(o.seed), jit=0.55;
+  g.save();
+  g.translate(cx,cy);
+  var pop=o.spawn<1?(1-Math.pow(1-o.spawn,3)):1;
+  g.rotate(o.rot+(o.mimic?Math.sin(o.hopT*9)*0.09:0));
+  var hop=o.mimic?Math.abs(Math.sin(o.hopT*9))*(hopAmp||0):0;
+  g.translate(0,-hop);
+  g.scale(s*(0.6+0.4*pop),s*pop);
+  if(o.squash>0){ var q=o.squash; g.scale(1+q*0.22,1-q*0.24); }
+  g.translate(-24,-44);
+
+  if(!o.wall){
+    g.globalAlpha=0.16; g.fillStyle=ink;
+    g.beginPath(); g.ellipse(24,43,15,3.6,0,0,6.3); g.fill(); g.globalAlpha=1;
+  }
+
+  /* spot plate, misregistered */
+  g.fillStyle=o.mimic?((o.vr&&o.vr.col)||'#C42B1C'):spotCol;
+  g.save(); g.translate(1.4,1.4);
+  for(var i=0;i<K.p.length;i++){ var p=K.p[i];
+    if(p.t==='line') continue;
+    rng=mk(o.seed+i); prim(p,jit,rng); g.fill();
+  }
+  g.restore();
+
+  /* mouth */
+  if(o.mimic&&o.teethTop){
+    var y=K.seam;
+    g.fillStyle=ink; g.fillRect(10,y-8,28,16);
+    g.fillStyle='#7C1712'; g.beginPath(); g.ellipse(25,y+4,9,4,0,0,6.3); g.fill();
+    g.fillStyle='#F4F1E6'; g.strokeStyle=ink; g.lineWidth=1.1;
+    [o.teethTop,o.teethBot].forEach(function(tp){
+      g.beginPath(); g.moveTo(tp[0][0],tp[0][1]);
+      for(var q2=1;q2<tp.length;q2++) g.lineTo(tp[q2][0],tp[q2][1]);
+      g.closePath(); g.fill(); g.stroke();
+    });
+  }
+
+  /* ink plate */
+  g.strokeStyle=ink; g.lineWidth=2.3; g.lineJoin='round'; g.lineCap='round';
+  for(var k=0;k<K.p.length;k++){ var q=K.p[k]; rng=mk(o.seed+k);
+    var m=prim(q,jit,rng);
+    if(q.ink){ g.fillStyle=ink; g.fill(); }
+    g.stroke();
+  }
+
+  /* cracks */
+  if(o.cracks.length){
+    g.lineWidth=1.5;
+    for(var c=0;c<o.cracks.length;c++){
+      var cr=o.cracks[c];
+      g.beginPath(); g.moveTo(cr[0][0],cr[0][1]);
+      for(var d=1;d<cr.length;d++) g.lineTo(cr[d][0],cr[d][1]);
+      g.stroke();
+    }
+  }
+  g.restore();
+}
+function drawEye(x,y,s,open){
+  g.save(); g.translate(x,y); g.scale(s,s);
+  g.lineWidth=1.7; g.lineCap='round'; g.strokeStyle='#231F1A';
+  if(open<=0.02){
+    g.globalAlpha=0.34; g.beginPath(); g.moveTo(-9,-1); g.quadraticCurveTo(0,4,9,-1); g.stroke(); g.globalAlpha=1;
+  } else {
+    var h=open;
+    g.fillStyle='#F4F1E6';
+    g.beginPath(); g.moveTo(-10,0); g.quadraticCurveTo(0,-8*h,10,0); g.quadraticCurveTo(0,8*h,-10,0); g.closePath();
+    g.fill(); g.stroke();
+    g.fillStyle='#231F1A'; g.beginPath(); g.arc(0,0,2.7*Math.min(1,h*1.4),0,6.3); g.fill();
+  }
+  g.restore();
+}
+function syncInterns(){
+  var want=U('staff');
+  while(interns.length<want) interns.push({x:rr(0.2,0.8)*W,y:floorTop()+rr(20,H*0.3),tx:-1,cd:rr(0,0.6),sw:0});
+  while(interns.length>want) interns.pop();
+}
+function stepInterns(dt){
+  syncInterns();
+  for(var i=0;i<interns.length;i++){
+    var it=interns[i];
+    if(it.tx<0||!objs[it.tx]||objs[it.tx].dead){
+      var pool=[]; for(var q=0;q<objs.length;q++) if(!objs[q].dead) pool.push(q);
+      it.tx=pool.length?pool[ri(0,pool.length-1)]:-1;
+    }
+    if(it.tx<0) continue;
+    var xy=objXY(objs[it.tx]);
+    var gx=xy[0], gy=xy[1]-baseSize()*0.34;
+    var dx=gx-it.x, dy=gy-it.y, d=Math.hypot(dx,dy)||1;
+    if(d>10){ var sp=Math.min(d,300*dt); it.x+=dx/d*sp; it.y+=dy/d*sp; it.sw=Math.max(0,it.sw-dt*4); }
+    else {
+      it.cd-=dt;
+      if(it.cd<=0){
+        it.cd=0.95/(1+0.22*(U('staff')-1)); it.sw=1;
+        hitObj(it.tx,Math.max(1,Math.round(dmg()*0.35)),true);
+        addSpark(gx,gy);
+        if(U('staff')<3) addEyes(0.05);
+        it.tx=-1;
+      }
+    }
+  }
+}
+function drawInterns(){
+  var IH={hd:0.72,col:'#CAC3A9',sil:'banded'};
+  for(var i=0;i<interns.length;i++){
+    var it=interns[i], sc=clamp(Math.min(W,H)/900,0.4,0.75);
+    paintHammer(IH,it.x,it.y,sc,0.55-it.sw*0.95);
+  }
+}
+function drawHammer(){
+  if(!hasPointer||dead) return;
+  var Hm=HAM(); Hm.live=1;
+  /* danger alert: silent until it matters, then unmistakably a gauge */
+  var dp=clamp(eyes/EYES,0,1);
+  if(dp>0.5){
+    var k=(dp-0.5)/0.5;                       /* 0 at half, 1 at the edge */
+    var ar=baseSize()*(0.50+k*0.09);
+    var gap=0.30;                             /* broken at the top, so it reads as a dial */
+    var a0=-Math.PI/2+gap, a1=a0+(Math.PI*2-gap*2)*dp;
+    var puls=dp>=0.86?(0.72+0.28*Math.sin(performance.now()/90)):1;
+    g.save();
+    g.lineCap='round';
+    g.globalAlpha=(0.35+0.65*k)*puls;
+    g.strokeStyle='rgba(35,31,26,.30)'; g.lineWidth=3+k*2;
+    g.beginPath(); g.arc(px,py,ar,a0,-Math.PI/2-gap+Math.PI*2); g.stroke();
+    /* amber as it wakes up, vermilion at the edge */
+    g.strokeStyle=dp>=0.8?'#C42B1C':'#D8873A'; g.lineWidth=4+k*3.5;
+    g.beginPath(); g.arc(px,py,ar,a0,a1); g.stroke();
+    /* a head on the fill so the direction of travel is obvious */
+    g.fillStyle=dp>=0.8?'#C42B1C':'#D8873A';
+    g.beginPath(); g.arc(px+Math.cos(a1)*ar,py+Math.sin(a1)*ar,2.6+k*2,0,6.3); g.fill();
+    g.restore();
+  }
+  /* the reach of the swing, so aoe is never invisible */
+  var R=aoeR()+(U('head')>=3?baseSize()*0.55:0);
+  if(R>4 && aimIdx>=0 && objs[aimIdx] && !objs[aimIdx].dead){
+    var axy=objXY(objs[aimIdx]);
+    g.save(); g.globalAlpha=held?0.3:0.16; g.strokeStyle=Hm.col; g.lineWidth=2;
+    g.setLineDash([7,7]);
+    g.beginPath(); g.ellipse(axy[0],axy[1]-baseSize()*0.25,R,R*0.55,0,0,6.3); g.stroke();
+    g.restore();
+  }
+  paintHammer(Hm,px,py,clamp(Math.min(W,H)/560,0.62,1.25),hamRot);
+}
+function headShape(Hm,hw,hh){
+  var ink='#231F1A';
+  g.fillStyle=Hm.col; g.strokeStyle=ink; g.lineWidth=3; g.lineJoin='round';
+  var sil=Hm.sil||'plain';
+  g.beginPath();
+  if(sil==='wedge'){
+    g.moveTo(-hw,-hh); g.lineTo(hw*0.5,-hh); g.lineTo(hw,-hh*0.3);
+    g.lineTo(hw,hh*0.3); g.lineTo(hw*0.5,hh); g.lineTo(-hw,hh);
+  } else if(sil==='flared'){
+    g.moveTo(-hw,-hh*1.4); g.lineTo(-hw*0.5,-hh*0.72); g.lineTo(hw*0.5,-hh*0.72);
+    g.lineTo(hw,-hh*1.4); g.lineTo(hw,hh*1.4); g.lineTo(hw*0.5,hh*0.72);
+    g.lineTo(-hw*0.5,hh*0.72); g.lineTo(-hw,hh*1.4);
+  } else if(sil==='organic'){
+    g.moveTo(-hw,0);
+    g.quadraticCurveTo(-hw*0.8,-hh*1.55,0,-hh*1.2);
+    g.quadraticCurveTo(hw*0.85,-hh*1.5,hw,0);
+    g.quadraticCurveTo(hw*0.8,hh*1.5,0,hh*1.18);
+    g.quadraticCurveTo(-hw*0.85,hh*1.5,-hw,0);
+  } else if(sil==='massive'){
+    g.moveTo(-hw,-hh*1.15); g.lineTo(hw,-hh*1.15); g.lineTo(hw,hh*1.15); g.lineTo(-hw,hh*1.15);
+  } else {
+    g.moveTo(-hw,-hh); g.lineTo(hw,-hh); g.lineTo(hw,hh); g.lineTo(-hw,hh);
+  }
+  g.closePath(); g.fill(); g.stroke();
+
+  /* dark striking faces from iron upward */
+  if(sil!=='plain'){
+    g.fillStyle=ink;
+    var fw=hw*0.22, fh=(sil==='massive'?hh*1.15:hh);
+    g.fillRect(-hw,-fh,fw,fh*2);
+    if(sil!=='wedge') g.fillRect(hw-fw,-fh,fw,fh*2);
+  }
+  /* reinforcing bands */
+  if(sil==='massive'||sil==='mimic'){
+    g.strokeStyle='#F4F1E6'; g.lineWidth=2;
+    g.strokeRect(-hw*0.55,-hh*0.85,hw*1.1,hh*1.7);
+  }
+  /* ribs on the grown one */
+  if(sil==='organic'){
+    g.strokeStyle=ink; g.lineWidth=1.8;
+    for(var r=-1;r<=1;r++){
+      g.beginPath(); g.moveTo(hw*0.3*r,-hh*1.05); g.lineTo(hw*0.3*r,hh*1.05); g.stroke();
+    }
+  }
+  /* teeth along the striking edge */
+  if(sil==='toothed'||sil==='mimic'){
+    var n=6, tw=hw*2/n;
+    g.fillStyle='#F4F1E6'; g.strokeStyle=ink; g.lineWidth=1.5;
+    g.beginPath();
+    for(var t=0;t<n;t++){
+      var x0=-hw+t*tw;
+      g.moveTo(x0,hh); g.lineTo(x0+tw*0.5,hh+tw*0.62); g.lineTo(x0+tw,hh);
+    }
+    g.closePath(); g.fill(); g.stroke();
+  }
+  /* it has an eye and it is watching you */
+  if(sil==='mimic'){
+    g.fillStyle='#F4F1E6'; g.strokeStyle=ink; g.lineWidth=2;
+    g.beginPath(); g.ellipse(hw*0.3,-hh*0.15,hh*0.62,hh*0.46,0,0,6.3); g.fill(); g.stroke();
+    g.fillStyle=ink; g.beginPath(); g.arc(hw*0.3,-hh*0.15,hh*0.22,0,6.3); g.fill();
+  }
+}
+var IMPACT_ROT=-0.40;
+/* cx,cy is where the HEAD lands at the impact pose. The hammer pivots at the grip,
+   like a hammer, so the head swings through that point instead of orbiting it. */
+function paintHammer(Hm,cx,cy,base,rot,anchor){
+  var hd=Hm.hd||1;
+  var HL=44+hd*10;            /* haft length — grows with the tier */
+  var hw=11+hd*5.4;           /* head half-length, along the head axis */
+  var hh=5.2+hd*2.1;          /* head half-thickness */
+  var sc=(base||1)*(0.78+hd*0.13);
+  rot=rot||0;
+  var gx=HL*0.70, gy=HL*0.74;
+  /* put the wrist where it needs to be for the head to reach cx,cy at the impact pose */
+  var ir=(anchor===undefined?IMPACT_ROT:anchor), ci=Math.cos(ir), si=Math.sin(ir);
+  var wx=cx+(gx*ci-gy*si)*sc, wy=cy+(gx*si+gy*ci)*sc;
+  g.save();
+  g.translate(wx,wy);
+  g.scale(sc,sc);
+  g.rotate(rot);
+  g.translate(-gx,-gy);
+  g.lineJoin='round'; g.lineCap='round';
+  g.strokeStyle='#231F1A'; g.lineWidth=9.5;
+  g.beginPath(); g.moveTo(0,0); g.lineTo(gx,gy); g.stroke();
+  g.strokeStyle='#C8B98E'; g.lineWidth=5.5;
+  g.beginPath(); g.moveTo(0,0); g.lineTo(gx,gy); g.stroke();
+  /* bound grip at the far end */
+  g.strokeStyle='#231F1A'; g.lineWidth=7.5;
+  g.beginPath(); g.moveTo(gx*0.76,gy*0.76); g.lineTo(gx,gy); g.stroke();
+
+  /* head sits across the haft, not along it */
+  g.save();
+  g.rotate(-Math.PI/4);
+  headShape(Hm,hw,hh);
+  /* sockets, if this hammer is yours and not a catalogue swatch */
+  if(Hm.live){
+    var sc2=socketCount(), sw=hw*1.5/Math.max(1,sc2);
+    for(var si=0;si<sc2;si++){
+      var sx=-hw*0.75+si*sw+sw*0.5, k=S.socket[si];
+      g.beginPath();
+      g.moveTo(sx-sw*0.3,-hh*0.95); g.lineTo(sx+sw*0.3,-hh*0.95); g.lineTo(sx,-hh*1.9);
+      g.closePath();
+      g.fillStyle=k&&FANGS[k]?FANGS[k].col:'rgba(35,31,26,.35)';
+      g.fill(); g.strokeStyle='#231F1A'; g.lineWidth=1.5; g.stroke();
+    }
+  }
+  /* the collar where the haft passes through */
+  g.fillStyle='#231F1A';
+  g.fillRect(-hw*0.16,-hh*1.5,hw*0.32,hh*3);
+  g.restore();
+  g.restore();
+}
+function drawRoomFuse(){
+  if(!roomMim) return;
+  var w=Math.min(W*0.86,520), x=(W-w)/2, y=H*0.055;
+  g.save();
+  g.font='700 '+Math.round(clamp(Math.min(W,H)*0.035,12,20))+'px '+MONO;
+  g.textAlign='center'; g.textBaseline='alphabetic';
+  g.fillStyle='#231F1A'; g.strokeStyle='#F4F1E6'; g.lineWidth=4; g.lineJoin='round';
+  g.strokeText('THE ROOM IS A MIMIC',W/2,y-8);
+  g.fillText('THE ROOM IS A MIMIC',W/2,y-8);
+  /* how much of it is left */
+  g.fillStyle='#F4F1E6'; g.fillRect(x,y,w,16);
+  g.fillStyle='#C42B1C'; g.fillRect(x+2,y+2,(w-4)*clamp(roomMim.hp/roomMim.max,0,1),12);
+  g.strokeStyle='#231F1A'; g.lineWidth=2.5; g.strokeRect(x,y,w,16);
+  /* how long you have */
+  var fy=y+21, p=clamp(roomMim.fuse/roomMim.fuseMax,0,1);
+  g.fillStyle='#F4F1E6'; g.fillRect(x,fy,w,9);
+  g.fillStyle=roomMim.fuse<2.2?'#231F1A':'#7C1712'; g.fillRect(x+1.5,fy+1.5,(w-3)*p,6);
+  g.strokeStyle='#231F1A'; g.lineWidth=2; g.strokeRect(x,fy,w,9);
+  g.restore();
+}
+function drawFuse(){
+  var o=loose(); if(!o||!o.fuseMax||o.flee<=0) return;
+  var xy=objXY(o), s=baseSize()*objScale(o);
+  var w=Math.max(52,s*0.95), h=8, x=xy[0]-w/2, y=xy[1]-s*1.12;
+  var p=clamp(o.flee/o.fuseMax,0,1);
+  var urgent=o.flee<2.2;
+  g.save();
+  if(urgent && Math.floor(o.flee*9)%2===0) g.globalAlpha=0.55;
+  g.fillStyle='#F4F1E6'; g.fillRect(x,y,w,h);
+  g.fillStyle='#C42B1C'; g.fillRect(x+1.5,y+1.5,(w-3)*p,h-3);
+  g.strokeStyle='#231F1A'; g.lineWidth=2; g.strokeRect(x,y,w,h);
+  /* an arrow to the door it is heading for */
+  g.fillStyle='#C42B1C';
+  var ax=x+w+7, ay=y+h/2;
+  g.beginPath(); g.moveTo(ax,ay-5); g.lineTo(ax+9,ay); g.lineTo(ax,ay+5); g.closePath(); g.fill();
+  g.restore();
+  /* and mark the door itself while something is running for it */
+  var dx=DOOR[0]*W, dy=floorTop();
+  g.save();
+  g.globalAlpha=urgent?0.9:0.45+0.25*Math.sin(o.flee*7);
+  g.strokeStyle='#C42B1C'; g.lineWidth=4;
+  g.strokeRect(dx-W*0.0455,dy-H*0.30,W*0.091,H*0.30);
+  g.restore();
+}
+function drawDoor(){
+  var x=W*0.93, y=floorTop();
+  g.save();
+  g.strokeStyle='#231F1A'; g.lineWidth=2.4; g.lineJoin='round';
+  var h=H*0.30, w=W*0.085;
+  g.fillStyle='rgba(35,31,26,.82)';
+  g.beginPath(); g.rect(x-w/2,y-h,w,h); g.fill(); g.stroke();
+  g.restore();
+}
+
+/* ══════════════ particles ══════════════ */
+function addShards(o,n,verm){
+  var xy=objXY(o), s=baseSize()*objScale(o);
+  n=budget(n);
+  for(var i=0;i<n;i++){
+    parts.push({k:'sh', x:xy[0]+rr(-s*0.2,s*0.2), y:xy[1]-s*0.4+rr(-s*0.2,s*0.2),
+      vx:rr(-190,190), vy:rr(-320,-90), t:0, life:rr(0.6,0.95),
+      r:rr(0,6.3), vr:rr(-9,9), sz:rr(4,8)*(s/70), c:verm?'#C42B1C':spot(), f:ri(0,2)});
+  }
+}
+function teethTarget(){
+  var r=$('vTeeth').getBoundingClientRect(), c=cv.getBoundingClientRect();
+  return [r.left-c.left+r.width/2, r.top-c.top+r.height/2];
+}
+function splTarget(){
+  var r=$('vSpl').getBoundingClientRect(), c=cv.getBoundingClientRect();
+  return [r.left-c.left+r.width/2, r.top-c.top+r.height/2];
+}
+function addTeeth(o,n,total){
+  var xy=objXY(o), s=baseSize()*objScale(o), tg=teethTarget();
+  var want=budget(n); if(want<1){ S.teeth+=total; S.cycleTeeth+=total; kick('sTeeth'); return; }
+  total=total/n*want; if(want<n){ S.teeth+=(n-want)*(total/want); S.cycleTeeth+=(n-want)*(total/want); }
+  n=want;
+  for(var i=0;i<n;i++){
+    parts.push({k:'th', x:xy[0]+rr(-s*0.18,s*0.18), y:xy[1]-s*0.45,
+      vx:rr(-230,230), vy:rr(-420,-160), t:0, burst:rr(0.22,0.42),
+      tx:tg[0], ty:tg[1], val:total/n, idx:i, r:rr(0,6.3), vr:rr(-12,12), sz:rr(5,8)*clamp(s/70,0.7,1.5)});
+  }
+}
+function addSpl(o,n,total){
+  var xy=objXY(o), s=baseSize()*objScale(o), tg=splTarget();
+  var want=budget(n); if(want<1){ S.spl+=total; kick('sSpl'); return; }
+  total=total/n*want; n=want;
+  for(var i=0;i<n;i++){
+    parts.push({k:'sp', x:xy[0]+rr(-s*0.15,s*0.15), y:xy[1]-s*0.4,
+      vx:rr(-160,160), vy:rr(-300,-110), t:0, burst:rr(0.2,0.34),
+      tx:tg[0], ty:tg[1], val:total/n, r:rr(0,6.3), vr:rr(-10,10), sz:rr(3,5)});
+  }
+}
+var PCAP=440;
+function budget(want){ return Math.max(0,Math.min(want,PCAP-parts.length)); }
+var lastSfx=0;
+function throttled(fn){ var t=performance.now(); if(t-lastSfx<62) return; lastSfx=t; fn(); }
+function addRing(x,y,r,col,w){ if(rings.length>26) return; rings.push({x:x,y:y,r0:r*0.25,r:r,t:0,life:0.34,col:col||'#231F1A',w:w||3}); }
+function addBeam(x0,y0,x1,y1,col,w){ if(beams.length>14) return; beams.push({x0:x0,y0:y0,x1:x1,y1:y1,t:0,life:0.16,col:col||'#C42B1C',w:w||7}); }
+function addSpark(x,y){
+  var c=budget(3);
+  for(var i=0;i<c;i++){
+    var a=rr(0,6.3);
+    parts.push({k:'sk', x:x, y:y, a:a, len:rr(9,20), t:0, life:0.16});
+  }
+}
+function pop(x,y,txt,big){ if(pops.length>(big?14:22)) return; pops.push({x:x,y:y,txt:txt,big:!!big,t:0}); }
+
+function updateParts(dt){
+  for(var i=parts.length-1;i>=0;i--){
+    var p=parts[i]; p.t+=dt;
+    if(p.k==='sh'){
+      p.vy+=1500*dt; p.x+=p.vx*dt; p.y+=p.vy*dt; p.r+=p.vr*dt;
+      p.vx*=0.99;
+      if(p.t>p.life) parts.splice(i,1);
+    } else if(p.k==='th'||p.k==='sp'){
+      if(p.t<p.burst){ p.vy+=1500*dt; p.x+=p.vx*dt; p.y+=p.vy*dt; p.r+=p.vr*dt; }
+      else {
+        var dx=p.tx-p.x, dy=p.ty-p.y, d=Math.hypot(dx,dy)||1;
+        var sp=Math.min(3600,420+(p.t-p.burst)*4200)*magnetK();
+        p.x+=dx/d*sp*dt; p.y+=dy/d*sp*dt; p.r+=p.vr*dt*0.5;
+        if(d<16){
+          if(p.k==='th'){ S.teeth+=p.val; S.cycleTeeth+=p.val; SFX.tooth(p.idx||0); kick('sTeeth'); }
+          else { S.spl+=p.val; kick('sSpl'); }
+          parts.splice(i,1); continue;
+        }
+      }
+    } else if(p.k==='sk'){ if(p.t>p.life) parts.splice(i,1); }
+  }
+  for(var j=pops.length-1;j>=0;j--){ pops[j].t+=dt; if(pops[j].t>0.85) pops.splice(j,1); }
+}
+function drawFX(){
+  for(var i=rings.length-1;i>=0;i--){
+    var r=rings[i], t=r.t/r.life;
+    g.save(); g.globalAlpha=clamp(1-t,0,1);
+    g.strokeStyle=r.col; g.lineWidth=r.w*(1-t*0.6);
+    g.beginPath(); g.ellipse(r.x,r.y,r.r0+(r.r-r.r0)*t,(r.r0+(r.r-r.r0)*t)*0.42,0,0,6.3); g.stroke();
+    g.restore();
+  }
+  for(var j=beams.length-1;j>=0;j--){
+    var b=beams[j], u=b.t/b.life;
+    g.save(); g.globalAlpha=clamp(1-u*u,0,1); g.lineCap='round';
+    g.strokeStyle='#F4F1E6'; g.lineWidth=b.w*1.9*(1-u*0.5);
+    g.beginPath(); g.moveTo(b.x0,b.y0); g.lineTo(b.x1,b.y1); g.stroke();
+    g.strokeStyle=b.col; g.lineWidth=b.w*(1-u*0.5);
+    g.beginPath(); g.moveTo(b.x0,b.y0); g.lineTo(b.x1,b.y1); g.stroke();
+    g.restore();
+  }
+}
+function stepFX(dt){
+  for(var i=rings.length-1;i>=0;i--){ rings[i].t+=dt; if(rings[i].t>rings[i].life) rings.splice(i,1); }
+  for(var j=beams.length-1;j>=0;j--){ beams[j].t+=dt; if(beams[j].t>beams[j].life) beams.splice(j,1); }
+}
+function drawParts(){
+  for(var i=0;i<parts.length;i++){
+    var p=parts[i];
+    if(p.k==='sh'){
+      var a=clamp(1-(p.t/p.life-0.7)/0.3,0,1);
+      g.save(); g.globalAlpha=a; g.translate(p.x,p.y); g.rotate(p.r);
+      g.fillStyle=p.c; g.strokeStyle='#231F1A'; g.lineWidth=1.3;
+      g.beginPath();
+      if(p.f===0){ g.moveTo(-p.sz,-p.sz*0.7); g.lineTo(p.sz,-p.sz); g.lineTo(p.sz*0.7,p.sz); g.lineTo(-p.sz*0.8,p.sz*0.8); }
+      else if(p.f===1){ g.moveTo(-p.sz*0.8,-p.sz); g.lineTo(p.sz,-p.sz*0.3); g.lineTo(-p.sz*0.2,p.sz); }
+      else { g.moveTo(-p.sz,0); g.lineTo(0,-p.sz); g.lineTo(p.sz,p.sz*0.4); g.lineTo(-p.sz*0.3,p.sz); }
+      g.closePath(); g.fill(); g.stroke(); g.restore();
+    } else if(p.k==='th'){
+      g.save(); g.translate(p.x,p.y); g.rotate(p.r);
+      g.fillStyle='#F4F1E6'; g.strokeStyle='#231F1A'; g.lineWidth=1.4;
+      g.beginPath(); g.moveTo(-p.sz*0.62,-p.sz); g.lineTo(p.sz*0.62,-p.sz);
+      g.lineTo(p.sz*0.4,p.sz); g.lineTo(-p.sz*0.4,p.sz); g.closePath();
+      g.fill(); g.stroke(); g.restore();
+    } else if(p.k==='sp'){
+      g.save(); g.translate(p.x,p.y); g.rotate(p.r);
+      g.fillStyle=spot(); g.strokeStyle='#231F1A'; g.lineWidth=1;
+      g.fillRect(-p.sz,-p.sz*0.35,p.sz*2,p.sz*0.7);
+      g.strokeRect(-p.sz,-p.sz*0.35,p.sz*2,p.sz*0.7); g.restore();
+    } else if(p.k==='sk'){
+      var t=p.t/p.life;
+      g.save(); g.globalAlpha=1-t; g.strokeStyle='#231F1A'; g.lineWidth=2.6; g.lineCap='round';
+      g.beginPath(); g.moveTo(p.x+Math.cos(p.a)*p.len*t*0.5, p.y+Math.sin(p.a)*p.len*t*0.5);
+      g.lineTo(p.x+Math.cos(p.a)*p.len*(0.5+t), p.y+Math.sin(p.a)*p.len*(0.5+t));
+      g.stroke(); g.restore();
+    }
+  }
+  for(var j=0;j<pops.length;j++){
+    var q=pops[j], tt=q.t/0.85;
+    g.save();
+    g.globalAlpha=clamp(1-tt*tt,0,1);
+    g.textAlign='center'; g.textBaseline='middle';
+    if(q.big){
+      var s=tt<0.25?0.5+tt*2.6:1.15-((tt-0.25)*0.2);
+      g.font='700 '+Math.round(clamp(Math.min(W,H)*0.055,17,34))+'px '+MONO;
+      g.fillStyle='#C42B1C'; g.strokeStyle='#F4F1E6'; g.lineWidth=4; g.lineJoin='round';
+      g.save(); g.translate(q.x,q.y-tt*52); g.scale(s,s);
+      g.strokeText(q.txt,0,0); g.fillText(q.txt,0,0); g.restore();
+    } else {
+      g.font='700 '+Math.round(clamp(Math.min(W,H)*0.028,11,16))+'px '+MONO;
+      g.fillStyle='#231F1A';
+      g.fillText(q.txt,q.x,q.y-tt*38);
+    }
+    g.restore();
+  }
+}
+
+/* ══════════════ render ══════════════ */
+function render(){
+  var ink='#231F1A', sp=spot(), hot=false;
+  for(var i=0;i<objs.length;i++) if(objs[i].mimic){ hot=true; break; }
+  if(hot) sp='#928C7C';
+
+  g.setTransform(DPR,0,0,DPR,0,0);
+  var sx=0, sy=0;
+  if(shakeM>0.2){ sx=rr(-shakeM,shakeM); sy=rr(-shakeM,shakeM); }
+  g.clearRect(0,0,W,H);
+  g.save(); g.translate(sx,sy);
+
+  if(bg) g.drawImage(bg,0,0,W,H);
+
+  /* eyes */
+  for(var e=0;e<EYES;e++){
+    var es=eyeSpots[e]; if(!es) continue;
+    drawEye(es.x*W, es.y*floorTop()*0.96, es.s*clamp(Math.min(W,H)/520,0.72,1.35)*clamp(floorTop()/(H*0.4),0.7,1.15), es.o);
+  }
+
+  /* objects sorted back to front */
+  var order=objs.slice().sort(function(a,b){ return (a.wall?-9:a.fy)-(b.wall?-9:b.fy); });
+  for(var o=0;o<order.length;o++) if(!order[o].dead) drawObj(order[o],ink,sp);
+
+  drawInterns();
+  drawFuse();
+  drawRoomFuse();
+  drawFX();
+  drawParts();
+  drawHammer();
+  g.restore();
+
+  /* vignette */
+  var vg=Math.pow(eyes/EYES,1.9);
+  if(vg>0.01){
+    var rad=g.createRadialGradient(W/2,H*0.46,Math.min(W,H)*0.22,W/2,H*0.46,Math.max(W,H)*0.72);
+    rad.addColorStop(0,'rgba(196,43,28,0)'); rad.addColorStop(1,'rgba(196,43,28,'+(vg*0.72).toFixed(3)+')');
+    g.fillStyle=rad; g.fillRect(0,0,W,H);
+  }
+  /* flash */
+  if(flashT>0){ g.fillStyle='rgba(196,43,28,'+(flashT*0.55).toFixed(3)+')'; g.fillRect(0,0,W,H); }
+  /* grain */
+  if(grain){ g.save(); g.globalCompositeOperation='multiply'; g.drawImage(grain,0,0,W,H); g.restore(); }
+  /* jaws */
+  if(dead||jawT>0){ drawJaws(); }
+}
+var jawT=0;
+function drawJaws(){
+  var p=clamp(jawT,0,1), h=H*0.55;
+  g.save();
+  [0,1].forEach(function(bot){
+    var y0=bot? H-h*p : -h+h*p;
+    g.save(); g.translate(0,y0);
+    g.fillStyle='#C42B1C';
+    g.fillRect(0,bot?0:0,W,h);
+    /* teeth row */
+    g.fillStyle='#F4F1E6'; g.strokeStyle='#231F1A'; g.lineWidth=1.4;
+    var n=13, w=W/n;
+    g.beginPath();
+    for(var i=0;i<n;i++){
+      var x=i*w;
+      if(bot){ g.moveTo(x,0); g.lineTo(x+w/2,-w*0.7); g.lineTo(x+w,0); }
+      else { g.moveTo(x,h); g.lineTo(x+w/2,h+w*0.7); g.lineTo(x+w,h); }
+    }
+    g.closePath(); g.fill(); g.stroke();
+    g.restore();
+  });
+  g.restore();
+}
+
+/* ══════════════ gameplay ══════════════ */
+function say(t){ $('say').innerHTML=t; }
+function kick(id){ var n=$(id); n.classList.remove('kick'); void n.offsetWidth; n.classList.add('kick'); }
+function shake(m){ if(REDUCED) m*=0.3; shakeM=Math.max(shakeM,m); }
+function crackFor(o){
+  var x=rr(14,32), y=rr(15,24), pts=[[x,y]];
+  for(var i=0;i<3;i++){ x+=rr(-4.5,4.5); y+=rr(3.5,6); pts.push([x,y]); }
+  o.cracks.push(pts);
+}
+/* generous aim: exact hit first, otherwise snap to the nearest piece within reach */
+function aimAt2(x,y){
+  var i=objAt(x,y);
+  if(i>=0) return i;
+  var best=-1, bd=1e9, R=baseSize()*1.35;
+  for(var j=0;j<objs.length;j++){
+    var o=objs[j]; if(o.dead) continue;
+    var q=objXY(o), s=baseSize()*objScale(o);
+    var d=Math.hypot(q[0]-x,(q[1]-s*0.42-y)*1.15);
+    if(d<bd && d<R){ bd=d; best=j; }
+  }
+  return best;
+}
+function objAt(x,y){
+  var best=-1, bd=1e9;
+  for(var i=0;i<objs.length;i++){
+    var o=objs[i]; if(o.dead) continue;
+    var xy=objXY(o), s=baseSize()*objScale(o);
+    var dx=x-xy[0], dy=y-(xy[1]-s*0.42);
+    /* never smaller than a fingertip */
+    var rx=Math.max(24,s*0.42), ry=Math.max(26,s*0.48);
+    var d=(dx*dx)/(rx*rx)+(dy*dy)/(ry*ry);
+    if(d<1 && d<bd){ bd=d; best=i; }
+  }
+  return best;
+}
+function reveal(o,forced){
+  var rng=mk(o.seed+77);
+  o.mimic=true;
+  o.vr=forced||pickVar();
+  o.max=Math.max(2,Math.round((6+U('head')*2)*(1+ROOMS[S.room].hp*0.14)*o.vr.hp)); o.hp=o.max;
+  o.cracks=[];
+  o.teethTop=teethPts(KIT[o.kind].seam,true,rng);
+  o.teethBot=teethPts(KIT[o.kind].seam,false,rng);
+  /* fuse scales with time-to-kill, so it stays fair as both sides grow */
+  var dps=dmg()/swingInt();
+  o.fuseMax=U('rep')>=3?0:clamp((4.6+(o.hp/dps)*2.5)*o.vr.fuse*fuseMul(),1.7,16);
+  o.flee=o.fuseMax; o.sx=o.fx; o.sy=o.fy; o.tick=0; o.bolting=false;
+  freeze=0.28; flashT=1; shake(14); SFX.scream();
+  var xy=objXY(o); pop(xy[0],xy[1]-baseSize()*objScale(o)*0.7,'TEETH!',true);
+  if(o.vr.k!=='plain'){ pop(xy[0],xy[1]-baseSize()*objScale(o)*1.05,o.vr.n); }
+  say(o.vr.k==='golden'?'<b>Gilded.</b> Worth a fortune and barely stopping.'
+     :o.vr.k==='brute'?'<b>A brute.</b> Slow, enormous, unbothered.'
+     :o.vr.k==='howler'?'<b>A howler.</b> It is waking the whole room.'
+     :o.vr.k==='splitter'?'<b>A splitter.</b> Killing it will not be the end of it.'
+     :o.fuseMax?'<b>It screams — and it runs.</b> Break it before it reaches the door.'
+     :'<b>It screams.</b> It is not going anywhere. Break it.');
+  if(!S.seen[o.kind]){ S.seen[o.kind]=1; }
+}
+function killMimic(o){
+  var xy=objXY(o), sc=objScale(o);
+  var gain=9*frenzy*(1+openEyes()*(1/6+0.02*U('haul')))*teethMult()*haulMul()*((o.vr&&o.vr.pay)||1);
+  var n=clamp(Math.round(6+Math.log10(Math.max(10,gain))*4),6,22);
+  addTeeth(o,n,gain);
+  addShards(o,10,true);
+  pop(xy[0],xy[1]-baseSize()*sc*0.8,'+'+fmt(gain),true);
+  shake(9); freeze=Math.max(freeze,0.09); SFX.kill();
+  if(S.room===4){ eyes=Math.max(0,eyes-1); }
+  else addEyes(1);
+  o.dead=true;
+  var self=o;
+  setTimeout(function(){ if(!dead) newObj(self); },260);
+  /* splitters leave two smaller problems behind */
+  if(o.vr&&o.vr.k==='splitter'&&!o.child){
+    for(var sp=0;sp<2;sp++){
+      var kid=objs[ri(0,objs.length-1)];
+      if(!kid||kid.mimic) continue;
+      kid.fx=clamp(o.fx+rr(-0.1,0.1),0.07,0.93); kid.fy=clamp(o.fy+rr(-0.08,0.08),0.03,0.97);
+      kid.child=true; kid.dead=false; kid.spawn=0.001;
+      reveal(kid,{k:'runner',n:'SPAWN',hp:0.4,fuse:0.8,pay:0.6,col:'#5E8A46'});
+    }
+  }
+  /* every variant leaves a fang behind, sometimes */
+  var vk=(o.vr&&o.vr.k)||'plain';
+  if(FANGS[vk] && Math.random()<(vk==='plain'?0.10:0.26)){
+    S.fangs[vk]=(S.fangs[vk]||0)+1;
+    var fxy=objXY(o);
+    pop(fxy[0],fxy[1]-baseSize()*1.15,FANGS[vk].n.toUpperCase());
+    tone(1480,0.1,'triangle',0.05); tone(2100,0.14,'triangle',0.04,null,0.07);
+  }
+  runKills++;
+
+  /* contract progress — this is what clears a room */
+  var R=ROOMS[S.room];
+  if(!S.cleared[S.room]){
+    S.prog[S.room]=prog(S.room)+1;
+    refreshRoomLabel();
+    if(prog(S.room)>=R.quota){ clearRoom(); return; }
+    var left=R.quota-prog(S.room);
+    if(left<=3){ say('<b>'+left+' more set'+(left>1?'s':'')+'</b> and this room is signed off.'); if(eyes>=EYES) roomScream(); return; }
+  }
+  var oe=openEyes();
+  say(oe>=13?'<b>Let go.</b> Let go now.':oe>=8?'Half the wallpaper is watching you.':'Teeth recovered. The Guild pays per set.');
+  if(eyes>=EYES) roomScream();
+}
+function findLore(){
+  if(S.lore>=LORE.length) return false;
+  var L=LORE[S.lore]; S.lore++;
+  banner('Guild memorandum',L.t+' — <i>'+L.src+'</i>');
+  tone(880,0.1,'triangle',0.045); tone(1170,0.16,'triangle',0.04,null,0.07);
+  save(); refreshUI();
+  return true;
+}
+function clearRoom(){
+  S.cleared[S.room]=1;
+  var next=S.room+1<ROOMS.length?ROOMS[S.room+1]:null;
+  freeze=0.4; flashT=1; shake(14); SFX.promo();
+  refreshRoomLabel();
+  $('clrRoom').textContent=ROOMS[S.room].n;
+  $('clrNext').innerHTML=next
+    ? 'The Guild signs it off and hands you a key to <i>'+next.n+'</i>. This room stays open — you can farm it whenever you like.'
+    : 'Every room in the dungeon is signed off. Walk out and accept your promotion.';
+  /* bank the run so a clear never costs you anything */
+  S.banked+=S.teeth; S.teeth=0;
+  setTimeout(findLore,1400);   /* every room signed off releases a document */
+  save();
+  setTimeout(function(){ show('ovClear'); },520);
+}
+function breakJunk(o){
+  var amt=(1+ri(1,3))*(1+0.4*U('scav'));
+  if(Math.random()<0.011) findLore();
+  addSpl(o,4,amt);
+  addShards(o,parts.length>200?3:7,false);
+  var xy=objXY(o);
+  shake(4.5); freeze=Math.max(freeze,0.05); throttled(function(){ SFX.brk(); });
+  o.dead=true;
+  var self=o;
+  setTimeout(function(){ if(!dead) newObj(self); },230);
+  /* library: some books do something */
+  if(S.room===2 && Math.random()<0.14){
+    var roll=Math.random();
+    if(roll<0.4){ frenzy=Math.min(3.4,frenzy+0.8); pop(xy[0],xy[1]-40,'A SPELL'); SFX.open(); }
+    else if(roll<0.75){ addEyes(1.2); pop(xy[0],xy[1]-40,'IT READ BACK'); }
+    else { S.teeth+=18*teethMult(); pop(xy[0],xy[1]-40,'PRESSED FLOWER'); kick('sTeeth'); }
+  }
+}
+/* the player's swing splashes: hammer aoe, plus the Arm keystone */
+function swingAt(i){
+  if(i<0||!objs[i]||objs[i].dead) return;
+  var R=aoeR()+(U('head')>=3?baseSize()*0.55:0);
+  var d=dmg();
+  critNow=Math.random()<critChance();
+  if(critNow){
+    d*=8;
+    var cxy=objXY(objs[i]);
+    pop(cxy[0],cxy[1]-baseSize()*1.05,'CRIT',true);
+    addRing(cxy[0],cxy[1]-baseSize()*0.25,baseSize()*1.4,'#D8A63A',5);
+    shake(8); tone(1320,0.1,'square',0.05); tone(1980,0.16,'square',0.04,null,0.06);
+    if(U('crit')>=6) R=Math.max(R,baseSize()*2.1);
+  }
+  if(R>4){
+    var XY=objXY(objs[i]), hitAny=false;
+    for(var j=0;j<objs.length;j++){
+      if(j===i||objs[j].dead) continue;
+      var q=objXY(objs[j]);
+      if(Math.hypot(q[0]-XY[0],(q[1]-XY[1])*1.4)<R){ hitObj(j,Math.max(1,Math.round(d*(U('reach')>=4?1:0.55))),true); hitAny=true; }
+    }
+    if(hitAny||HAM().ring){ addRing(XY[0],XY[1]-baseSize()*0.25,R*1.2,HAM().col,2+HAM().ring); }
+  }
+  hitObj(i,d,false);
+}
+function hitObj(i,amount,byIntern){
+  if(dead||i<0||i>=objs.length) return;
+  var o=objs[i]; if(!o||o.dead) return;
+  o.squash=1; crackFor(o);
+  o.hp-=amount;
+  if(roomMim){
+    roomMim.hp-=amount;
+    if(roomMim.hp<=0){ killRoom(); return; }
+  }
+  if(!byIntern){
+    swings++; throttled(function(){ SFX.swing(swings); });
+    shake(1.6); freeze=Math.max(freeze,swingInt()<0.1?0.012:0.028);
+    if(swingInt()>0.09||swings%2===0) addSpark(px,py);
+    hamAnim=0;
+  }
+  if(o.hp>0){
+    if(!byIntern){ var xy=objXY(o); pop(xy[0]+rr(-8,8), xy[1]-baseSize()*objScale(o)*0.85, '−'+fmt(amount)); }
+    return;
+  }
+  if(!o.mimic && !loose() && !roomMim && Math.random()<mimicChance()) reveal(o);
+  else if(o.mimic) killMimic(o);
+  else breakJunk(o);
+}
+function detonate(xy,rad,d,chain){
+  addRing(xy[0],xy[1]-baseSize()*0.2,rad*1.5,'#C42B1C',5);
+  addRing(xy[0],xy[1]-baseSize()*0.2,rad*0.9,'#231F1A',3);
+  shake(7); tone(90,0.3,'sawtooth',0.07,40); noise(0.28,0.07,600,0.8);
+  var hits=[];
+  for(var i=0;i<objs.length;i++){
+    if(objs[i].dead) continue;
+    var p=objXY(objs[i]);
+    if(Math.hypot(p[0]-xy[0],(p[1]-xy[1])*1.5)<rad) hits.push(i);
+  }
+  for(var j=0;j<hits.length;j++) hitObj(hits[j],d,true);
+  if(chain>0 && hits.length){
+    var nxt=hits[ri(0,hits.length-1)];
+    if(objs[nxt]){ var np=objXY(objs[nxt]);
+      setTimeout(function(){ if(!dead) detonate(np,rad*0.8,Math.round(d*0.7),chain-1); },140); }
+  }
+}
+function roomScream(){
+  if(roomMim||dead) return;
+  var dps=dmg()/swingInt();
+  roomMim={max:Math.max(20,Math.round(dps*5.5)),hp:0,fuse:7,fuseMax:7};
+  roomMim.hp=roomMim.max;
+  eyes=EYES;
+  freeze=0.5; flashT=1; shake(22);
+  SFX.roomScream();
+  say('<b>THE ROOM IS A MIMIC.</b> Break it. Hit anything — it all hurts.');
+  pop(W/2,H*0.42,'THE ROOM',true);
+}
+function killRoom(){
+  var gain=9*frenzy*(1+15*(1/6+0.02*U('haul')))*teethMult()*haulMul()*14;
+  var tg=teethTarget();
+  for(var i=0;i<22;i++){
+    parts.push({k:'th',x:rr(W*0.2,W*0.8),y:rr(H*0.3,H*0.7),vx:rr(-320,320),vy:rr(-520,-160),
+      t:0,burst:rr(0.2,0.5),tx:tg[0],ty:tg[1],val:gain/22,idx:i,r:rr(0,6.3),vr:rr(-12,12),sz:rr(7,11)});
+  }
+  pop(W/2,H*0.4,'+'+fmt(gain),true);
+  addRing(W/2,H*0.5,Math.max(W,H)*0.7,'#C42B1C',7);
+  shake(20); flashT=1; SFX.promo(); SFX.kill();
+  S.fangs.room=(S.fangs.room||0)+1;
+  pop(W/2,H*0.55,'ROOM FANG');
+  roomMim=null; eyes=0; jawT=0;
+  if(!S.cleared[S.room]){
+    S.prog[S.room]=prog(S.room)+3; refreshRoomLabel();
+    if(prog(S.room)>=ROOMS[S.room].quota){ clearRoom(); return; }
+  }
+  say('<b>You broke the room.</b> Every eye shut at once. Keep going.');
+  save();
+}
+function getEaten(){
+  if(dead) return;
+  dead=true; held=false; jawT=0;
+  var keepPct=U('pouch')>=6?0.6:0.3;
+  var kept=S.teeth*keepPct, lost=S.teeth-kept;
+  S.banked+=kept; S.spl+=lost/4; S.teeth=0; eyes=EYES;
+  SFX.eat(); shake(18); flashT=1;
+  $('eatKept').textContent=fmt(kept);
+  $('eatSpl').textContent=fmt(lost/4);
+  $('eatProg').textContent=S.cleared[S.room]
+    ? 'This room is already signed off. Nothing lost but teeth.'
+    : 'Contract progress kept: '+prog(S.room)+' of '+ROOMS[S.room].quota+'. Being eaten never costs you that.';
+  setTimeout(function(){ show('ovEaten'); },700);
+  save();
+}
+function mimicEscaped(o){
+  if(dead) return;
+  o.dead=true;
+  dead=true; held=false; jawT=0;
+  var keepPct=U('pouch')>=6?0.6:0.3;
+  var kept=S.teeth*keepPct, lost=S.teeth-kept;
+  S.banked+=kept; S.spl+=lost/4; S.teeth=0;
+  SFX.flee(); SFX.eat(); shake(16); flashT=1;
+  var xy=objXY(o); pop(xy[0],xy[1]-50,'GOT AWAY',true);
+  $('escKept').textContent=fmt(kept);
+  $('escProg').textContent=S.cleared[S.room]
+    ? 'This room is already signed off. Nothing lost but teeth.'
+    : 'Contract progress kept: '+prog(S.room)+' of '+ROOMS[S.room].quota+'. An escape never costs you that.';
+  setTimeout(function(){ show('ovEsc'); },650);
+  save();
+}
+function walkOut(){
+  if(dead) return;
+  var mult=(U('pouch')>=3 && openEyes()>=13)?2:1;
+  var amt=S.teeth*mult, hadEyes=openEyes(), k=runKills;
+  S.banked+=amt; S.teeth=0;
+  if(amt>0){ SFX.buy(); kick('sBank'); }
+  var hm=haulMul();
+  banner(mult>1?'Banked — double':'Banked',
+    '<i>'+fmt(amt)+'</i> teeth safe · <i>'+k+'</i> set'+(k===1?'':'s')+' · haul bonus <i>×'+hm.toFixed(1)+'</i> reset · reached <i>'+hadEyes+'</i> eyes');
+  /* the run is over: the room restocks and every eye shuts. That is the cost of banking. */
+  buildRoom(true);
+  runKills=0;
+  say(mult>1?'<b>Banked double.</b> You went right to the edge.':'<b>Safe.</b> Fresh room, haul bonus back to ×1. Stay in longer next time and it climbs.');
+  save(); refreshUI();
+}
+
+/* ══════════════ input ══════════════ */
+function localPt(e){
+  var r=cv.getBoundingClientRect();
+  return [e.clientX-r.left, e.clientY-r.top];
+}
+cv.addEventListener('pointerdown',function(e){
+  if(!running||dead) return;
+  e.preventDefault();
+  var p=localPt(e); px=p[0]; py=p[1]; hasPointer=true;
+  try{ cv.setPointerCapture(e.pointerId); }catch(err){}
+  /* pressing anywhere starts swinging — the hammer finds something */
+  aimIdx=aimAt2(px,py);
+  held=true; holdT=0; swings=0; swingAcc=swingInt();
+});
+cv.addEventListener('pointermove',function(e){
+  var p=localPt(e); px=p[0]; py=p[1]; hasPointer=true;
+  if(!running||dead) return;
+  aimIdx=aimAt2(px,py);
+});
+function release(){
+  if(!held) return;
+  held=false; swings=0; hamTarget=0.6;
+}
+cv.addEventListener('pointerup',release);
+cv.addEventListener('pointercancel',release);
+cv.addEventListener('pointerleave',function(){ if(!held){ hasPointer=false; aimIdx=-1; } });
+window.addEventListener('blur',release);
+
+/* ══════════════ UI ══════════════ */
+var TABS=['ovShop','ovMap','ovBest','ovCat','ovHelp'];
+function anyPanel(){ return !!document.querySelector('.ov.on'); }
+function syncTabs(){
+  var t=document.querySelectorAll('#bot .tab');
+  for(var i=0;i<t.length;i++) t[i].classList.toggle('on',$(t[i].dataset.panel).classList.contains('on'));
+}
+function show(id){
+  for(var i=0;i<TABS.length;i++) if(TABS[i]!==id) $(TABS[i]).classList.remove('on');
+  $(id).classList.add('on');
+  if(TABS.indexOf(id)>=0) $('scrim').classList.add('on');
+  var w=$(id).querySelector('.where');
+  if(w) w.textContent='in '+ROOMS[S.room].n;
+  syncTabs();
+}
+function hide(id){
+  $(id).classList.remove('on');
+  var open=false;
+  for(var i=0;i<TABS.length;i++) if($(TABS[i]).classList.contains('on')) open=true;
+  $('scrim').classList.toggle('on',open);
+  syncTabs();
+}
+function togglePanel(id,build){
+  if($(id).classList.contains('on')){ hide(id); return; }
+  release(); if(build) build(); show(id);
+}
+
+/* cheap, every frame */
+function refreshNums(){
+  $('vTeeth').textContent=fmt(S.teeth);
+  $('kTeeth').textContent=runKills?('Carrying · ×'+haulMul().toFixed(1)):'Carrying';
+  $('vBank').textContent=fmt(S.banked);
+  $('vSpl').textContent=fmt(S.spl);
+  $('vEyes').textContent=roomMim?'OPEN':(openEyes()+'/'+EYES);
+  var fm=Math.round((1-fuseMul())*100);
+  $('kEyes').textContent=roomMim?'The room':(fm>0?'Eyes · fuse −'+fm+'%':'Eyes');
+  $('vEyes').className='v'+(roomMim||openEyes()>=12?' verm':'');
+  var dp=clamp(eyes/EYES,0,1), dw=$('dwrap');
+  $('dbar').style.width=(dp*100).toFixed(1)+'%';
+  dw.classList.toggle('hot',dp>=0.6||!!roomMim);
+  dw.classList.toggle('warn',dp>=0.8&&!roomMim);
+  $('dlbl').textContent = roomMim ? 'The room is a mimic — break it'
+    : dp>=0.8 ? 'Stop · walk out'
+    : dp>=0.6 ? 'Hostile · fuse −'+fm+'%'
+    : dp>=0.3 ? 'Noticed · fuse −'+fm+'%'
+    : (!held&&loose()) ? 'Cooling · something is loose'
+    : !held&&dp>0.02 ? 'Cooling'
+    : 'Safe';
+  var fb=$('fbar');
+  fb.style.width=clamp((frenzy-1)/2.2*100,0,100).toFixed(1)+'%';
+  fb.classList.toggle('max',frenzy>=3.15);
+}
+/* touches innerHTML — only when something it shows actually changed */
+var chromeSig='';
+function refreshUI(){
+  refreshNums();
+  var afford=false;
+  for(var i=0;i<TECH.length;i++){ var t=TECH[i]; if(U(t.k)<t.max && S.banked>=cost(t,U(t.k))){ afford=true; break; } }
+  if(!afford && U('decoy')<DECOY.max && S.spl>=cost(DECOY,U('decoy'))) afford=true;
+  /* badge the Rooms button when a room you've never entered has opened up */
+  var roomReady=false;
+  for(var j=1;j<ROOMS.length;j++) if(roomOpen(j) && !S.cleared[j] && prog(j)===0 && S.room!==j){ roomReady=true; break; }
+  var sig=S.rank+'|'+S.notes+'|'+(promoReady()?1:0)+'|'+(afford?1:0)+'|'+(roomReady?1:0)+'|'+S.lore+'|'+S.loreSeen+'|'+Math.floor(S.teeth)+'|'+runKills;
+  if(sig===chromeSig) return;
+  chromeSig=sig;
+  $('rank').textContent=(S.sandbox?'SANDBOX · ':'')+RANKS[S.rank]+(S.notes?' · '+S.notes+' notes':'');
+  var w=$('walk');
+  if(promoReady()){ w.classList.add('promo'); w.innerHTML='Accept promotion'; w.classList.remove('idle'); }
+  else {
+    w.classList.remove('promo');
+    if(S.teeth>=1){ w.classList.remove('idle'); w.innerHTML='Bank '+fmt(S.teeth)+'<i>walk out · ×'+haulMul().toFixed(1)+' haul lost</i>'; }
+    else { w.classList.add('idle'); w.innerHTML='Walk out<i>nothing to bank</i>'; }
+  }
+  $('mapBtn').innerHTML='Rooms'+(roomReady?'<span class="badge">!</span>':'');
+  var unread=Math.max(0,S.lore-S.loreSeen);
+  $('help').innerHTML='?&nbsp;Handbook'+(unread?'<span class="badge">'+unread+'</span>':'');
+  $('shopBtn').innerHTML='Store'+(afford?'<span class="badge">!</span>':'');
+}
+
+function iconSVG(kind,mimic){
+  var K=KIT[kind], rng=mk(9), out='';
+  function pts2str(pts){ return pts.map(function(p){return p[0]+','+p[1];}).join(' '); }
+  for(var i=0;i<K.p.length;i++){
+    var p=K.p[i];
+    if(p.t==='rect') out+='<rect x="'+p.x+'" y="'+p.y+'" width="'+p.w+'" height="'+p.h+'" rx="'+(p.r||0)+'" fill="'+(p.ink?'#231F1A':'none')+'" stroke="#231F1A" stroke-width="2.4"/>';
+    else if(p.t==='poly') out+='<polygon points="'+pts2str(p.pts)+'" fill="none" stroke="#231F1A" stroke-width="2.4"/>';
+    else if(p.t==='ell') out+='<ellipse cx="'+p.cx+'" cy="'+p.cy+'" rx="'+p.rx+'" ry="'+p.ry+'" fill="none" stroke="#231F1A" stroke-width="2.4"/>';
+    else out+='<polyline points="'+pts2str(p.pts)+'" fill="none" stroke="#231F1A" stroke-width="2.4"/>';
+  }
+  var mo='';
+  if(mimic){
+    var y=K.seam, up=teethPts(y,true,mk(4)), dn=teethPts(y,false,mk(5));
+    mo='<rect x="10" y="'+(y-8)+'" width="28" height="16" fill="#231F1A"/>'+
+       '<polygon points="'+pts2str(up)+'" fill="#F4F1E6"/><polygon points="'+pts2str(dn)+'" fill="#F4F1E6"/>';
+  }
+  return '<svg viewBox="0 0 48 48" style="background:'+(mimic?'#E8CFC6':'#DED8C4')+'">'+out+mo+'</svg>';
+}
+
+/* shop */
+function hammerIcon(Hm){
+  return '<svg viewBox="0 0 48 48" style="background:#DED8C4"><g stroke="#231F1A" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" fill="none">'+
+    '<path d="M14 14 L34 36"/></g>'+
+    '<g transform="rotate(45,14,14)"><rect x="'+(14-11*Hm.hd)+'" y="'+(14-7*Hm.hd)+'" width="'+(22*Hm.hd)+'" height="'+(14*Hm.hd)+'" fill="'+Hm.col+'" stroke="#231F1A" stroke-width="3"/></g></svg>';
+}
+var buyN=1;
+function costN(def,lvl,k){
+  var c=0; for(var i=0;i<k;i++) c+=Math.floor(def.base*Math.pow(def.r,lvl+i));
+  return c;
+}
+function maxAfford(def,lvl,budget){
+  var k=0,c=0;
+  while(lvl+k<def.max){
+    var nx=Math.floor(def.base*Math.pow(def.r,lvl+k));
+    if(c+nx>budget) break;
+    c+=nx; k++;
+    if(k>200) break;
+  }
+  return k;
+}
+function planBuy(def,lvl,budget){
+  var room=def.max-lvl;
+  if(room<=0) return {k:0,c:0};
+  var k = buyN==='max' ? maxAfford(def,lvl,budget) : Math.min(buyN,room);
+  return {k:k, c:costN(def,lvl,k)};
+}
+function statRow(){
+  var sw=1/swingInt();
+  return '<div class="stats2">'+
+    [['Damage',fmt(dmg())],
+     ['Swings/s',sw.toFixed(1)],
+     ['DPS',fmt(dmg()*sw)],
+     ['Area',HAM().aoe?((aoeR()/baseSize()).toFixed(2)+'×'):'—'],
+     ['Crit',Math.round(critChance()*100)+'%'],
+     ['Mimic',Math.round(mimicChance()*100)+'%'],
+     ['Eyes/s',(eyeRate()).toFixed(2)],
+     ['Teeth ×',teethMult().toFixed(1)]
+    ].map(function(r){ return '<div><span>'+r[0]+'</span><b>'+r[1]+'</b></div>'; }).join('')+
+    '</div>';
+}
+function buildShop(){
+  var h=statRow();
+  h+='<div class="buyrow"><span>Buy</span>'+
+     [1,10,'max'].map(function(v){
+       return '<button class="bn'+(buyN===v?' on':'')+'" data-buy="'+v+'">'+(v==='max'?'Max':'×'+v)+'</button>';
+     }).join('')+'</div>';
+
+  h+='<div class="grp">The Forge — hammers, bought with banked teeth and larvae</div>';
+  var cur=HAM();
+  h+='<div class="card bought" style="cursor:default"><span class="ci">'+hammerIcon(cur)+'</span>'+
+     '<div class="cb"><div class="cn">'+cur.n+' — equipped</div><div class="cd">'+cur.d+'</div>'+
+     '<div class="key">×'+cur.dmg+' damage · ×'+cur.spd.toFixed(2)+' swing · '+(cur.aoe?'area '+cur.aoe.toFixed(2):'no area')+'</div></div></div>';
+  var nx=HAMMERS[(S.hammer||0)+1];
+  if(nx){
+    var okT=S.banked>=nx.cost, okL=S.larvae>=nx.larv, can=okT&&okL;
+    h+='<button class="card '+(can?'ok':'')+'" data-t="forge" '+(can?'':'disabled')+'>'+
+       '<span class="ci">'+hammerIcon(nx)+'</span><div class="cb">'+
+       '<div class="cn">Forge the '+nx.n+'</div><div class="cd">'+nx.d+'</div>'+
+       '<div class="cc">'+fmt(nx.cost)+' teeth'+(nx.larv?' <s>+</s> '+nx.larv+' larvae':'')+'</div>'+
+       '<div class="key">×'+nx.dmg+' dmg (now ×'+cur.dmg+') · ×'+nx.spd.toFixed(2)+' swing · '+(nx.aoe?'area '+nx.aoe.toFixed(2):'no area')+'</div>'+
+       (okL?'':'<div class="key" style="color:#8C846F">Larvae come from decoys, while you are away.</div>')+
+       '</div></button>';
+  }
+
+  /* tech, grouped by branch name */
+  var groups={};
+  TECH.forEach(function(t){ (groups[t.g]=groups[t.g]||[]).push(t); });
+  Object.keys(groups).forEach(function(gn){
+    h+='<div class="grp">'+gn+'</div>';
+    groups[gn].forEach(function(t){
+      var lv=U(t.k), maxed=lv>=t.max;
+      var p=planBuy(t,lv,S.banked);
+      var can=!maxed&&p.k>0&&S.banked>=p.c;
+      var owned='';
+      for(var k2 in t.key) if(lv>=+k2) owned+='<div class="key" style="color:#9FBF8A">Active: '+t.key[k2]+'</div>';
+      var nextKey='';
+      for(var kk in t.key) if(+kk>lv) { nextKey='<div class="key">Lv '+kk+': '+t.key[kk]+'</div>'; break; }
+      var label=maxed?'<s>Fully upgraded</s>'
+        :(p.k>1?fmt(p.c)+' teeth for '+p.k+' levels':fmt(costN(t,lv,1))+' teeth');
+      h+='<button class="card '+(can?'ok':'')+(lv?' bought':'')+'" data-t="'+t.k+'" '+(can?'':'disabled')+'>'+
+         '<div class="cb"><div class="cn">'+t.n+'</div><div class="cd">'+t.d+'</div>'+
+         '<div class="cc">'+label+'</div>'+owned+nextKey+'</div>'+
+         '<span class="lv">'+lv+'/'+t.max+'</span></button>';
+    });
+  });
+
+  var dl=U('decoy'), dp=planBuy(DECOY,dl,S.spl), dcan=dl<DECOY.max&&dp.k>0&&S.spl>=dp.c;
+  h+='<div class="grp">Decoys — built from splinters, work while you are away</div>'+
+     '<button class="card '+(dcan?'ok':'')+(dl?' bought':'')+'" data-t="decoy" '+(dcan?'':'disabled')+'>'+
+     '<div class="cb"><div class="cn">'+DECOY.n+'</div><div class="cd">'+DECOY.d+'</div>'+
+     '<div class="cc">'+(dl>=DECOY.max?'<s>The dungeon is full</s>':fmt(dp.c)+' splinters'+(dp.k>1?' for '+dp.k:''))+'</div>'+
+     '<div class="key">'+dl+' out · about '+fmt(dl*14)+' splinters and '+(dl*0.9).toFixed(1)+' larvae an hour</div></div>'+
+     '<span class="lv">'+dl+'/'+DECOY.max+'</span></button>';
+
+  $('shopBody').innerHTML=h;
+  $('shopBank').textContent=fmt(S.banked);
+  $('shopSpl').textContent=fmt(S.spl)+' · larvae '+S.larvae;
+  var cw=$('carryWarn');
+  if(cw){
+    if(S.teeth>=1){ cw.hidden=false; cw.innerHTML='You are carrying <b>'+fmt(S.teeth)+'</b> unbanked teeth. They buy nothing until you walk out — and you lose 70% of them if the run goes wrong.'; }
+    else cw.hidden=true;
+  }
+}
+$('shopBody').addEventListener('click',function(e){
+  var tog=e.target.closest('[data-buy]');
+  if(tog){ var v=tog.dataset.buy; buyN=(v==='max'?'max':+v); buildShop(); return; }
+  var b=e.target.closest('.card'); if(!b||b.disabled) return;
+  var k=b.dataset.t;
+  if(k==='forge'){
+    var nh=HAMMERS[(S.hammer||0)+1];
+    if(!nh||S.banked<nh.cost||S.larvae<nh.larv) return;
+    S.banked-=nh.cost; S.larvae-=nh.larv; S.hammer=(S.hammer||0)+1;
+    SFX.promo(); flashT=1; shake(10);
+    say('<b>'+nh.n+'.</b> '+nh.d);
+    save(); buildShop(); refreshUI(); return;
+  }
+  if(k==='decoy'){
+    var dp=planBuy(DECOY,U('decoy'),S.spl);
+    if(dp.k<1||S.spl<dp.c) return;
+    S.spl-=dp.c; S.upg.decoy=U('decoy')+dp.k;
+  } else {
+    var t=TECH.filter(function(z){return z.k===k;})[0];
+    var p=planBuy(t,U(k),S.banked);
+    if(p.k<1||S.banked<p.c) return;
+    S.banked-=p.c;
+    var before=U(k); S.upg[k]=before+p.k;
+    for(var kk2 in t.key){ if(+kk2>before && +kk2<=S.upg[k]) say('<b>'+t.key[kk2]+'.</b>'); }
+  }
+  SFX.buy(); save(); buildShop(); refreshUI();
+  var nb=$('shopBody').querySelector('[data-t="'+k+'"]');
+  if(nb){ nb.classList.add('flash'); setTimeout(function(){ nb.classList.remove('flash'); },360); }
+});
+
+/* map */
+function buildMap(){
+  var h='<div class="grp">Recover the sets of teeth a room asks for and it is cleared for good. Rooms unlock in order.</div>';
+  ROOMS.forEach(function(R,i){
+    var open=roomOpen(i), done=!!S.cleared[i], here=i===S.room, p=prog(i);
+    var status = done ? '<s>Cleared — farm it whenever</s>'
+               : open ? '<b style="color:#E8825F">'+p+' of '+R.quota+' sets recovered</b>'
+               : 'Locked — clear '+ROOMS[i-1].n+' first';
+    h+='<button class="card '+(open&&!done?'ok':'')+(done?' bought':'')+'" data-r="'+i+'" '+(open?'':'disabled')+'>'+
+       '<span class="ci" style="background:'+R.spot+'; border:1px solid #5E5647"></span>'+
+       '<div class="cb"><div class="cn">'+R.n+(here?' — you are here':'')+(done?' ✓':'')+'</div>'+
+       '<div class="cd">'+R.rule+'</div>'+
+       '<div class="cc">'+status+'</div>'+
+       (open&&!done?'<div class="pbar"><i style="width:'+Math.min(100,p/R.quota*100)+'%"></i></div>':'')+
+       '<div class="key" style="color:#8C846F">Payout ×'+R.pay+' · '+R.count+' objects · '+R.hp+' hp each</div></div>'+
+       '</button>';
+  });
+  $('mapBody').innerHTML=h;
+  $('mapBank').textContent=fmt(S.banked);
+}
+$('mapBody').addEventListener('click',function(e){
+  var b=e.target.closest('.card'); if(!b||b.disabled) return;
+  var i=+b.dataset.r;
+  if(!roomOpen(i)) return;
+  SFX.buy();
+  S.room=i; runKills=0; buildRoom(); save(); buildMap(); refreshUI(); hide('ovMap');
+});
+
+/* bestiary */
+function fangSVG(k,dim){
+  var f=FANGS[k];
+  return '<svg viewBox="0 0 24 24" style="width:100%;height:26px'+(dim?';opacity:.28':'')+'">'+
+    '<polygon points="5,2 19,2 15,22 9,22" fill="'+(f?f.col:'#3A342B')+'" stroke="#231F1A" stroke-width="2"/></svg>';
+}
+function buildBest(){
+  var h='';
+
+  /* ── the hammer and its sockets ── */
+  h+='<div class="grp">Your hammer</div>';
+  var Hm=HAM(), sc=socketCount();
+  h+='<div class="kit"><div class="kitart" id="kitArt"></div><div class="kitinfo">'+
+     '<div class="cn">'+Hm.n+'</div><div class="cd">'+Hm.d+'</div>'+
+     '<div class="key">'+sc+' socket'+(sc>1?'s':'')+' · a hammer gains one per tier</div></div></div>';
+
+  h+='<div class="socks">';
+  for(var i=0;i<sc;i++){
+    var k=S.socket[i];
+    h+='<button class="sock'+(k?' full':'')+'" data-sock="'+i+'">'+fangSVG(k,!k)+
+       '<span>'+(k?FANGS[k].n.replace(' Fang',''):'empty')+'</span></button>';
+  }
+  h+='</div>';
+  var setc=socketed(), sets=[];
+  for(var sk in setc) if(setc[sk]>=3) sets.push(FANGS[sk].n+' ×'+setc[sk]);
+  h+='<div class="hint">Tap a socket to change it. '+
+     (sets.length?'<b style="color:#9FBF8A">Matched set: '+sets.join(', ')+' — doubled.</b>'
+                 :'Three of the same fang doubles its effect.')+'</div>';
+
+  /* ── fangs you own ── */
+  h+='<div class="grp">Fangs recovered</div><div class="fangs">';
+  var any=false;
+  FANGK.forEach(function(k){
+    var have=fangsHeld(k); if(!have) return;
+    any=true;
+    h+='<div class="fang"><div>'+fangSVG(k)+'</div><div class="fn">'+FANGS[k].n+'</div>'+
+       '<div class="fd">'+FANGS[k].d+'</div>'+
+       '<div class="fc">'+fangsFree(k)+' spare of '+have+'</div></div>';
+  });
+  if(!any) h+='<div class="hint">None yet. Every mimic variant drops its own fang — the odd ones drop them more often.</div>';
+  h+='</div>';
+
+  /* ── what you are, in numbers ── */
+  var sw=1/swingInt();
+  h+='<div class="grp">Standing</div>'+statRow()+
+     '<div class="hint">Rank ×'+rankMult().toFixed(1)+' · notes ×'+notesMult().toFixed(2)+
+     ' · room ×'+ROOMS[S.room].pay+' · fangs +'+Math.round(fx('teeth')*100)+'% teeth</div>';
+
+  /* ── owned upgrades at a glance ── */
+  h+='<div class="grp">Tech owned</div><div class="owned">';
+  TECH.forEach(function(t){
+    var lv=U(t.k);
+    h+='<div class="ow'+(lv?' has':'')+'"><span>'+t.n+'</span><b>'+lv+'/'+t.max+'</b></div>';
+  });
+  h+='<div class="ow'+(U('decoy')?' has':'')+'"><span>Decoys</span><b>'+U('decoy')+'/'+DECOY.max+'</b></div>';
+  h+='</div>';
+
+  /* ── career ── */
+  h+='<div class="grp">Career</div>'+
+     '<div class="card" style="cursor:default"><div class="cb"><div class="cn">'+RANKS[S.rank]+'</div>'+
+     '<div class="cd">'+clearedCount()+' of '+ROOMS.length+' rooms signed off · '+
+     Object.keys(S.seen).length+' of '+BEAST.length+' species catalogued · '+
+     fmt(S.cycleTeeth)+' teeth this cycle.</div>'+
+     '<div class="key">'+(promoReady()
+       ? 'Every room cleared. Walk out to accept your promotion.'
+       : 'Clear all '+ROOMS.length+' rooms to become eligible for promotion.')+'</div></div></div>';
+
+  /* ── bestiary ── */
+  h+='<div class="grp">Bestiary</div><div class="bx">';
+  BEAST.forEach(function(b){
+    var got=!!S.seen[b.kind];
+    h+='<div class="bxi'+(got?' got':'')+'">'+(got?iconSVG(b.kind,true):iconSVG(b.kind,false))+
+       '<div class="nm">'+(got?b.n:'Unrecorded')+'</div></div>';
+  });
+  h+='</div>';
+
+  h+='<div class="grp">Sandbox</div>'+
+     '<button class="card ok" data-sbx="1"><div class="cb"><div class="cn">'+
+     (S.sandbox?'Leave sandbox':'Enter sandbox — max everything')+'</div>'+
+     '<div class="cd">'+(S.sandbox
+        ? 'Put the maxed loadout away and pick your own career back up.'
+        : 'Every upgrade, the last hammer, all automation, hardest room. Your real save is parked safely.')+
+     '</div></div></button>';
+
+  $('bestBody').innerHTML=h;
+  $('bestNotes').textContent=S.notes;
+  $('bestMult').textContent='×'+notesMult().toFixed(2);
+
+  /* draw the live hammer into the sheet */
+  var art=$('kitArt');
+  if(art){ art.innerHTML=''; Hm.live=1; art.appendChild(thumb(150,120,function(w,hh){
+    paintHammer(Hm,w*0.30,hh*0.26,1.0,IMPACT_ROT,IMPACT_ROT);
+  })); }
+}
+/* tap a socket: cycle through the fangs you actually have spare */
+function cycleSocket(idx){
+  var cur=S.socket[idx]||null;
+  var pool=[null];
+  FANGK.forEach(function(k){ if(fangsHeld(k)>0) pool.push(k); });
+  var at=pool.indexOf(cur);
+  for(var step=1;step<=pool.length;step++){
+    var nx=pool[(at+step)%pool.length];
+    if(nx===null){ S.socket[idx]=null; break; }
+    if(nx===cur){ break; }
+    if(fangsFree(nx)>0){ S.socket[idx]=nx; break; }
+  }
+  SFX.buy(); save(); buildBest();
+}
+
+/* ══ key art — one still frame of the worst possible run, drawn with the game's own code ══ */
+function drawKeyArt(){
+  var c=$('keyart'); if(!c) return;
+  var r=c.getBoundingClientRect();
+  var vw=Math.max(320,Math.round(r.width)||window.innerWidth);
+  var vh=Math.max(400,Math.round(r.height)||window.innerHeight);
+  var dp=Math.min(2,window.devicePixelRatio||1);
+  c.width=Math.round(vw*dp); c.height=Math.round(vh*dp);
+  var ctx=c.getContext('2d'); ctx.setTransform(dp,0,0,dp,0,0);
+
+  var og=g,oW=W,oH=H;
+  g=ctx; W=vw; H=vh;
+  var ft=vh*0.60, ink='#231F1A', spot='#B4842A';
+
+  ctx.fillStyle='#CAC3A9'; ctx.fillRect(0,0,vw,ft);
+  ctx.strokeStyle='rgba(35,31,26,.15)'; ctx.lineWidth=1.2;
+  var st=52;
+  for(var r=0;r*st<ft+st;r++) for(var cc=0;cc*st<vw+st;cc++){
+    var bx=cc*st+(r%2?st/2:0), by=r*st;
+    ctx.beginPath(); ctx.moveTo(bx+26,by+8); ctx.quadraticCurveTo(bx+34,by+18,bx+26,by+28);
+    ctx.quadraticCurveTo(bx+18,by+18,bx+26,by+8); ctx.stroke();
+  }
+  ctx.fillStyle='#DED8C4'; ctx.fillRect(0,ft,vw,vh-ft);
+  ctx.strokeStyle='rgba(35,31,26,.22)'; ctx.lineWidth=1;
+  for(var fl=1;fl<5;fl++){ var fy=ft+(vh-ft)*(fl/5);
+    ctx.beginPath(); ctx.moveTo(0,fy); ctx.lineTo(vw,fy); ctx.stroke(); }
+  ctx.strokeStyle=ink; ctx.lineWidth=3; ctx.beginPath();
+  for(var k=0;k<=vw;k+=24) ctx.lineTo(k,ft+Math.sin(k*0.05)*2.4);
+  ctx.stroke();
+
+  /* every eye open — this is the moment before the room screams */
+  var er=mk(20250903);
+  for(var e=0;e<26;e++) drawEye(er()*vw, 24+er()*(ft-60), 1.5+er()*1.5, 1);
+
+  /* clutter, small at the back and larger at the front */
+  var kinds=Object.keys(KIT), pr=mk(77);
+  var pcs=[];
+  for(var i=0;i<16;i++){
+    var d=pr();
+    pcs.push({kind:kinds[Math.floor(pr()*kinds.length)],
+      x:pr()*vw, y:ft+16+d*(vh-ft-30), px:(52+d*88)*Math.min(1.5,vw/720), rot:(pr()-0.5)*0.22, d:d});
+  }
+  pcs.sort(function(a,b){ return a.d-b.d; });
+  pcs.forEach(function(p){
+    var o=fakeObj(p.kind,null); o.rot=p.rot; o.seed=Math.floor(pr()*1e6);
+    paintPiece(o,p.x,p.y,p.px,ink,spot,0);
+  });
+
+  /* the thing you are here for */
+  var big=fakeObj('wardrobe',VAR[0]);
+  big.rot=-0.06; big.seed=4242;
+  paintPiece(big, vw*(vw<620?0.80:0.72), vh*0.98, Math.min(vh*0.50,vw*0.62), ink, spot, 0);
+
+  /* your hammer, raised */
+  var Hm=HAMMERS[HAMMERS.length-1]; Hm.live=0;
+  paintHammer(Hm, vw*0.17, vh*0.70, Math.min(vh,vw)/260, -0.95, -0.95);
+
+  if(grain){ ctx.save(); ctx.globalCompositeOperation='multiply'; ctx.drawImage(grain,0,0,vw,vh); ctx.restore(); }
+  g=og; W=oW; H=oH;
+}
+
+/* ══ handbook — written from the live data, so it cannot drift from the build ══ */
+function hsec(t){ return '<div class="grp">'+t+'</div>'; }
+function hp(t){ return '<p class="hb">'+t+'</p>'; }
+function hrow(a,b){ return '<div class="hrow"><span>'+a+'</span><b>'+b+'</b></div>'; }
+function buildHelp(){
+  var h='';
+
+  h+=hsec('Records — '+S.lore+' of '+LORE.length+' recovered');
+  if(!S.lore) h+=hp('Documents turn up in the furniture, and the Guild releases one every time you sign off a room. Read in order, they are almost an explanation.');
+  for(var li=S.lore-1;li>=0;li--){
+    var L=LORE[li];
+    h+='<details class="doc"'+(li===S.lore-1?' open':'')+'><summary><b>'+L.t+'</b><i>'+L.src+'</i></summary><div>'+L.b+'</div></details>';
+  }
+  if(S.lore<LORE.length) h+='<div class="hint">'+(LORE.length-S.lore)+' still out there.</div>';
+  S.loreSeen=S.lore; save();
+
+  h+=hsec('The job');
+  h+=hp('You are a Mimicologist, third class. An unhelpful percentage of the furniture in this dungeon is alive, and the Guild pays you per set of teeth recovered. Ordinary furniture is worthless — it is the chaff you break through to find the live ones.');
+  h+=hp('<b>Hold</b> anywhere on the floor. Your hammer swings by itself and follows your finger, so you can sweep across the clutter without ever letting go. You never need to tap twice.');
+
+  h+=hsec('The bar above the room — the only thing that can kill you');
+  h+=hp('Every eye in the wallpaper opens while your finger is down, and <b>every open eye shortens the fuse</b> on anything that screams. That is the whole risk system: the more the room is watching, the less time you get when a mimic turns.');
+  h+=hrow('Eyes rise','only while you are holding');
+  h+=hrow('Eyes fall','0.95/s the moment you let go');
+  h+=hrow('Each open eye','−4% fuse, and a higher chance the next thing is a mimic');
+  h+=hrow('All '+EYES+' open','<b style="color:#E8825F">the room itself screams</b>');
+  h+=hp('Nothing else can fill the bar to the end. Interns, beams, ordnance and stray kills nudge it while you are already holding, but they are capped and can never be the thing that tips it over. <b>You can only ever be killed by continuing to hold.</b>');
+
+  h+=hsec('When the room screams');
+  h+=hp('The jaws start closing and you get <b>seven seconds</b>. While it is open, <b>every swing anywhere in the room damages the room</b> — so your interns, beams and charges all pile in. Break it for an enormous payout, +3 contract progress, a guaranteed Room Fang and every eye slamming shut. Fail and it eats you: you keep 30% of what you were carrying.');
+
+  h+=hsec('When furniture screams');
+  h+=hp('An object takes a few swings to break. On the swing that would break it, roughly one in five turns out to be a mimic instead. It gains health, grows teeth, and <b>starts running for the door on a visible fuse</b>. Kill it for teeth. Let it reach the door and it leaves with your whole haul and <b>the run is over</b> — you keep 30%.');
+  h+=hp('Only one is ever loose at a time, so you are never asked to be in two places at once.');
+  h+='<div class="htab"><div class="hh"><span>Variant</span><span>Health</span><span>Fuse</span><span>Pays</span><span>From</span></div>';
+  VAR.forEach(function(v){
+    h+='<div class="hr"><span style="color:'+v.col+'">'+(v.n||'Plain')+'</span><span>×'+v.hp+'</span><span>×'+v.fuse+'</span><span>×'+v.pay+'</span><span>room '+(v.from+1)+'</span></div>';
+  });
+  h+='</div>';
+
+  h+=hsec('Why you would ever walk out');
+  h+=hp('Every set of teeth you take <b>without banking</b> makes the next one worth more — the <b>haul bonus</b>, shown next to what you are carrying. It climbs to ×4 and it only exists while the teeth are still in your pocket.');
+  h+=hp('Pockets are not safe. If the room eats you, or a mimic gets out of the door, <b>you lose 70% of everything you are carrying</b> and the bonus with it. Banked teeth can never be taken.');
+  h+=hp('<b>Walk out</b> banks the lot, restocks the room, shuts every eye and sets the haul bonus back to ×1. That is the whole game: stay in while it compounds, leave before it is taken. Banked teeth are also the only teeth you can spend.');
+  h+=hrow('Carrying','at risk, and worth more the longer you stay');
+  h+=hrow('Banked','safe forever, and the only teeth the Store takes');
+  h+=hrow('Splinters','from junk furniture. Builds decoys');
+  h+=hrow('Larvae','only from decoys, while you are away. Forges the top hammers');
+
+  h+=hsec('Rooms and contracts');
+  h+=hp('Each room asks for a number of sets of teeth. Fill it and the room is <b>cleared for good</b>, which unlocks the next one — you never pay to enter. Cleared rooms stay open to farm. <b>You cannot fail a room</b>: being eaten costs teeth, never contract progress.');
+  h+='<div class="htab"><div class="hh"><span>Room</span><span>Contract</span><span>Pays</span><span>Rule</span></div>';
+  ROOMS.forEach(function(R,i){
+    h+='<div class="hr"><span>'+R.n+'</span><span>'+R.quota+'</span><span>×'+R.pay+'</span><span style="opacity:.7">'+R.rule+'</span></div>';
+  });
+  h+='</div>';
+
+  h+=hsec('Your hammer');
+  h+=hp('Hammers are forged in the Store with banked teeth, and the later ones also need larvae. Each tier hits harder, swings faster, and most of them add <b>area damage</b> — a radius around whatever you aim at, shown as a dashed ring.');
+  h+=hp('Every hammer has <b>one socket per tier</b>. Mimic variants drop <b>fangs</b>, and what you socket is your build. <b>Three of the same fang doubles that fang\'s effect.</b> Sockets show up as teeth on the hammer head.');
+  h+='<div class="htab"><div class="hh"><span>Fang</span><span>Dropped by</span><span>Effect</span></div>';
+  FANGK.forEach(function(k){
+    h+='<div class="hr"><span style="color:'+FANGS[k].col+'">'+FANGS[k].n+'</span><span>'+(k==='room'?'the Room Mimic':(k==='plain'?'any plain mimic':k))+'</span><span>'+FANGS[k].d+'</span></div>';
+  });
+  h+='</div>';
+
+  h+=hsec('Automation');
+  h+=hp('<b>Squires</b> carry their own hammers and work on their own. The <b>Aetheric Lens</b> drops a beam from the ceiling onto whatever has the most health left. <b>Guild Ordnance</b> detonates charges in the clutter, and chains them at level 4. None of it can raise the danger bar on its own, so automation is safe income — it is your floor, and holding the hammer is your ceiling.');
+  h+=hp('<b>Decoys</b> are furniture you build from splinters and leave in the dungeon overnight. Things move into them. That is the only source of larvae, and it works for up to 24 hours while the game is closed.');
+
+  h+=hsec('Getting promoted');
+  h+=hp('Clear every room and Walk Out becomes <b>Accept promotion</b>. The dungeon closes its mouth, digests you, and you wake one rank higher inside a bigger one. You lose your teeth, your tech and your hammer. You keep <b>field notes</b>, which are a permanent multiplier on everything, and your bestiary.');
+  h+='<div class="htab"><div class="hh"><span>#</span><span>Rank</span></div>';
+  RANKS.forEach(function(r,i){ h+='<div class="hr"><span>'+(i+1)+'</span><span'+(i===S.rank?' style="color:#E8825F"':'')+'>'+r+(i===S.rank?' — you':'')+'</span></div>'; });
+  h+='</div>';
+
+  h+=hsec('Controls');
+  h+=hrow('Hold anywhere','swing. The hammer finds a target');
+  h+=hrow('Drag while holding','sweep. Never let go to move on');
+  h+=hrow('Let go','the bar falls, and your frenzy bleeds away');
+  h+=hrow('Esc, or the lit tab','close a panel');
+  h+=hrow('Tab bar','Store, Rooms, Kit, Art');
+
+  $('helpBody').innerHTML=h;
+}
+
+/* ══ art catalogue: every asset, drawn by the live game code ══ */
+function thumb(cw,ch,fn){
+  var c=document.createElement('canvas');
+  var dp=Math.min(2,window.devicePixelRatio||1);
+  c.width=Math.round(cw*dp); c.height=Math.round(ch*dp);
+  c.style.width=cw+'px'; c.style.height=ch+'px';
+  var ctx=c.getContext('2d'); ctx.setTransform(dp,0,0,dp,0,0);
+  var og=g,oW=W,oH=H;
+  g=ctx; W=cw; H=ch;
+  ctx.fillStyle='#DED8C4'; ctx.fillRect(0,0,cw,ch);
+  try{ fn(cw,ch); }catch(e){ ctx.fillStyle='#C42B1C'; ctx.font='10px monospace'; ctx.fillText('err',6,14); }
+  g=og; W=oW; H=oH;
+  return c;
+}
+function fakeObj(kind,vr){
+  return {kind:kind, seed:12345, rot:0, sz:1, spawn:1, squash:0, hopT:0,
+          mimic:!!vr, vr:vr||null, cracks:[],
+          teethTop:vr?teethPts(KIT[kind].seam,true,mk(4)):null,
+          teethBot:vr?teethPts(KIT[kind].seam,false,mk(5)):null};
+}
+function tile(code,name,sub,canvas){
+  var d=document.createElement('div');
+  d.className='ci2';
+  d.innerHTML='<span class="cid">'+code+'</span>';
+  d.appendChild(canvas);
+  var t=document.createElement('div'); t.className='nm2'; t.textContent=name; d.appendChild(t);
+  if(sub){ var u=document.createElement('div'); u.className='sub'; u.innerHTML=sub; d.appendChild(u); }
+  return d;
+}
+function section(title,note){
+  var h=document.createElement('div'); h.className='grp'; h.textContent=title;
+  $('catBody').appendChild(h);
+  if(note){ var p=document.createElement('div');
+    p.style.cssText='font-family:var(--mono);font-size:12px;color:#8C846F;margin:-4px 0 11px;line-height:1.5;letter-spacing:.04em';
+    p.textContent=note; $('catBody').appendChild(p); }
+  var grid=document.createElement('div'); grid.className='cat';
+  $('catBody').appendChild(grid); return grid;
+}
+function buildCat(){
+  $('catBody').innerHTML='';
+
+  var gh=section('Hammers — H1 to H'+HAMMERS.length,'Real proportions, held mid-strike.');
+  HAMMERS.forEach(function(Hm,i){
+    gh.appendChild(tile('H'+(i+1),Hm.n,
+      '×'+Hm.dmg+' dmg · ×'+Hm.spd.toFixed(2)+' spd<br>'+(Hm.aoe?'area '+Hm.aoe.toFixed(2):'no area'),
+      thumb(116,104,function(w,h){ paintHammer(Hm,w*0.30,h*0.26,0.86,IMPACT_ROT,IMPACT_ROT); })));
+  });
+
+  var gm=section('Mimic variants — M1 to M'+VAR.length,'The same chest in every variant tint, for comparing the reds.');
+  VAR.forEach(function(v,i){
+    gm.appendChild(tile('M'+(i+1),v.n||'Plain',
+      '×'+v.hp+' hp · ×'+v.fuse+' fuse<br>×'+v.pay+' pay · room '+(v.from+1)+'+',
+      thumb(104,90,function(w,h){ paintPiece(fakeObj('chest',v),w/2,h-10,60,'#231F1A','#B4842A',0); })));
+  });
+
+  var kk=Object.keys(KIT);
+  var go=section('Furniture — O1 to O'+kk.length,'Each tile: intact above, the same piece opened below.');
+  kk.forEach(function(k,i){
+    go.appendChild(tile('O'+(i+1),k,null,
+      thumb(104,124,function(w,h){
+        paintPiece(fakeObj(k,null),w/2,58,50,'#231F1A','#B4842A',0);
+        g.strokeStyle='rgba(35,31,26,.22)'; g.lineWidth=1;
+        g.beginPath(); g.moveTo(8,62); g.lineTo(w-8,62); g.stroke();
+        paintPiece(fakeObj(k,VAR[0]),w/2,h-6,50,'#231F1A','#B4842A',0);
+      })));
+  });
+
+  var gf=section('Effects — FX1 to FX10','Everything that fires during a swing.');
+  var FX=[
+    ['Impact spark','off the hammer head',function(w,h){
+      g.strokeStyle='#231F1A'; g.lineWidth=2.6; g.lineCap='round';
+      for(var i=0;i<4;i++){ var a=i*1.6+0.4;
+        g.beginPath(); g.moveTo(w/2+Math.cos(a)*7,h/2+Math.sin(a)*7);
+        g.lineTo(w/2+Math.cos(a)*20,h/2+Math.sin(a)*20); g.stroke(); }}],
+    ['Crack','cut fresh per blow',function(w,h){
+      g.strokeStyle='#231F1A'; g.lineWidth=1.7; g.lineCap='round';
+      var r=mk(9);
+      for(var j=0;j<3;j++){ var x=w/2-18+j*18,y=14;
+        g.beginPath(); g.moveTo(x,y);
+        for(var i=0;i<3;i++){ x+=(r()*2-1)*7; y+=9; g.lineTo(x,y); } g.stroke(); }}],
+    ['Paper shard','7 per break, arcing',function(w,h){
+      [[-19,-7,0.3],[3,-14,1.1],[17,3,2.2],[-6,11,0.7]].forEach(function(p,i){
+        g.save(); g.translate(w/2+p[0],h/2+p[1]); g.rotate(p[2]);
+        g.fillStyle=i%2?'#B4842A':'#C42B1C'; g.strokeStyle='#231F1A'; g.lineWidth=1.4;
+        g.beginPath(); g.moveTo(-8,-6); g.lineTo(8,-8); g.lineTo(6,8); g.lineTo(-7,7); g.closePath();
+        g.fill(); g.stroke(); g.restore(); });}],
+    ['Tooth','flies to the counter',function(w,h){
+      [[-17,3,0.2],[0,-6,0],[17,4,-0.3]].forEach(function(p){
+        g.save(); g.translate(w/2+p[0],h/2+p[1]); g.rotate(p[2]);
+        g.fillStyle='#F4F1E6'; g.strokeStyle='#231F1A'; g.lineWidth=1.6;
+        g.beginPath(); g.moveTo(-6,-10); g.lineTo(6,-10); g.lineTo(4,10); g.lineTo(-4,10); g.closePath();
+        g.fill(); g.stroke(); g.restore(); });}],
+    ['Shockwave','hammer area damage',function(w,h){
+      [[36,'#C42B1C',4],[23,'#231F1A',3]].forEach(function(r){
+        g.strokeStyle=r[1]; g.lineWidth=r[2];
+        g.beginPath(); g.ellipse(w/2,h/2,r[0],r[0]*0.42,0,0,6.3); g.stroke(); });}],
+    ['Lens beam','fires from the ceiling',function(w,h){
+      g.lineCap='round';
+      g.strokeStyle='#F4F1E6'; g.lineWidth=14; g.beginPath(); g.moveTo(w*0.36,2); g.lineTo(w*0.54,h-16); g.stroke();
+      g.strokeStyle='#8FD3E8'; g.lineWidth=7;  g.beginPath(); g.moveTo(w*0.36,2); g.lineTo(w*0.54,h-16); g.stroke();
+      g.strokeStyle='#8FD3E8'; g.lineWidth=3;
+      g.beginPath(); g.ellipse(w*0.54,h-16,21,8,0,0,6.3); g.stroke();}],
+    ['Detonation','guild ordnance',function(w,h){
+      [[38,'#C42B1C',5],[24,'#231F1A',3]].forEach(function(r){
+        g.strokeStyle=r[1]; g.lineWidth=r[2];
+        g.beginPath(); g.ellipse(w/2,h/2,r[0],r[0]*0.42,0,0,6.3); g.stroke(); });
+      g.fillStyle='#C42B1C'; g.beginPath(); g.arc(w/2,h/2,6,0,6.3); g.fill();}],
+    ['Eye, shut','wallpaper at rest',function(w,h){ drawEye(w/2,h/2,2.0,0); }],
+    ['Eye, open','one notch of danger',function(w,h){ drawEye(w/2,h/2,2.0,1); }],
+    ['Escape fuse','above a running mimic',function(w,h){
+      var x=10,y=h/2-5,bw=w-36;
+      g.fillStyle='#F4F1E6'; g.fillRect(x,y,bw,10);
+      g.fillStyle='#C42B1C'; g.fillRect(x+2,y+2,(bw-4)*0.55,6);
+      g.strokeStyle='#231F1A'; g.lineWidth=2; g.strokeRect(x,y,bw,10);
+      g.fillStyle='#C42B1C'; g.beginPath();
+      g.moveTo(x+bw+6,y); g.lineTo(x+bw+17,y+5); g.lineTo(x+bw+6,y+10); g.closePath(); g.fill();}]
+  ];
+  FX.forEach(function(f,i){ gf.appendChild(tile('FX'+(i+1),f[0],f[1],thumb(104,78,f[2]))); });
+
+  var gr=section('Rooms — R1 to R'+ROOMS.length,'One black plate, one spot colour swapped per room.');
+  ROOMS.forEach(function(R,i){
+    gr.appendChild(tile('R'+(i+1),R.n,'ink '+R.spot+'<br>×'+R.pay+' pay · '+R.hp+' hp',
+      thumb(104,78,function(w,h){
+        g.fillStyle='#CAC3A9'; g.fillRect(0,0,w,h*0.54);
+        g.fillStyle='#DED8C4'; g.fillRect(0,h*0.54,w,h*0.46);
+        g.strokeStyle='#231F1A'; g.lineWidth=2;
+        g.beginPath(); g.moveTo(0,h*0.54); g.lineTo(w,h*0.54); g.stroke();
+        paintPiece(fakeObj(R.kinds[0],null),w*0.32,h-8,42,'#231F1A',R.spot,0);
+        paintPiece(fakeObj(R.kinds[1]||R.kinds[0],null),w*0.71,h-13,34,'#231F1A',R.spot,0);
+      })));
+  });
+}
+
+/* promotion */
+/* a maxed-out ceiling to feel, without touching the real save */
+function maxState(){
+  var m={v:2,teeth:0,banked:5e8,spl:5e6,room:ROOMS.length-1,rank:5,notes:60,
+    upg:{},seen:{},cleared:{},prog:{},cycleTeeth:0,larvae:2000,hammer:HAMMERS.length-1,sandbox:1,t:Date.now()};
+  TECH.forEach(function(t){ m.upg[t.k]=t.max; });
+  m.upg.decoy=DECOY.max;
+  BEAST.forEach(function(b){ m.seen[b.kind]=1; });
+  ROOMS.forEach(function(R,i){ m.cleared[i]=1; m.prog[i]=R.quota; });
+  return m;
+}
+function enterSandbox(){
+  if(S.sandbox) return;
+  save();
+  try{ localStorage.setItem('mimicSeasonReal',JSON.stringify(S)); }catch(e){}
+  var m=maxState();
+  for(var k in m) S[k]=m[k];
+  runKills=0; buildRoom(); refreshUI();
+  document.body.classList.add('sbx');
+  say('<b>Sandbox.</b> Everything maxed, hardest room. Your real save is parked — leave sandbox to get it back.');
+}
+function exitSandbox(quiet){
+  var r=null;
+  try{ r=localStorage.getItem('mimicSeasonReal'); }catch(e){}
+  if(r){ try{ var o=JSON.parse(r); for(var k in o) S[k]=o[k]; }catch(e){} }
+  S.sandbox=0;
+  try{ localStorage.removeItem('mimicSeasonReal'); }catch(e){}
+  document.body.classList.remove('sbx');
+  if(quiet) return;
+  runKills=0; buildRoom(); refreshUI(); save();
+  say('Back to your own career. Such as it is.');
+}
+function promote(){
+  var earned=Math.max(1,Math.floor(Math.pow(S.cycleTeeth/2500,0.42)));
+  S.rank++; S.notes+=earned;
+  S.banked=0; S.teeth=0; S.spl=Math.floor(S.spl*0.5); S.cycleTeeth=0;
+  S.cleared={}; S.prog={}; S.room=0; runKills=0;
+  var d=U('decoy');
+  S.upg={head:0,wrist:0,nerve:0,rep:0,pouch:0,staff:0,clutter:0,magnet:0,lens:0,ord:0,reach:0,crit:0,haul:0,scav:0,decoy:Math.floor(d*0.5)};
+  jawT=0; dead=true;
+  SFX.promo();
+  $('promoRank').textContent=RANKS[S.rank];
+  $('promoNotes').textContent='+'+earned;
+  $('promoMult').textContent='×'+notesMult().toFixed(2);
+  setTimeout(function(){ show('ovPromo'); },800);
+  save();
+}
+
+/* offline decoys */
+function offline(){
+  var d=U('decoy'); if(!d||!S.t) return;
+  var hrs=Math.min(24,(Date.now()-S.t)/3600000);
+  if(hrs<0.08) return;
+  var sp=Math.floor(d*14*hrs), lv=Math.floor(d*0.9*hrs);
+  if(sp<1&&lv<1) return;
+  S.spl+=sp; S.larvae+=lv;
+  var tth=Math.floor(lv*90*teethMult()/ROOMS[S.room].pay);
+  S.banked+=tth;
+  $('idleTxt').textContent=lv>0
+    ? 'You left '+d+' decoy'+(d>1?'s':'')+' out for '+hrs.toFixed(1)+' hours. '+lv+' larva'+(lv>1?'e':'')+' moved in, and something has been chewing.'
+    : 'You left '+d+' decoy'+(d>1?'s':'')+' out for '+hrs.toFixed(1)+' hours. Nothing has moved in yet, but there are splinters everywhere.';
+  $('idleStat').innerHTML='Splinters <i>+'+fmt(sp)+'</i> · larvae <i>+'+lv+'</i> · banked teeth <i>+'+fmt(tth)+'</i>';
+  show('ovIdle');
+}
+
+/* ══════════════ buttons ══════════════ */
+$('walk').addEventListener('click',function(){
+  if(dead) return;
+  if(promoReady()) promote(); else walkOut();
+});
+$('shopBtn').addEventListener('click',function(){ togglePanel('ovShop',buildShop); });
+$('mapBtn').addEventListener('click',function(){ togglePanel('ovMap',buildMap); });
+$('bestBtn').addEventListener('click',function(){ togglePanel('ovBest',buildBest); });
+$('bestBody').addEventListener('click',function(e){
+  var sk=e.target.closest('[data-sock]');
+  if(sk){ cycleSocket(+sk.dataset.sock); return; }
+  var b=e.target.closest('[data-sbx]'); if(!b) return;
+  if(S.sandbox) exitSandbox(); else enterSandbox();
+  buildBest(); hide('ovBest');
+});
+$('xShop').addEventListener('click',function(){ hide('ovShop'); });
+$('xMap').addEventListener('click',function(){ hide('ovMap'); });
+$('xBest').addEventListener('click',function(){ hide('ovBest'); });
+$('xCat').addEventListener('click',function(){ hide('ovCat'); });
+$('xHelp').addEventListener('click',function(){ hide('ovHelp'); });
+$('help').addEventListener('click',function(){ togglePanel('ovHelp',buildHelp); });
+$('catBtn').addEventListener('click',function(){ togglePanel('ovCat',buildCat); });
+$('eatOk').addEventListener('click',function(){ hide('ovEaten'); runKills=0; buildRoom(); refreshUI(); });
+$('escOk').addEventListener('click',function(){ hide('ovEsc'); runKills=0; buildRoom(); refreshUI(); });
+$('promoOk').addEventListener('click',function(){ hide('ovPromo'); buildRoom(); refreshUI(); });
+$('clrOk').addEventListener('click',function(){
+  hide('ovClear'); runKills=0; buildRoom(true); refreshUI();
+  var nx=S.room+1;
+  say(nx<ROOMS.length?'<b>Signed off.</b> '+ROOMS[nx].n+' is open — check Rooms.':'<b>Every room signed off.</b> Walk out and take the promotion.');
+});
+$('idleOk').addEventListener('click',function(){ hide('ovIdle'); refreshUI(); });
+$('sound').addEventListener('click',function(){ muted=!muted; this.textContent=muted?'Sound off':'Sound on'; });
+function begin(){
+  hide('ovTitle'); running=true;
+  var c=ac(); if(c&&c.state==='suspended') c.resume();
+}
+$('sbxBtn').addEventListener('click',function(){ begin(); enterSandbox(); });
+$('contBtn').addEventListener('click',function(){ begin(); offline(); });
+$('rulesBtn').addEventListener('click',function(){ begin(); buildHelp(); show('ovHelp'); });
+var wipeArmed=false;
+$('wipeBtn').addEventListener('click',function(){
+  if(!wipeArmed){
+    wipeArmed=true; this.textContent='Erase everything?'; this.style.color='#E8825F';
+    var b=this; setTimeout(function(){ if(wipeArmed){ wipeArmed=false; b.textContent='New game'; b.style.color=''; } },4000);
+    return;
+  }
+  try{ localStorage.removeItem('mimicSeason'); localStorage.removeItem('mimicSeasonReal'); }catch(e){}
+  location.reload();
+});
+/* dress the menu for a returning member */
+function dressMenu(){
+  var fresh=!hadSave;
+  $('startBtn').hidden=!fresh;
+  $('contBtn').hidden=fresh;
+  $('wipeBtn').hidden=fresh;
+  if(!fresh){
+    $('saveLine').innerHTML='Resuming · '+RANKS[S.rank]+' · '+clearedCount()+' of '+ROOMS.length+
+      ' rooms signed off · '+fmt(S.banked)+' teeth banked';
+  } else {
+    $('saveLine').textContent='New career. The handbook is behind the ? in the top corner at any time.';
+  }
+}
+$('startBtn').addEventListener('click',function(){ begin(); offline(); });
+
+document.addEventListener('click',function(e){
+  var b=e.target.closest('[data-back]');
+  if(b){ hide(b.dataset.back); return; }
+  if(e.target.id==='scrim'){ for(var i=0;i<TABS.length;i++) hide(TABS[i]); }
+});
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Escape') return;
+  for(var i=0;i<TABS.length;i++) hide(TABS[i]);
+});
+document.addEventListener('visibilitychange',function(){ if(document.hidden){ release(); save(); } });
+window.addEventListener('pagehide',save);
+
+/* ══════════════ loop ══════════════ */
+var last=performance.now(), acc=0, sacc=0;
+function frame(now){
+  var dt=Math.min((now-last)/1000,0.05); last=now;
+  if(running && !anyPanel()) step(dt); else refreshNums();
+  render();
+  requestAnimationFrame(frame);
+}
+function step(dt){
+  /* hammer pose */
+  if(hamAnim>=0){
+    hamAnim+=dt/swingInt();
+    var t=hamAnim;
+    if(t>=1){ hamAnim=-1; hamRot=hamTarget; }
+    else {
+      /* impact on frame one — the damage already happened — then bounce, then wind back up */
+      if(t<0.14) hamRot=IMPACT_ROT+(t/0.14)*0.35;
+      else if(t<0.30) hamRot=-0.05-((t-0.14)/0.16)*0.17;
+      else hamRot=-0.22+((t-0.30)/0.70)*0.84;
+    }
+  } else hamRot+=(hamTarget-hamRot)*Math.min(1,dt*14);
+  if(!held&&hamAnim<0) hamTarget=aimIdx>=0?0.62:0.18;
+
+  /* squash decay */
+  for(var i=0;i<objs.length;i++){
+    var o=objs[i];
+    if(o.squash>0) o.squash=Math.max(0,o.squash-dt*9);
+    if(o.spawn<1) o.spawn=Math.min(1,o.spawn+dt*5);
+    if(o.mimic&&!o.dead){
+      o.hopT+=dt;
+      if(o.flee>0){
+        o.flee-=dt;
+        /* eased travel: it creeps, then bolts, and lands at the door as the fuse empties */
+        var ft=clamp(1-o.flee/o.fuseMax,0,1), e=ft*ft;
+        o.fx=o.sx+(DOOR[0]-o.sx)*e;
+        o.fy=o.sy+(DOOR[1]-o.sy)*e;
+        if(!o.bolting && o.flee<2.2){ o.bolting=true; SFX.bolt(); say('<b>It is bolting.</b> Door. Now.'); }
+        o.tick-=dt;
+        if(o.tick<=0){ o.tick=clamp(o.flee*0.16,0.09,0.55); SFX.tick(1-o.flee/o.fuseMax); }
+        if(o.flee<=0){ mimicEscaped(o); }
+      }
+      if(S.room===3||(o.vr&&o.vr.k==='howler')){
+        o.biteT+=dt;
+        if(o.biteT>1.5){
+          o.biteT=0;
+          var bite=S.teeth*0.05;
+          if(bite>0.5){
+            S.teeth-=bite;
+            var bxy=objXY(o);
+            pop(bxy[0],bxy[1]-baseSize()*0.9,'−'+fmt(bite));
+            say('<b>It bit you.</b> That came out of your pocket.');
+          }
+          shake(3); throttled(function(){ tone(150,0.12,'sawtooth',0.05,80); });
+        }
+      }
+    }
+  }
+
+  if(roomMim && !dead && freeze<=0){
+    roomMim.fuse-=dt;
+    if(roomMim.fuse<=0){ roomMim=null; getEaten(); }
+  }
+  if(freeze>0){ freeze-=dt; }
+  else if(!dead){
+    if(held){
+      holdT+=dt; frenzy=Math.min(3.2,frenzy+0.62*dt);
+      if(aimIdx<0 || objs[aimIdx].dead) aimIdx=aimAt2(px,py);
+      swingAcc+=dt;
+      var si=swingInt(), guard=0;
+      while(swingAcc>=si && !dead && guard++<6){
+        swingAcc-=si;
+        if(aimIdx>=0 && !objs[aimIdx].dead){
+          doubleTick++;
+          swingAt(aimIdx);
+          if(U('wrist')>=6 && doubleTick%8===0) swingAt(aimIdx);
+        } else hamAnim=0;
+      }
+      var frozenEyes=(U('nerve')>=6 && (function(){ for(var z=0;z<objs.length;z++) if(objs[z].mimic&&!objs[z].dead) return true; return false; })());
+      if(!frozenEyes){
+        eyes=Math.min(EYES,eyes+eyeRate()*frenzy*dt);
+        if(eyes>=EYES) roomScream();
+      }
+    } else {
+      /* stepping back genuinely buys you fuse back now */
+      frenzy=Math.max(1,frenzy-(U('nerve')>=3?0.75:1.5)*dt);
+      if(!roomMim){
+        var slow=loose()&&U('nerve')<6;
+        eyes=Math.max(0,eyes-(slow?0.45:0.95)*dt);
+      }
+    }
+    if(U('staff')>0) stepInterns(dt);
+
+    /* the lens: a beam drops out of the ceiling on its own */
+    if(U('lens')>0){
+      lensT-=dt;
+      if(lensT<=0){
+        lensT=Math.max(0.55,3.4/(1+0.38*(U('lens')-1)));
+        var targets=[], sweep=U('lens')>=6?4:(U('lens')>=3?2:1);
+        var pool2=[]; for(var q2=0;q2<objs.length;q2++) if(!objs[q2].dead) pool2.push(q2);
+        pool2.sort(function(a,b){ return objs[b].hp-objs[a].hp; });
+        for(var t2=0;t2<Math.min(sweep,pool2.length);t2++) targets.push(pool2[t2]);
+        for(var t3=0;t3<targets.length;t3++){
+          var txy=objXY(objs[targets[t3]]);
+          addBeam(txy[0]+rr(-30,30),-20,txy[0],txy[1]-baseSize()*0.35,'#8FD3E8',6+U('lens'));
+          addRing(txy[0],txy[1]-baseSize()*0.2,baseSize()*0.7,'#8FD3E8',3);
+          hitObj(targets[t3],Math.max(1,Math.round(dmg()*(2+U('lens')*0.9))),true);
+        }
+        if(targets.length){ shake(3); tone(1500,0.16,'sawtooth',0.035,420); noise(0.12,0.03,3200,1.4); }
+      }
+    }
+
+    /* ordnance: a charge goes off in the clutter */
+    if(U('ord')>0){
+      ordT-=dt;
+      if(ordT<=0){
+        ordT=Math.max(1.1,6.0/(1+0.3*(U('ord')-1)));
+        var pool3=[]; for(var q3=0;q3<objs.length;q3++) if(!objs[q3].dead) pool3.push(q3);
+        if(pool3.length){
+          var c0=pool3[ri(0,pool3.length-1)];
+          detonate(objXY(objs[c0]), baseSize()*(1.5+U('ord')*0.22), Math.round(dmg()*(2.5+U('ord'))), U('ord')>=4?2:0);
+        }
+      }
+    }
+  }
+
+  /* eye opening animation */
+  var want=openEyes();
+  for(var e=0;e<EYES;e++){
+    var es=eyeSpots[e]; if(!es) continue;
+    var t2=e<want?1:0;
+    if(es.o<t2){ es.o=Math.min(1,es.o+dt*7); if(es.o>0.9&&!es.dinged){ es.dinged=1; SFX.open(); } }
+    else if(es.o>t2){ es.o=Math.max(0,es.o-dt*2.2); es.dinged=0; }
+  }
+
+  updateParts(dt); stepFX(dt);
+  if(shakeM>0.2) shakeM*=Math.pow(0.02,dt); else shakeM=0;
+  if(flashT>0) flashT=Math.max(0,flashT-dt*3.4);
+  if(dead) jawT=Math.min(1,jawT+dt*2.4);
+  else if(roomMim) jawT=clamp((1-roomMim.fuse/roomMim.fuseMax)*0.72,0,0.72);
+  else jawT=Math.max(0,jawT-dt*3);
+
+  refreshNums();
+  acc+=dt; if(acc>0.25){ acc=0; refreshUI(); }
+  sacc+=dt; if(sacc>6){ sacc=0; save(); }
+}
+
+/* ══════════════ boot ══════════════ */
+var hadSave=load();
+if(S.sandbox){ exitSandbox(true); }
+resize();
+buildRoom();
+refreshUI();
+dressMenu();
+requestAnimationFrame(function(){ drawKeyArt(); });
+requestAnimationFrame(frame);
+
+})();
+</script>
