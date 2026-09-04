@@ -1,6 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
 <title>Some of It Bites</title>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#231F1A">
+<!-- an eye, inline so the file stays self-contained -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23231F1A'/%3E%3Cpath d='M3 16c5-7 21-7 26 0-5 7-21 7-26 0z' fill='%23F4F1E6' stroke='%23231F1A' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%23231F1A'/%3E%3Ccircle cx='16' cy='16' r='2' fill='%23C42B1C'/%3E%3C/svg%3E">
+<meta name="description" content="An unhelpful percentage of the furniture is alive. Hold the hammer, break the room, and walk out before the eyes finish opening.">
+
+<!-- ── link preview ──────────────────────────────────────────────────
+     Scrapers do not run scripts and reject relative or data: images, so
+     these have to be literal absolute URLs. ONE thing to change if this
+     is ever hosted somewhere else: the SITE constant below, everywhere
+     it appears. Regenerate the card itself by opening the game with
+     #og on the end of the URL — it renders and downloads it.
+     SITE = https://mkirvela.github.io/some-of-it-bites                          -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Some of It Bites">
+<meta property="og:title" content="Some of It Bites">
+<meta property="og:description" content="An unhelpful percentage of the furniture is alive. Hold the hammer, break the room, and walk out before the eyes finish opening.">
+<meta property="og:url" content="https://mkirvela.github.io/some-of-it-bites/">
+<meta property="og:image" content="https://mkirvela.github.io/some-of-it-bites/og.png">
+<meta property="og:image:secure_url" content="https://mkirvela.github.io/some-of-it-bites/og.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A cellar of woodcut furniture with every eye in the wallpaper open, a wardrobe baring teeth, and a raised hammer.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Some of It Bites">
+<meta name="twitter:description" content="An unhelpful percentage of the furniture is alive. Hold the hammer, break the room, and walk out before the eyes finish opening.">
+<meta name="twitter:image" content="https://mkirvela.github.io/some-of-it-bites/og.png">
+<meta name="twitter:image:alt" content="A cellar of woodcut furniture with every eye in the wallpaper open, a wardrobe baring teeth, and a raised hammer.">
 
 <style>
 :root{
@@ -11,6 +42,13 @@
   --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+/* the forge moment is the payoff for the most expensive purchase in the game.
+   It runs for 2.8s and nothing gets to cut it short. */
+body.forging #top,body.forging #bot,body.forging #stats{pointer-events:none; opacity:.35; transition:opacity .2s}
+body.forging #wrap{pointer-events:none}
+/* a class with display: on it outranks the UA's [hidden] rule, which quietly
+   left both title-screen buttons on screen doing the same thing */
+[hidden]{display:none!important}
 html,body{height:100%; margin:0; overscroll-behavior:none}
 body{
   background:var(--ink); color:var(--bone); font-family:var(--body);
@@ -242,6 +280,10 @@ body.sbx #top .rk{color:#FFB38A}
 /* the way back in, once it has been found */
 body.dbg #top .rk:after{content:' · DBG'; color:#E8825F; letter-spacing:.14em}
 #top .rk{cursor:pointer}
+.cycle{border:1px solid #7A7059; border-left:5px solid #8FB56A; background:#302B21; padding:11px 13px; margin-bottom:14px}
+.cycle>b{display:block; font-family:var(--mono); font-size:12.5px; letter-spacing:.14em; text-transform:uppercase; color:#BBD3A6}
+.cycle span{display:block; margin-top:5px; font-size:14.5px; line-height:1.5; color:#DCD3BD}
+.cycle b{color:#FFF8E6}
 .legend{display:flex; flex-wrap:wrap; gap:6px 16px; margin:-8px 0 16px; font-family:var(--mono);
   font-size:11.5px; letter-spacing:.06em; color:#B3A98F}
 .legend span{display:flex; align-items:center; gap:6px}
@@ -427,6 +469,8 @@ body.dbg #top .rk:after{content:' · DBG'; color:#E8825F; letter-spacing:.14em}
   #bot #walk.promo,.stat.kick .v,.card.flash{animation:none}
 }
 </style>
+</head>
+<body>
 
 <div id="top">
   <span class="rk" id="rank">Mimicologist, Third Class</span>
@@ -535,7 +579,8 @@ body.dbg #top .rk:after{content:' · DBG'; color:#E8825F; letter-spacing:.14em}
   <div class="ov center" id="ovPromo">
     <div>
       <h2 class="big">You have been<br><span class="v">promoted</span></h2>
-      <p class="mid">The dungeon closed its mouth, digested you thoroughly, and spat you out one rank higher inside a bigger one. Your tools are gone. Your notes are not.</p>
+      <p class="mid">The dungeon closed its mouth, digested you thoroughly, and spat you out one rank higher inside a bigger one. <b>Your tech is gone.</b> They are not taking your hammer, which is the only decent thing the Guild has ever done. Your fangs, your notes and your bestiary are yours too.</p>
+      <p class="mid" id="promoWorld" style="color:#BBD3A6"></p>
       <p class="mid st">New rank <i id="promoRank">—</i> · field notes <i id="promoNotes">0</i> · global <i id="promoMult">×1.0</i></p>
       <button class="cta v" id="promoOk" type="button">Report for duty</button>
     </div>
@@ -591,6 +636,11 @@ function mk(s){ return function(){ s|=0; s=s+0x6D2B79F5|0; var t=Math.imul(s^s>>
 function rr(a,b){ return a+Math.random()*(b-a); }
 function ri(a,b){ return Math.floor(rr(a,b+1)); }
 function clamp(v,a,b){ return v<a?a:v>b?b:v; }
+function lerp(a,b,t){ return a+(b-a)*t; }
+function ease(t){ return t<0?0:t>1?1:t*t*(3-2*t); }
+function easeOut(t){ return 1-Math.pow(1-clamp(t,0,1),3); }
+function easeIn(t){ return Math.pow(clamp(t,0,1),3); }
+function win(t,a,b){ return clamp((t-a)/(b-a),0,1); }
 function fmt(n){ n=Math.floor(n);
   if(n<10000) return n.toLocaleString('en-US');
   if(n<1e6) return (n/1e3).toFixed(n<1e5?1:0)+'k';
@@ -639,7 +689,22 @@ var SFX={
   tick:function(p){ tone(520+p*760,0.045,'square',0.03+p*0.035); },
   bolt:function(){ tone(220,0.5,'sawtooth',0.07,900); noise(0.3,0.05,1800,0.8); },
   roomScream:function(){ tone(300,1.5,'sawtooth',0.11,48); tone(452,1.3,'square',0.05,70,0.05);
-    noise(1.3,0.09,900,0.5); tone(60,1.6,'sine',0.09); }
+    noise(1.3,0.09,900,0.5); tone(60,1.6,'sine',0.09); },
+  /* the forge moment: a riser under the lift, a stab on the name, and the
+     deepest impact in the game on the slam */
+  forgeRise:function(){
+    tone(70,2.0,'sawtooth',0.055,320);
+    tone(105,1.9,'sine',0.045,480,0.05);
+    noise(1.9,0.022,320,0.9);
+  },
+  forgeName:function(){
+    [523,659,784,1046,1318].forEach(function(f,i){ tone(f,0.5,'triangle',0.055,null,i*0.045); });
+  },
+  forgeSlam:function(){
+    tone(44,1.4,'sine',0.13); tone(58,1.1,'sawtooth',0.09,26);
+    noise(0.7,0.11,220,0.5);
+    tone(1568,0.35,'square',0.03,null,0.02);
+  }
 };
 
 /* ══════════════ content ══════════════ */
@@ -732,7 +797,8 @@ var VAR=[
    turn up so seldom you would never learn what they do. */
 function pickVar(){
   var pool=[], tot=0, i;
-  for(i=1;i<VAR.length;i++) if(VAR[i].from<=S.room){ pool.push(VAR[i]); tot+=VAR[i].w||8; }
+  /* a second career meets the exotic ones earlier — rank counts as depth */
+  for(i=1;i<VAR.length;i++) if(VAR[i].from<=S.room+S.rank){ pool.push(VAR[i]); tot+=VAR[i].w||8; }
   if(!pool.length||Math.random()<0.55) return VAR[0];
   var r=Math.random()*tot;
   for(i=0;i<pool.length;i++){ r-=(pool[i].w||8); if(r<=0) return pool[i]; }
@@ -748,7 +814,8 @@ var PREFIX=[
   {k:'screaming',n:'SCREAMING', pay:1.5}
 ];
 function pickPre(){
-  if(S.room<3||Math.random()>0.18) return null;
+  var gate=Math.max(0,3-S.rank), ch=Math.min(0.42,0.18+0.05*S.rank);
+  if(S.room<gate||Math.random()>ch) return null;
   return PREFIX[ri(0,PREFIX.length-1)];
 }
 /* snapper's jaw. shut for a bit under half of every cycle. */
@@ -856,7 +923,7 @@ var BEAST=[
 var S={
   v:2, teeth:0, banked:0, spl:0, room:0, rank:0, notes:0,
   upg:{head:0,wrist:0,nerve:0,rep:0,pouch:0,staff:0,decoy:0,clutter:0,magnet:0,lens:0,ord:0,reach:0,crit:0,haul:0,scav:0},
-  seen:{}, cleared:{}, prog:{}, cycleTeeth:0, larvae:0, hammer:0, sandbox:0, fangs:{}, socket:[], lore:0, loreSeen:0, t:Date.now()
+  seen:{}, cleared:{}, prog:{}, cycleTeeth:0, larvae:0, hammer:0, carryHam:0, sandbox:0, fangs:{}, socket:[], lore:0, loreSeen:0, t:Date.now()
 };
 function save(){ if(S.sandbox) return; S.t=Date.now(); try{ localStorage.setItem('mimicSeason',JSON.stringify(S)); }catch(e){} }
 function load(){
@@ -873,8 +940,51 @@ function load(){
 function U(k){ return S.upg[k]||0; }
 function notesMult(){ return 1+S.notes*0.12; }
 function rankMult(){ return Math.pow(1.7,S.rank); }
+/* ── the difficulty curve across careers ──────────────────────────────────
+   A promotion multiplies what you earn — rank pays ×1.7, and field notes pile
+   on top — but the dungeon used to stay exactly as it was, so the second
+   career was a walkover. The dungeon now grows with your reputation, at a
+   lower exponent than your income: every cycle you are genuinely stronger
+   than the last, and never so much stronger that it plays itself.
+   Everything downstream (junk, mimics, quotas, prices) reads these. */
+function incomeMul(){ return rankMult()*notesMult(); }
+/* Field notes are knowledge of where to hit the things, so they raise your
+   damage on the same slope they raise your pay. That is what lets the dungeon
+   grow at all: scale health without scaling damage and every career simply
+   takes longer than the last, which is a treadmill, not a curve. */
+function noteDmg(){ return 1+0.12*S.notes; }
+/* Health grows a quarter faster than your damage per rank, so the same build
+   takes measurably longer to break the same room — while pay grows much
+   faster, so re-arming after a promotion is quick. The teeth are where the
+   promotion pays; the difficulty is in the danger, not in the grind. */
+/* the damage of the hammer you walked out of the last career holding */
+function carryPow(){ return HAMMERS[clamp(S.carryHam||0,0,HAMMERS.length-1)].dmg; }
+/* Health tracks the power you walked in with, and nothing else. An extra
+   per-rank factor on top of that compounds against a damage ceiling that is
+   capped (head maxes at 8, the hammer ladder at 8), so every career ends up
+   longer than the last — modelled at 1.35/rank it went 25 -> 39 -> 61 -> 107
+   minutes. The bite per career belongs on the quota and the fail state. */
+function worldMul(){ return S.rank?carryPow()*noteDmg():1; }
+function costMul(){ return S.rank?Math.pow(incomeMul(),0.9):1; }
+function quotaOf(i){ return Math.round(ROOMS[i].quota*(1+0.10*S.rank)); }
+/* You always re-enter at the shallow end, so the growth ramps from the cellar
+   to Outside instead of landing flat on the first room. Otherwise a new career
+   opens slower in real seconds than the one you just finished, which reads as
+   a punishment rather than a promotion. */
+function roomMul(i){
+  if(!S.rank) return 1;
+  if(i===undefined) i=S.room;
+  var d=ROOMS.length>1?i/(ROOMS.length-1):1;
+  return Math.pow(worldMul(),0.45+0.55*d);
+}
+function hpOf(base,i){ return Math.max(1,Math.round(base*roomMul(i))); }
+/* The hammer ladder is the one thing that does NOT ride the curve. Its top end
+   was always tuned to the end of a career, so scaling it would put the last
+   hammers permanently out of reach; leaving it fixed is the promotion's
+   reward — every career you climb further up the same ladder, faster. */
+function hamCost(H){ return H.cost; }
 function HAM(){ return HAMMERS[Math.min(S.hammer||0,HAMMERS.length-1)]; }
-function dmg(){ return (1+U('head'))*HAM().dmg*(1+fx('dmg')); }
+function dmg(){ return (1+U('head'))*HAM().dmg*(1+fx('dmg'))*noteDmg(); }
 function swingInt(){ return Math.max(0.040,0.19*Math.pow(0.88,U('wrist'))/HAM().spd/Math.max(0.4,1+fx('spd'))); }
 function aoeR(){ return HAM().aoe*baseSize()*1.05*(1+0.15*U('reach'))*(1+fx('aoe')); }
 function critChance(){ return 0.04*U('crit')+fx('crit'); }
@@ -882,6 +992,10 @@ function critChance(){ return 0.04*U('crit')+fx('crit'); }
 /* every set of teeth taken without banking makes the next one worth more */
 function haulMul(){ return Math.min(4,1+0.09*runKills); }
 function fuseMul(){ return clamp(1-0.04*eyes,0.38,1); }
+/* every rank shortens the fuse on everything that screams. This, not health,
+   is what makes a later career frightening: the same room, less time to break
+   whatever turns in it. */
+function rankFuse(){ return Math.max(0.6,1-0.07*S.rank); }
 function addEyes(v){
   if(!held) return;
   var cap=EYES-0.9;
@@ -889,10 +1003,13 @@ function addEyes(v){
   eyes=Math.min(cap,eyes+v);
 }
 function magnetK(){ return 1+0.4*U('magnet'); }
-function eyeRate(){ return 0.30*Math.pow(0.88,U('nerve'))*(S.room===5?1.6:1)*Math.max(0.25,1+fx('eye')); }
+function eyeRate(){ return 0.30*Math.pow(0.88,U('nerve'))*(S.room===5?1.6:1)*(1+0.07*S.rank)*Math.max(0.25,1+fx('eye')); }
 function mimicChance(){ return Math.min(0.72,0.18+0.029*openEyes()+0.025*U('rep')+fx('mimic')); }
 function teethMult(){ return rankMult()*notesMult()*(1+0.25*U('pouch'))*(1+fx('teeth'))*ROOMS[S.room].pay; }
-function cost(def,lvl){ return Math.floor(def.base*Math.pow(def.r,lvl)); }
+/* teeth prices ride the curve; splinter prices (decoys) do not, because
+   splinters come off junk whose health is already scaling */
+function priceMul(def){ return def===DECOY?1:costMul(); }
+function cost(def,lvl){ return Math.floor(def.base*Math.pow(def.r,lvl)*priceMul(def)); }
 /* a room is open if it's the first, or the one before it is cleared */
 function roomOpen(i){ return i===0 || !!S.cleared[i-1]; }
 /* only ever one mimic loose: the fuse ends the run, so two at once would be unwinnable */
@@ -915,8 +1032,9 @@ var touchAim=false;
 function aimLift(){ return touchAim?clamp(baseSize()*0.62,40,80):0; }
 
 var cv=$('cv'), g=cv.getContext('2d');
-var grain=null, bg=null;
+var grain=null, bg=null, keyArtMode=false;
 var MONO='ui-monospace,Menlo,Consolas,monospace';
+var DISP='"Impact","Haettenschweiler","Arial Narrow",sans-serif';
 
 function openEyes(){ return Math.min(EYES,Math.floor(eyes)); }
 function spot(){ return ROOMS[S.room].spot; }
@@ -1109,6 +1227,113 @@ function doorLeaf(b,C,m,G,open){
   b.restore();
 }
 /* how far open it is: shut at rest, wider as something runs at it, slammed after */
+
+/* ══════════════ the forge moment ══════════════
+   Take B, "The Lift". Time stops, the room loses its colour, the new hammer
+   rises out of the bottom of the frame, and then it comes down.
+   Deliberately not skippable: it is the payoff for the most expensive purchase
+   in the game, it runs for 2.8s, and every input is dead while it plays. */
+var FORGE_DUR=2.8;
+var forgeT=-1, forgeHm=null, forgeNamed=false, forgeSlammed=false;
+var hammerSheen=null, forgeEyeMul=1;
+function forging(){ return forgeT>=0; }
+function endForge(){
+  if(forgeT<0) return;
+  forgeT=-1; forgeHm=null; hammerSheen=null; forgeEyeMul=1;
+  document.body.classList.remove('forging');
+  buildShop(); show('ovShop'); syncTabs(); refreshUI();
+}
+function startForge(Hm){
+  forgeT=0; forgeHm=Hm; forgeNamed=false; forgeSlammed=false; forgeEyeMul=1;
+  /* the frame loop drives the sequence, but a backgrounded tab stops rAF dead.
+     Nothing may leave the UI locked, so wall-clock hands control back too. */
+  setTimeout(endForge,(FORGE_DUR+2.2)*1000);
+  held=false; aimIdx=-1; hamAnim=-1;
+  for(var i=0;i<TABS.length;i++) hide(TABS[i]);
+  syncTabs();
+  document.body.classList.add('forging');   /* kills every button for the duration */
+  SFX.forgeRise();
+}
+function stepForge(dt){
+  forgeT+=dt;
+  /* gameplay is stopped, but the pieces still need their pop-in and squash to
+     finish or a room built moments ago renders at zero scale */
+  for(var i=0;i<objs.length;i++){
+    var o=objs[i];
+    if(o.spawn<1) o.spawn=Math.min(1,o.spawn+dt*5);
+    if(o.squash>0) o.squash=Math.max(0,o.squash-dt*9);
+  }
+  if(!forgeNamed&&forgeT>=1.15){ forgeNamed=true; SFX.forgeName(); }
+  if(!forgeSlammed&&forgeT>=2.0){
+    forgeSlammed=true; SFX.forgeSlam(); shake(20);
+    /* the room flinches — the eyes shut for the shot, then go back to whatever
+       the danger gauge actually says. Pure spectacle, no balance in it. */
+    forgeEyeMul=0;
+  }
+  if(forgeSlammed) forgeEyeMul=clamp((forgeT-2.28)/0.42,0,1);
+  if(forgeT>=FORGE_DUR) endForge();
+}
+function drawForge(){
+  var t=forgeT, Hm=forgeHm; if(t<0||!Hm) return;
+  var w=W, h=H;
+  /* one white frame to cut on, then the vignette closes in */
+  if(t<0.16){ g.save(); g.globalAlpha=(1-ease(win(t,0,0.14)))*0.75; g.fillStyle='#F4F1E6'; g.fillRect(0,0,w,h); g.restore(); }
+  var vg=ease(win(t,0.05,0.6))*0.85;
+  if(vg>0.01){
+    var rad=g.createRadialGradient(w/2,h*0.5,Math.min(w,h)*0.18,w/2,h*0.5,Math.max(w,h)*0.75);
+    rad.addColorStop(0,'rgba(20,18,9,0)'); rad.addColorStop(1,'rgba(20,18,9,'+vg.toFixed(3)+')');
+    g.fillStyle=rad; g.fillRect(0,0,w,h);
+  }
+  /* ink rays, turning slowly */
+  var ry=win(t,0.5,1.1)*(t>1.9?clamp(1-(t-1.9)*3,0,1):1);
+  if(ry>0){
+    g.save(); g.globalAlpha=ry*0.5; g.fillStyle='#231F1A';
+    g.translate(w*0.5,h*0.46); g.rotate(t*0.55);
+    var len=Math.max(w,h)*0.75*ry;
+    for(var i=0;i<14;i++){
+      g.rotate(6.2832/14);
+      g.beginPath(); g.moveTo(0,0); g.lineTo(len,-len*0.055); g.lineTo(len,len*0.055); g.closePath(); g.fill();
+    }
+    g.restore();
+  }
+  /* the lift, and then the slam */
+  var UP=0.785;                     /* haft straight down, head on top */
+  var rise=easeOut(win(t,0.18,1.1));
+  var hy=lerp(h*1.3,h*0.5,rise), rot=lerp(UP+1.55,UP,rise), sc=lerp(0.7,1.5,rise);
+  if(t>1.1&&t<2.0) hy+=Math.sin(t*3.4)*h*0.006;
+  var slam=win(t,2.0,2.14);
+  if(slam>0){ rot=lerp(UP,IMPACT_ROT,easeIn(slam)); hy=lerp(h*0.5,h*0.6,easeIn(slam)); sc=lerp(1.5,1.3,slam); }
+  hammerSheen=win(t,0.85,1.35); if(hammerSheen>=1) hammerSheen=null;
+  Hm.live=1;
+  paintHammer(Hm,w*0.5,hy,Math.min(w,h)/230*sc,rot,rot);
+  hammerSheen=null;
+  /* the name */
+  var nm=win(t,1.15,1.45)*(t>2.55?clamp(1-(t-2.55)*3.5,0,1):1);
+  if(nm>0){
+    g.save(); g.globalAlpha=nm;
+    var size=Math.max(20,Math.min(w,h)*0.13), txt=Hm.n.toUpperCase();
+    for(var k=0;k<26;k++){ g.font='400 '+size+'px '+DISP; if(g.measureText(txt).width<=w*0.86) break; size*=0.92; }
+    g.textAlign='center'; g.textBaseline='alphabetic';
+    g.lineJoin='round'; g.lineWidth=size*0.14; g.strokeStyle='rgba(20,18,9,.55)';
+    g.strokeText(txt,w*0.5,h*0.22); g.fillStyle='#F4F1E6'; g.fillText(txt,w*0.5,h*0.22);
+    g.font='600 '+Math.max(10,Math.min(w,h)*0.026)+'px '+MONO;
+    g.fillStyle='#D8CFB8';
+    g.fillText('×'+Hm.dmg+' DAMAGE · ×'+Hm.spd.toFixed(2)+' SWING'+(Hm.aoe?' · AREA '+Hm.aoe.toFixed(2):''),w*0.5,h*0.28);
+    g.restore();
+  }
+  /* the shockwave */
+  if(slam>=1){
+    var kk=win(t,2.14,2.75);
+    g.save(); g.lineCap='round';
+    g.globalAlpha=1-kk; g.strokeStyle='#F4F1E6'; g.lineWidth=9*(1-kk);
+    g.beginPath(); g.ellipse(w*0.5,h*0.64,Math.max(w,h)*0.9*kk,Math.max(w,h)*0.4*kk,0,0,6.3); g.stroke();
+    g.strokeStyle=Hm.col; g.lineWidth=6*(1-kk);
+    g.beginPath(); g.ellipse(w*0.5,h*0.64,Math.max(w,h)*0.6*kk,Math.max(w,h)*0.27*kk,0,0,6.3); g.stroke();
+    g.restore();
+    if(t<2.36){ g.save(); g.globalAlpha=(1-win(t,2.14,2.36))*0.85; g.fillStyle='#FFFDF4'; g.fillRect(0,0,w,h); g.restore(); }
+  }
+}
+
 var doorOpen=0, doorTarget=0;
 function stepDoor(dt){
   var lo=loose();
@@ -1587,7 +1812,8 @@ function newObj(o,wall){
   o.kind=wall?WALLKINDS[ri(0,WALLKINDS.length-1)]:R.kinds[ri(0,R.kinds.length-1)];
   o.fx=p[0]; o.fy=p[1];
   o.seed=ri(1,1e9); o.rot=rr(-0.13,0.13); o.sz=rr(0.86,1.16);
-  o.max=R.hp; o.hp=R.hp; o.mimic=false; o.dead=false; o.cracks=[];
+  var jh=hpOf(R.hp,S.room);
+  o.max=jh; o.hp=jh; o.mimic=false; o.dead=false; o.cracks=[];
   o.teethTop=null; o.teethBot=null; o.flee=0; o.hopT=Math.random()*6; o.vr=null; o.child=false;
   o.biteT=0; o.spawn=0.001; o.squash=0; o.splashed=false;
   return o;
@@ -1618,9 +1844,9 @@ function buildRoom(quiet){
 function refreshRoomLabel(){
   var R=ROOMS[S.room], p=prog(S.room), done=!!S.cleared[S.room];
   $('roomName').textContent=R.n;
-  $('roomProg').textContent=done?'cleared':(p+'/'+R.quota);
+  $('roomProg').textContent=done?'cleared':(p+'/'+quotaOf(S.room));
   $('roomProg').className=done?'pg done':'pg';
-  $('roomBar').style.width=(done?100:Math.min(100,p/R.quota*100))+'%';
+  $('roomBar').style.width=(done?100:Math.min(100,p/quotaOf(S.room)*100))+'%';
   $('roomBar').className=done?'done':'';
 }
 /* the job sheet — punctuation at the end of every run, without a modal */
@@ -1801,8 +2027,9 @@ function paintPiece(o,cx,cy,px,ink,spotCol,hopAmp){
 }
 function drawEye(x,y,s,open){
   g.save(); g.translate(x,y); g.scale(s,s);
-  /* shelves, brick and frames would swallow an eye, so it gets its own paper */
-  if(ROOMS[S.room].busy){
+  /* shelves, brick and frames would swallow an eye, so it gets its own paper.
+     The key art paints its own plain wallpaper, so it never wants one. */
+  if(ROOMS[S.room].busy&&!keyArtMode){
     g.globalAlpha=0.22+0.34*clamp(open,0,1); g.fillStyle='#EDE8D8';
     g.beginPath(); g.ellipse(0,0,11,7,0,0,6.3); g.fill(); g.globalAlpha=1;
   }
@@ -2001,6 +2228,15 @@ function paintHammer(Hm,cx,cy,base,rot,anchor){
   /* the collar where the haft passes through */
   g.fillStyle='#231F1A';
   g.fillRect(-hw*0.16,-hh*1.5,hw*0.32,hh*3);
+  /* light running down the head — only the forge moment sets this */
+  if(hammerSheen!=null&&hammerSheen>0&&hammerSheen<1){
+    g.save();
+    g.beginPath(); g.rect(-hw,-hh*1.7,hw*2,hh*3.4); g.clip();
+    var shx=lerp(-hw*1.4,hw*1.4,hammerSheen);
+    g.globalAlpha=0.85; g.strokeStyle='#FFFDF4'; g.lineWidth=hw*0.22; g.lineCap='butt';
+    g.beginPath(); g.moveTo(shx-hh*0.9,-hh*1.8); g.lineTo(shx+hh*0.9,hh*1.8); g.stroke();
+    g.restore();
+  }
   g.restore();
   g.restore();
 }
@@ -2241,7 +2477,7 @@ function render(){
   /* eyes */
   for(var e=0;e<EYES;e++){
     var es=eyeSpots[e]; if(!es) continue;
-    drawEye(es.x*W, es.y*floorTop()*0.96, es.s*clamp(Math.min(W,H)/520,0.72,1.35)*clamp(floorTop()/(H*0.4),0.7,1.15), es.o);
+    drawEye(es.x*W, es.y*floorTop()*0.96, es.s*clamp(Math.min(W,H)/520,0.72,1.35)*clamp(floorTop()/(H*0.4),0.7,1.15), es.o*forgeEyeMul);
   }
 
   /* objects sorted back to front */
@@ -2267,6 +2503,7 @@ function render(){
   if(flashT>0){ g.fillStyle='rgba(196,43,28,'+(flashT*0.55).toFixed(3)+')'; g.fillRect(0,0,W,H); }
   /* grain */
   if(grain){ g.save(); g.globalCompositeOperation='multiply'; g.drawImage(grain,0,0,W,H); g.restore(); }
+  if(forging()) drawForge();
   /* jaws */
   if(dead||jawT>0){ drawJaws(); }
 }
@@ -2333,14 +2570,14 @@ function reveal(o,forced){
   var rng=mk(o.seed+77);
   o.mimic=true;
   o.vr=forced||pickVar();
-  o.max=Math.max(2,Math.round((6+U('head')*2)*(1+ROOMS[S.room].hp*0.14)*o.vr.hp)); o.hp=o.max;
+  o.max=Math.max(2,Math.round((6+U('head')*2)*(1+ROOMS[S.room].hp*0.14)*o.vr.hp*roomMul())); o.hp=o.max;
   o.cracks=[];
   o.teethTop=teethPts(KIT[o.kind].seam,true,rng);
   o.teethBot=teethPts(KIT[o.kind].seam,false,rng);
   /* fuse scales with time-to-kill, so it stays fair as both sides grow */
   var dps=dmg()/swingInt();
   /* fuse 0 on the variant means it never runs at all — the clock becomes the room */
-  o.fuseMax=(U('rep')>=3||o.vr.fuse<=0)?0:clamp((4.6+(o.hp/dps)*2.5)*o.vr.fuse*fuseMul(),1.7,16);
+  o.fuseMax=(U('rep')>=3||o.vr.fuse<=0)?0:clamp((4.6+(o.hp/dps)*2.5)*o.vr.fuse*fuseMul()*rankFuse(),1.5,16);
   o.flee=o.fuseMax; o.sx=o.fx; o.sy=o.fy; o.tick=0; o.bolting=false;
   /* an elite prefix on top, from the Armoury on */
   o.pre=forced?null:pickPre();
@@ -2427,8 +2664,8 @@ function killMimic(o){
   if(!S.cleared[S.room]){
     S.prog[S.room]=prog(S.room)+1;
     refreshRoomLabel();
-    if(prog(S.room)>=R.quota){ clearRoom(); return; }
-    var left=R.quota-prog(S.room);
+    if(prog(S.room)>=quotaOf(S.room)){ clearRoom(); return; }
+    var left=quotaOf(S.room)-prog(S.room);
     if(left<=3){ say('<b>'+left+' more set'+(left>1?'s':'')+'</b> and this room is signed off.'); if(eyes>=EYES) roomScream(); return; }
   }
   var oe=openEyes();
@@ -2459,7 +2696,7 @@ function clearRoom(){
   setTimeout(function(){ show('ovClear'); },520);
 }
 function breakJunk(o){
-  var amt=(1+ri(1,3))*(1+0.4*U('scav'));
+  var amt=(1+ri(1,3))*(1+0.4*U('scav'))*Math.pow(worldMul(),0.6);
   if(Math.random()<0.011) findLore();
   addSpl(o,7,amt);
   addShards(o,parts.length>200?3:7,false);
@@ -2592,7 +2829,7 @@ function killRoom(){
   roomMim=null; eyes=0; jawT=0;
   if(!S.cleared[S.room]){
     S.prog[S.room]=prog(S.room)+3; refreshRoomLabel();
-    if(prog(S.room)>=ROOMS[S.room].quota){ clearRoom(); return; }
+    if(prog(S.room)>=quotaOf(S.room)){ clearRoom(); return; }
   }
   say('<b>You broke the room.</b> Every eye shut at once. Keep going.');
   save();
@@ -2608,7 +2845,7 @@ function getEaten(){
   $('eatSpl').textContent=fmt(lost/4);
   $('eatProg').textContent=S.cleared[S.room]
     ? 'This room is already signed off. Nothing lost but teeth.'
-    : 'Contract progress kept: '+prog(S.room)+' of '+ROOMS[S.room].quota+'. Being eaten never costs you that.';
+    : 'Contract progress kept: '+prog(S.room)+' of '+quotaOf(S.room)+'. Being eaten never costs you that.';
   setTimeout(function(){ show('ovEaten'); },700);
   save();
 }
@@ -2624,7 +2861,7 @@ function mimicEscaped(o){
   $('escKept').textContent=fmt(kept);
   $('escProg').textContent=S.cleared[S.room]
     ? 'This room is already signed off. Nothing lost but teeth.'
-    : 'Contract progress kept: '+prog(S.room)+' of '+ROOMS[S.room].quota+'. An escape never costs you that.';
+    : 'Contract progress kept: '+prog(S.room)+' of '+quotaOf(S.room)+'. An escape never costs you that.';
   setTimeout(function(){ show('ovEsc'); },650);
   save();
 }
@@ -2650,7 +2887,7 @@ function localPt(e){
   return [e.clientX-r.left, e.clientY-r.top];
 }
 cv.addEventListener('pointerdown',function(e){
-  if(!running||dead) return;
+  if(!running||dead||forging()) return;
   e.preventDefault();
   touchAim=(e.pointerType==='touch');
   var p=localPt(e); px=p[0]; py=p[1]-aimLift(); hasPointer=true;
@@ -2688,6 +2925,7 @@ function dbgTap(){
   if(dbgTaps>=5){ dbgTaps=0; openDbg(); }
 }
 function openDbg(){
+  if(forging()) return;
   S.dbg=1;
   document.body.classList.add('dbg');
   hide('ovTitle'); running=true;
@@ -2701,6 +2939,7 @@ function buildDbg(){
   h+='<div class="dstat">'+
      [['Room',ROOMS[S.room].n],['Rank',S.rank+1],['Banked',fmt(S.banked)],['Splinters',fmt(S.spl)],
       ['Larvae',S.larvae],['Hammer','H'+((S.hammer||0)+1)],['Eyes',eyes.toFixed(1)+'/'+EYES],
+      ['World','×'+worldMul().toFixed(2)],['Here','×'+roomMul().toFixed(2)],['Income','×'+incomeMul().toFixed(2)],['Notes',S.notes],
       ['Objects',objs.length],['Parts',parts.length],['Canvas',W+'×'+H+' @'+DPR]]
      .map(function(r){ return '<div><span>'+r[0]+'</span><b>'+r[1]+'</b></div>'; }).join('')+'</div>';
 
@@ -2717,7 +2956,7 @@ function buildDbg(){
      dbgBtn('give','+10k carrying','carry')+dbgBtn('give','3 of every fang','fangs')+
      dbgBtn('give','Max all tech','tech')+dbgBtn('give','Next hammer','hammer')+
      dbgBtn('give','Last hammer','hammerMax')+dbgBtn('give','Clear every room','clearAll')+
-     dbgBtn('give','+1 rank','rank')+
+     dbgBtn('give','+1 rank','rank')+dbgBtn('give','+10 field notes','notes')+dbgBtn('give','Promote now','promote')+
      '</div>';
 
   h+='<div class="grp">Spawn a mimic on the nearest thing</div><div class="drow">';
@@ -2758,8 +2997,10 @@ function dbgDo(act,a){
     else if(a==='tech'){ TECH.forEach(function(t){ S.upg[t.k]=t.max; }); }
     else if(a==='hammer'){ S.hammer=Math.min(HAMMERS.length-1,(S.hammer||0)+1); }
     else if(a==='hammerMax'){ S.hammer=HAMMERS.length-1; }
-    else if(a==='clearAll'){ ROOMS.forEach(function(R,i){ S.cleared[i]=1; S.prog[i]=R.quota; }); }
+    else if(a==='clearAll'){ ROOMS.forEach(function(R,i){ S.cleared[i]=1; S.prog[i]=quotaOf(i); }); }
     else if(a==='rank'){ S.rank=Math.min(RANKS.length-1,S.rank+1); }
+    else if(a==='notes'){ S.notes+=10; }
+    else if(a==='promote'){ hide('ovDbg'); syncTabs(); promote(); return; }
     save(); refreshUI(); buildDbg(); return;
   }
   if(act==='spawn'){
@@ -2818,6 +3059,7 @@ function hide(id){
   syncTabs();
 }
 function togglePanel(id,build){
+  if(forging()) return;
   if($(id).classList.contains('on')){ hide(id); return; }
   release(); if(build) build(); show(id);
 }
@@ -2901,13 +3143,14 @@ function hammerIcon(Hm){
 }
 var buyN=1;
 function costN(def,lvl,k){
-  var c=0; for(var i=0;i<k;i++) c+=Math.floor(def.base*Math.pow(def.r,lvl+i));
+  var c=0, m=priceMul(def);
+  for(var i=0;i<k;i++) c+=Math.floor(def.base*Math.pow(def.r,lvl+i)*m);
   return c;
 }
 function maxAfford(def,lvl,budget){
-  var k=0,c=0;
+  var k=0,c=0,m=priceMul(def);
   while(lvl+k<def.max){
-    var nx=Math.floor(def.base*Math.pow(def.r,lvl+k));
+    var nx=Math.floor(def.base*Math.pow(def.r,lvl+k)*m);
     if(c+nx>budget) break;
     c+=nx; k++;
     if(k>200) break;
@@ -2954,14 +3197,15 @@ function buildShop(){
      '<div class="key">×'+cur.dmg+' damage · ×'+cur.spd.toFixed(2)+' swing · '+(cur.aoe?'area '+cur.aoe.toFixed(2):'no area')+'</div></div></div>';
   var nx=HAMMERS[(S.hammer||0)+1];
   if(nx){
-    var okT=S.banked>=nx.cost, okL=S.larvae>=nx.larv, can=okT&&okL;
+    var nxc=hamCost(nx);
+    var okT=S.banked>=nxc, okL=S.larvae>=nx.larv, can=okT&&okL;
     var lack=[];
-    if(!okT) lack.push(fmt(nx.cost-S.banked)+' teeth');
+    if(!okT) lack.push(fmt(nxc-S.banked)+' teeth');
     if(!okL) lack.push((nx.larv-S.larvae)+' larvae');
     h+='<button class="card '+(can?'ok':'')+'" data-t="forge" '+(can?'':'disabled')+'>'+
        '<span class="ci">'+hammerIcon(nx)+'</span><div class="cb">'+
        '<div class="cn">Forge the '+nx.n+'</div><div class="cd">'+nx.d+'</div>'+
-       '<div class="cc">'+fmt(nx.cost)+' teeth'+(nx.larv?' <s>+</s> '+nx.larv+' larvae':'')+
+       '<div class="cc">'+fmt(nxc)+' teeth'+(nx.larv?' <s>+</s> '+nx.larv+' larvae':'')+
        (can?'':' <span class="short">· '+lack.join(' and ')+' short</span>')+'</div>'+
        '<div class="key">×'+nx.dmg+' dmg (now ×'+cur.dmg+') · ×'+nx.spd.toFixed(2)+' swing · '+(nx.aoe?'area '+nx.aoe.toFixed(2):'no area')+'</div>'+
        (okL?'':'<div class="key" style="color:#8C846F">Larvae come from decoys, while you are away.</div>')+
@@ -3026,11 +3270,14 @@ $('shopBody').addEventListener('click',function(e){
   var k=b.dataset.t;
   if(k==='forge'){
     var nh=HAMMERS[(S.hammer||0)+1];
-    if(!nh||S.banked<nh.cost||S.larvae<nh.larv) return;
-    S.banked-=nh.cost; S.larvae-=nh.larv; S.hammer=(S.hammer||0)+1;
-    SFX.promo(); flashT=1; shake(10);
+    if(!nh) return;
+    var nhc=hamCost(nh);
+    if(S.banked<nhc||S.larvae<nh.larv) return;
+    S.banked-=nhc; S.larvae-=nh.larv; S.hammer=(S.hammer||0)+1;
     say('<b>'+nh.n+'.</b> '+nh.d);
-    save(); buildShop(); refreshUI(); return;
+    save(); refreshUI();
+    startForge(HAM());
+    return;
   }
   if(k==='decoy'){
     var dp=planBuy(DECOY,U('decoy'),S.spl);
@@ -3051,19 +3298,31 @@ $('shopBody').addEventListener('click',function(e){
 
 /* map */
 function buildMap(){
-  var h='<div class="grp">Recover the sets of teeth a room asks for and it is cleared for good. Rooms unlock in order.</div>';
+  var h='';
+  if(S.rank){
+    h+='<div class="cycle"><b>Career '+(S.rank+1)+'</b>'+
+       '<span>Sized to the <b>'+HAMMERS[clamp(S.carryHam||0,0,HAMMERS.length-1)].n+'</b> you kept — you hit <b>×'+
+       (carryPow()*noteDmg()).toFixed(1)+'</b> harder than a first-career opening, so health matches it at depth: '+
+       '<b>×'+roomMul(0).toFixed(1)+'</b> in the cellar rising to <b>×'+roomMul(ROOMS.length-1).toFixed(1)+
+       '</b> Outside. Contracts ask <b>'+Math.round(10*S.rank)+'%</b> more, prices ride <b>×'+costMul().toFixed(1)+
+       '</b> against <b>×'+incomeMul().toFixed(1)+'</b> pay. Fuses are <b>'+Math.round((1-rankFuse())*100)+
+       '%</b> shorter, the exotic mimics start '+S.rank+' room'+(S.rank>1?'s':'')+' earlier, and '+
+       Math.round(Math.min(0.42,0.18+0.05*S.rank)*100)+'% of them are elites.</span></div>';
+  }
+  h+='<div class="grp">Recover the sets of teeth a room asks for and it is cleared for good. Rooms unlock in order.</div>';
   ROOMS.forEach(function(R,i){
     var open=roomOpen(i), done=!!S.cleared[i], here=i===S.room, p=prog(i);
     var status = done ? '<s>Cleared — farm it whenever</s>'
-               : open ? '<b style="color:#E8825F">'+p+' of '+R.quota+' sets recovered</b>'
+               : open ? '<b style="color:#E8825F">'+p+' of '+quotaOf(i)+' sets recovered</b>'
                : 'Locked — clear '+ROOMS[i-1].n+' first';
     h+='<button class="card '+(open&&!done?'ok':'')+(done?' bought':'')+'" data-r="'+i+'" '+(open?'':'disabled')+'>'+
        '<span class="ci" style="background:'+R.spot+'; border:1px solid #5E5647"></span>'+
        '<div class="cb"><div class="cn">'+R.n+(here?' — you are here':'')+(done?' ✓':'')+'</div>'+
        '<div class="cd">'+R.rule+'</div>'+
        '<div class="cc">'+status+'</div>'+
-       (open&&!done?'<div class="pbar"><i style="width:'+Math.min(100,p/R.quota*100)+'%"></i></div>':'')+
-       '<div class="key" style="color:#8C846F">Payout ×'+R.pay+' · '+R.count+' objects · '+R.hp+' hp each</div></div>'+
+       (open&&!done?'<div class="pbar"><i style="width:'+Math.min(100,p/quotaOf(i)*100)+'%"></i></div>':'')+
+       '<div class="key" style="color:#8C846F">Payout ×'+R.pay+' · '+R.count+' objects · '+fmt(hpOf(R.hp,i))+' hp each'+
+       (S.rank?' (×'+roomMul(i).toFixed(1)+' this career)':'')+'</div></div>'+
        '</button>';
   });
   $('mapBody').innerHTML=h;
@@ -3187,17 +3446,22 @@ function cycleSocket(idx){
 }
 
 /* ══ key art — one still frame of the worst possible run, drawn with the game's own code ══ */
-function drawKeyArt(){
-  var c=$('keyart'); if(!c) return;
-  var r=c.getBoundingClientRect();
-  var vw=Math.max(320,Math.round(r.width)||window.innerWidth);
-  var vh=Math.max(400,Math.round(r.height)||window.innerHeight);
-  var dp=Math.min(2,window.devicePixelRatio||1);
+/* target/fw/fh let the same art render offscreen at card size (see makeOG) */
+function drawKeyArt(target,fw,fh){
+  var c=target||$('keyart'); if(!c) return;
+  var vw,vh,dp;
+  if(fw){ vw=fw; vh=fh; dp=1; }
+  else {
+    var r=c.getBoundingClientRect();
+    vw=Math.max(320,Math.round(r.width)||window.innerWidth);
+    vh=Math.max(400,Math.round(r.height)||window.innerHeight);
+    dp=Math.min(2,window.devicePixelRatio||1);
+  }
   c.width=Math.round(vw*dp); c.height=Math.round(vh*dp);
   var ctx=c.getContext('2d'); ctx.setTransform(dp,0,0,dp,0,0);
 
   var og=g,oW=W,oH=H;
-  g=ctx; W=vw; H=vh;
+  g=ctx; W=vw; H=vh; keyArtMode=true;
   var ft=vh*0.60, ink='#231F1A', spot='#B4842A';
 
   ctx.fillStyle='#CAC3A9'; ctx.fillRect(0,0,vw,ft);
@@ -3244,8 +3508,60 @@ function drawKeyArt(){
   paintHammer(Hm, vw*0.17, vh*0.70, Math.min(vh,vw)/260, -0.95, -0.95);
 
   if(grain){ ctx.save(); ctx.globalCompositeOperation='multiply'; ctx.drawImage(grain,0,0,vw,vh); ctx.restore(); }
-  g=og; W=oW; H=oH;
+  g=og; W=oW; H=oH; keyArtMode=false;
 }
+
+/* ══ link-preview card ══
+   Messenger scrapers will not run scripts and will not take a data: URI,
+   so og.png has to be a real file sitting next to the game. Rather than
+   keep a hand-drawn image in sync with the art, the card is rendered by
+   the game itself: open the game with #og on the URL and it saves one.
+   Re-run it whenever the art changes. */
+var OG_W=1200, OG_H=630;
+function makeOG(){
+  var c=document.createElement('canvas');
+  /* no grain on the card: the noise triples the PNG, and WhatsApp drops a
+     preview image over ~300 KB. Flat plates compress to a fraction of that. */
+  var sv=grain; grain=null;
+  drawKeyArt(c,OG_W,OG_H);
+  grain=sv;
+  var x=c.getContext('2d');
+
+  /* the slab goes top-left: it fills the empty wallpaper, and leaves the
+     clutter, the mimic and the raised hammer unobstructed along the bottom */
+  var pad=48, slabW=Math.round(OG_W*0.55), slabH=206, sy=pad;
+  x.save();
+  x.fillStyle='rgba(35,31,26,.93)';
+  x.fillRect(pad,sy,slabW,slabH);
+  x.fillStyle='#C42B1C';
+  x.fillRect(pad,sy,slabW,7);
+
+  x.textBaseline='top';
+  x.fillStyle='#F4F1E6';
+  x.font='400 86px "Impact","Haettenschweiler","Arial Narrow",sans-serif';
+  x.fillText('SOME OF',pad+26,sy+30);
+  var mw=x.measureText('SOME OF ').width;
+  x.fillStyle='#C42B1C';
+  x.fillText('IT BITES',pad+26+mw,sy+30);
+
+  x.fillStyle='#DED8C4';
+  x.font='400 25px Georgia,"Times New Roman",serif';
+  x.fillText('An unhelpful percentage of the furniture is alive.',pad+26,sy+128);
+  x.fillStyle='#B3A98F';
+  x.font='400 19px ui-monospace,Menlo,Consolas,monospace';
+  x.fillText('HOLD THE HAMMER · BREAK THE ROOM · WALK OUT IN TIME',pad+26,sy+166);
+  x.restore();
+
+  return c;
+}
+function saveOG(){
+  makeOG().toBlob(function(b){
+    var u=URL.createObjectURL(b), a=document.createElement('a');
+    a.href=u; a.download='og.png'; document.body.appendChild(a); a.click();
+    a.remove(); setTimeout(function(){ URL.revokeObjectURL(u); },4000);
+  },'image/png');
+}
+window.makeOG=makeOG; window.saveOG=saveOG;   /* both callable from the console */
 
 /* ══ handbook — written from the live data, so it cannot drift from the build ══ */
 function hsec(t){ return '<div class="grp">'+t+'</div>'; }
@@ -3342,7 +3658,8 @@ function buildHelp(){
   h+=hp('<b>Decoys</b> are furniture you build from splinters and leave in the dungeon overnight. Things move into them. That is the only source of larvae, and it works for up to 24 hours while the game is closed.');
 
   h+=hsec('Getting promoted');
-  h+=hp('Clear every room and Walk Out becomes <b>Accept promotion</b>. The dungeon closes its mouth, digests you, and you wake one rank higher inside a bigger one. You lose your teeth, your tech and your hammer. You keep <b>field notes</b>, which are a permanent multiplier on everything, and your bestiary.');
+  h+=hp('Clear every room and Walk Out becomes <b>Accept promotion</b>. The dungeon closes its mouth, digests you, and you wake one rank higher inside a bigger one. You lose your teeth and your tech. <b>You keep the hammer</b> — nobody at the Guild has ever managed to get one back — along with your <b>fangs</b>, your bestiary, and <b>field notes</b>, which are a permanent multiplier on everything.');
+  h+=hp('<b>The next dungeon is sized to the hammer you walked out with.</b> Keeping a ×210 hammer would make a fresh cellar meaningless, so the furniture in the next dungeon is proportionally heavier — most of all in the deep rooms, least of all in the cellar, where your old hammer is supposed to feel like cheating. Contracts and prices climb too, and every rank shortens every fuse and puts the exotic mimics a room earlier.');
   h+=htab([{n:'#',num:1},{n:'Rank'}],
     RANKS.map(function(r,i){
       return [i+1,{v:r+(i===S.rank?' — you':''),s:i===S.rank?'color:#E8825F':''}];
@@ -3499,7 +3816,7 @@ function maxState(){
   TECH.forEach(function(t){ m.upg[t.k]=t.max; });
   m.upg.decoy=DECOY.max;
   BEAST.forEach(function(b){ m.seen[b.kind]=1; });
-  ROOMS.forEach(function(R,i){ m.cleared[i]=1; m.prog[i]=R.quota; });
+  ROOMS.forEach(function(R,i){ m.cleared[i]=1; m.prog[i]=R.quota*3; });
   return m;
 }
 function enterSandbox(){
@@ -3530,11 +3847,23 @@ function promote(){
   S.cleared={}; S.prog={}; S.room=0; runKills=0;
   var d=U('decoy');
   S.upg={head:0,wrist:0,nerve:0,rep:0,pouch:0,staff:0,clutter:0,magnet:0,lens:0,ord:0,reach:0,crit:0,haul:0,scav:0,decoy:Math.floor(d*0.5)};
+  /* You keep the hammer. What stops that trivialising the next career is that
+     the dungeon is now sized to it: carryHam records the tier you walked out
+     with, and the world scales off that. Snapshotting it here rather than
+     reading S.hammer live means forging mid-career stays pure progress — the
+     room never grows under you. */
+  S.carryHam=S.hammer||0;
   jawT=0; dead=true;
   SFX.promo();
   $('promoRank').textContent=RANKS[S.rank];
   $('promoNotes').textContent='+'+earned;
   $('promoMult').textContent='×'+notesMult().toFixed(2);
+  $('promoWorld').innerHTML='The next dungeon is sized to the '+HAMMERS[clamp(S.carryHam||0,0,HAMMERS.length-1)].n+
+    ' you are keeping. You hit <b>×'+(carryPow()*noteDmg()).toFixed(1)+'</b> harder than a first-career opening, so the deep rooms carry '+
+    '<b>×'+roomMul(ROOMS.length-1).toFixed(1)+'</b> the health to match — but the cellar only <b>×'+roomMul(0).toFixed(1)+
+    '</b>, where that hammer is meant to feel like cheating. Contracts ask <b>'+Math.round(10*(S.rank))+'%</b> more, '+
+    'prices <b>×'+costMul().toFixed(1)+'</b> against <b>×'+incomeMul().toFixed(1)+'</b> pay, and every fuse is <b>'+
+    Math.round((1-rankFuse())*100)+'%</b> shorter.';
   setTimeout(function(){ show('ovPromo'); },800);
   save();
 }
@@ -3604,7 +3933,8 @@ function begin(){
   hide('ovTitle'); running=true;
   var c=ac(); if(c&&c.state==='suspended') c.resume();
 }
-$('contBtn').addEventListener('click',function(){ begin(); offline(); });
+function enterGame(){ begin(); offline(); }
+$('contBtn').addEventListener('click',enterGame);
 $('rulesBtn').addEventListener('click',function(){ begin(); buildHelp(); show('ovHelp'); });
 var wipeArmed=false;
 $('wipeBtn').addEventListener('click',function(){
@@ -3619,17 +3949,21 @@ $('wipeBtn').addEventListener('click',function(){
 /* dress the menu for a returning member */
 function dressMenu(){
   var fresh=!hadSave;
+  /* exactly one way in: a new licence, or the career you already have */
   $('startBtn').hidden=!fresh;
   $('contBtn').hidden=fresh;
   $('wipeBtn').hidden=fresh;
+  /* the one on screen is always the primary button */
+  $('contBtn').className='cta v';
   if(!fresh){
+    $('contBtn').innerHTML='Back to work &nbsp;<i>&rarr;</i>';
     $('saveLine').innerHTML='Resuming · '+RANKS[S.rank]+' · '+clearedCount()+' of '+ROOMS.length+
       ' rooms signed off · '+fmt(S.banked)+' teeth banked';
   } else {
     $('saveLine').textContent='New career. The handbook is behind the ? in the top corner at any time.';
   }
 }
-$('startBtn').addEventListener('click',function(){ begin(); offline(); });
+$('startBtn').addEventListener('click',enterGame);
 
 document.addEventListener('click',function(e){
   var b=e.target.closest('[data-back]');
@@ -3651,6 +3985,7 @@ function frame(now){
   /* outside step(), so an open panel can't strand the room half-drained */
   var want=0;
   for(var dq=0;dq<objs.length;dq++) if(objs[dq].mimic){ want=1; break; }
+  if(forging()) want=1;
   drain+=(want-drain)*Math.min(1,dt*DRAIN_RATE);
   render();
   requestAnimationFrame(frame);
@@ -3751,6 +4086,7 @@ function stepVariant(o,dt){
   }
 }
 function step(dt){
+  if(forging()){ stepForge(dt); if(shakeM>0.2) shakeM*=Math.pow(0.0016,dt); return; }
   stepDoor(dt);
   /* hammer pose */
   if(hamAnim>=0){
@@ -3910,8 +4246,14 @@ resize();
 buildRoom();
 refreshUI();
 dressMenu();
-requestAnimationFrame(function(){ drawKeyArt(); });
+requestAnimationFrame(function(){
+  drawKeyArt();
+  /* #og renders the link-preview card and saves it next to the game */
+  if(location.hash==='#og') saveOG();
+});
 requestAnimationFrame(frame);
 
 })();
 </script>
+</body>
+</html>
