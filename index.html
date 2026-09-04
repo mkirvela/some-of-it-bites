@@ -967,16 +967,15 @@ function carryPow(){ return HAMMERS[clamp(S.carryHam||0,0,HAMMERS.length-1)].dmg
 function worldMul(){ return S.rank?carryPow()*noteDmg():1; }
 function costMul(){ return S.rank?Math.pow(incomeMul(),0.9):1; }
 function quotaOf(i){ return Math.round(ROOMS[i].quota*(1+0.10*S.rank)); }
-/* You always re-enter at the shallow end, so the growth ramps from the cellar
-   to Outside instead of landing flat on the first room. Otherwise a new career
-   opens slower in real seconds than the one you just finished, which reads as
-   a punishment rather than a promotion. */
-function roomMul(i){
-  if(!S.rank) return 1;
-  if(i===undefined) i=S.room;
-  var d=ROOMS.length>1?i/(ROOMS.length-1):1;
-  return Math.pow(worldMul(),0.45+0.55*d);
-}
+/* Health scales flat across the dungeon, which keeps the one invariant that
+   matters: with the hammer you carried in and no tech, every room takes the
+   same number of swings it took in your first career. It has to be flat —
+   this used to ramp from the cellar (worldMul^0.45) to Outside, dating from
+   when worldMul carried an extra 1.35^rank. With that gone, the ramp just made
+   the shallow half free: a Professor with a Toothbreaker and no tech one-shot
+   cellar furniture in 0.17 swings and farmed it for 42x the teeth per second
+   of Outside. */
+function roomMul(i){ return S.rank?worldMul():1; }
 function hpOf(base,i){ return Math.max(1,Math.round(base*roomMul(i))); }
 /* The hammer ladder is the one thing that does NOT ride the curve. Its top end
    was always tuned to the end of a career, so scaling it would put the last
@@ -1005,7 +1004,15 @@ function addEyes(v){
 function magnetK(){ return 1+0.4*U('magnet'); }
 function eyeRate(){ return 0.30*Math.pow(0.88,U('nerve'))*(S.room===5?1.6:1)*(1+0.07*S.rank)*Math.max(0.25,1+fx('eye')); }
 function mimicChance(){ return Math.min(0.72,0.18+0.029*openEyes()+0.025*U('rep')+fx('mimic')); }
-function teethMult(){ return rankMult()*notesMult()*(1+0.25*U('pouch'))*(1+fx('teeth'))*ROOMS[S.room].pay; }
+/* The pay ladder alone (x1 to x18) never covered the health ladder (x4 to
+   x520), so the shallowest room was always the best teeth-per-second — barely
+   noticeable in a first career, and the whole strategy by the time pay is
+   x150. Weighting payout by the room's own health flattens that: every room
+   earns about the same per second, and the deep rooms earn it in fewer, bigger,
+   far more dangerous kills. Normalised at the Armoury so the mid-game economy
+   stays where it was tuned. */
+function depthPay(){ return S.rank?Math.sqrt(ROOMS[S.room].hp/16):1; }
+function teethMult(){ return rankMult()*notesMult()*(1+0.25*U('pouch'))*(1+fx('teeth'))*ROOMS[S.room].pay*depthPay(); }
 /* teeth prices ride the curve; splinter prices (decoys) do not, because
    splinters come off junk whose health is already scaling */
 function priceMul(def){ return def===DECOY?1:costMul(); }
@@ -2998,7 +3005,10 @@ function dbgDo(act,a){
     else if(a==='hammer'){ S.hammer=Math.min(HAMMERS.length-1,(S.hammer||0)+1); }
     else if(a==='hammerMax'){ S.hammer=HAMMERS.length-1; }
     else if(a==='clearAll'){ ROOMS.forEach(function(R,i){ S.cleared[i]=1; S.prog[i]=quotaOf(i); }); }
-    else if(a==='rank'){ S.rank=Math.min(RANKS.length-1,S.rank+1); }
+    else if(a==='rank'){
+      S.rank=Math.min(RANKS.length-1,S.rank+1);
+      S.carryHam=S.hammer||0;   /* a real promotion records this; the shortcut must too */
+    }
     else if(a==='notes'){ S.notes+=10; }
     else if(a==='promote'){ hide('ovDbg'); syncTabs(); promote(); return; }
     save(); refreshUI(); buildDbg(); return;
@@ -3302,9 +3312,10 @@ function buildMap(){
   if(S.rank){
     h+='<div class="cycle"><b>Career '+(S.rank+1)+'</b>'+
        '<span>Sized to the <b>'+HAMMERS[clamp(S.carryHam||0,0,HAMMERS.length-1)].n+'</b> you kept — you hit <b>×'+
-       (carryPow()*noteDmg()).toFixed(1)+'</b> harder than a first-career opening, so health matches it at depth: '+
-       '<b>×'+roomMul(0).toFixed(1)+'</b> in the cellar rising to <b>×'+roomMul(ROOMS.length-1).toFixed(1)+
-       '</b> Outside. Contracts ask <b>'+Math.round(10*S.rank)+'%</b> more, prices ride <b>×'+costMul().toFixed(1)+
+       (carryPow()*noteDmg()).toFixed(1)+'</b> harder than a first-career opening, and <b>everything in here carries ×'+
+       worldMul().toFixed(1)+'</b> the health to match, cellar to Outside. So with no tech every room takes exactly the '+
+       'swings it took the first time, and tech is the only thing that makes it faster. '+
+       'Contracts ask <b>'+Math.round(10*S.rank)+'%</b> more, prices ride <b>×'+costMul().toFixed(1)+
        '</b> against <b>×'+incomeMul().toFixed(1)+'</b> pay. Fuses are <b>'+Math.round((1-rankFuse())*100)+
        '%</b> shorter, the exotic mimics start '+S.rank+' room'+(S.rank>1?'s':'')+' earlier, and '+
        Math.round(Math.min(0.42,0.18+0.05*S.rank)*100)+'% of them are elites.</span></div>';
@@ -3659,7 +3670,8 @@ function buildHelp(){
 
   h+=hsec('Getting promoted');
   h+=hp('Clear every room and Walk Out becomes <b>Accept promotion</b>. The dungeon closes its mouth, digests you, and you wake one rank higher inside a bigger one. You lose your teeth and your tech. <b>You keep the hammer</b> — nobody at the Guild has ever managed to get one back — along with your <b>fangs</b>, your bestiary, and <b>field notes</b>, which are a permanent multiplier on everything.');
-  h+=hp('<b>The next dungeon is sized to the hammer you walked out with.</b> Keeping a ×210 hammer would make a fresh cellar meaningless, so the furniture in the next dungeon is proportionally heavier — most of all in the deep rooms, least of all in the cellar, where your old hammer is supposed to feel like cheating. Contracts and prices climb too, and every rank shortens every fuse and puts the exotic mimics a room earlier.');
+  h+=hp('<b>The next dungeon is sized to the hammer you walked out with.</b> Keeping a ×210 hammer would make a fresh cellar meaningless, so every piece of furniture in the next dungeon is proportionally heavier — the same multiplier from the cellar to Outside. With no tech bought, every room takes exactly the swings it took in your first career: <b>the tech tree, not the promotion, is what makes a room quick</b>. Contracts and prices climb too, and every rank shortens every fuse and puts the exotic mimics a room earlier.');
+  h+=hp('From your <b>second career on</b>, deeper rooms also pay for what they are made of, so <b>teeth per second is roughly level across the dungeon</b> and the deep rooms earn it in fewer, bigger, far more dangerous kills. Farming the cellar with a hammer it cannot survive is never the answer.');
   h+=htab([{n:'#',num:1},{n:'Rank'}],
     RANKS.map(function(r,i){
       return [i+1,{v:r+(i===S.rank?' — you':''),s:i===S.rank?'color:#E8825F':''}];
@@ -3859,9 +3871,9 @@ function promote(){
   $('promoNotes').textContent='+'+earned;
   $('promoMult').textContent='×'+notesMult().toFixed(2);
   $('promoWorld').innerHTML='The next dungeon is sized to the '+HAMMERS[clamp(S.carryHam||0,0,HAMMERS.length-1)].n+
-    ' you are keeping. You hit <b>×'+(carryPow()*noteDmg()).toFixed(1)+'</b> harder than a first-career opening, so the deep rooms carry '+
-    '<b>×'+roomMul(ROOMS.length-1).toFixed(1)+'</b> the health to match — but the cellar only <b>×'+roomMul(0).toFixed(1)+
-    '</b>, where that hammer is meant to feel like cheating. Contracts ask <b>'+Math.round(10*(S.rank))+'%</b> more, '+
+    ' you are keeping. You hit <b>×'+(carryPow()*noteDmg()).toFixed(1)+'</b> harder than a first-career opening, so everything in it '+
+    'carries <b>×'+worldMul().toFixed(1)+'</b> the health — which means your tech, not your rank, is what makes a room quick again. '+
+    'Contracts ask <b>'+Math.round(10*(S.rank))+'%</b> more, '+
     'prices <b>×'+costMul().toFixed(1)+'</b> against <b>×'+incomeMul().toFixed(1)+'</b> pay, and every fuse is <b>'+
     Math.round((1-rankFuse())*100)+'%</b> shorter.';
   setTimeout(function(){ show('ovPromo'); },800);
