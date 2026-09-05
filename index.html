@@ -738,8 +738,8 @@ var ROOMS=[
   {n:'The Dining Hall',    spot:'#6E7F86', quota:14, kinds:['plate','bucket','urn','stool'],       count:20, hp:3,   pay:0.9, rule:'Swarms. Small, fast, plentiful.', door:'ajar', dmin:0.13, wallCol:'#C8C1A6', floorCol:'#DAD4BF', seed:67},
   {n:'The Library',        spot:'#3A5AA0', quota:18, kinds:['book','shelf','crate','stool'],       count:13, hp:8,   pay:1.8, rule:'Some books do something when opened.', door:'glazed', wallCol:'#C9C2A7', floorCol:'#DBD5C0', seed:101, busy:1},
   {n:'The Armoury',        spot:'#5A6157', quota:22, kinds:['helm','crate','barrel','shelf'],      count:12, hp:16,  pay:3.0, rule:'These bite. A loose mimic opens eyes on its own.', door:'banded', wallCol:'#BFB89E', floorCol:'#D3CDB4', seed:157, busy:1},
-  {n:'The Kitchens',       spot:'#D08A16', quota:26, kinds:['plate','sack','bucket','urn'],        count:16, hp:34,  pay:4.4, rule:'Edible. Every set of teeth closes an eye.', door:'swing', wallCol:'#CBC4A9', floorCol:'#DED8C4', seed:191, busy:1},
-  {n:'The Gallery',        spot:'#6B4076', quota:30, kinds:['wardrobe','shelf','stool','book'],    count:14, hp:78,  pay:7,   rule:'They watch. Eyes open 60% faster.', door:'panelled', darch:1, wallCol:'#CCC5AA', floorCol:'#DED8C4', seed:241, busy:1},
+  {n:'The Kitchens',       spot:'#D08A16', quota:26, kinds:['plate','sack','bucket','urn'],        count:16, hp:34,  pay:4.4, rule:'Edible. It watches you half as closely while you are feeding it.', eyeFast:0.5, door:'swing', wallCol:'#CBC4A9', floorCol:'#DED8C4', seed:191, busy:1},
+  {n:'The Gallery',        spot:'#6B4076', quota:30, kinds:['wardrobe','shelf','stool','book'],    count:14, hp:78,  pay:7,   rule:'They watch. Eyes open 60% faster.', eyeFast:1.6, door:'panelled', darch:1, wallCol:'#CCC5AA', floorCol:'#DED8C4', seed:241, busy:1},
   {n:'The Throne Room',    spot:'#C9A227', quota:34, kinds:['wardrobe','chest','helm','urn'],      count:14, hp:190, pay:11,  rule:'Something here has been reigning for 400 years.', door:'gilt', wallCol:'#C9C2A7', floorCol:'#DCD6C1', seed:283, busy:1},
   {n:'Outside',            spot:'#DED8C4', quota:40, kinds:['wardrobe','shelf','chest','barrel'],  count:15, hp:520, pay:18,  rule:'No ink at all. The sky is unprinted.', door:'freestanding', wallCol:'#F1EEE1', floorCol:'#DED8C4', seed:349, noSkirt:1}
 ];
@@ -1009,7 +1009,7 @@ function addEyes(v){
   eyes=Math.min(cap,eyes+v);
 }
 function magnetK(){ return 1+0.4*U('magnet'); }
-function eyeRate(){ return 0.30*Math.pow(0.88,U('nerve'))*(S.room===5?1.6:1)*(1+0.07*S.rank)*Math.max(0.25,1+fx('eye')); }
+function eyeRate(){ return 0.30*Math.pow(0.88,U('nerve'))*(ROOMS[S.room].eyeFast||1)*(1+0.07*S.rank)*Math.max(0.25,1+fx('eye')); }
 function mimicChance(){ return Math.min(0.72,0.18+0.029*openEyes()+0.025*U('rep')+fx('mimic')); }
 /* The pay ladder alone (x1 to x18) never covered the health ladder (x4 to
    x520), so the shallowest room was always the best teeth-per-second — barely
@@ -2634,8 +2634,11 @@ function killMimic(o){
   addShards(o,10,true);
   pop(xy[0],xy[1]-baseSize()*sc*0.8,'+'+fmt(gain),true);
   shake(9); freeze=Math.max(freeze,0.09); SFX.kill();
-  if(S.room===4){ eyes=Math.max(0,eyes-1); }
-  else addEyes(1);
+  /* The Kitchens used to hand back a whole eye per set of teeth. Kills per
+     second scale with your build; the passive gain caps with frenzy, so past a
+     certain damage the room simply never woke up. It is a halved eye rate now
+     — same fiction, and it cannot be outrun. */
+  addEyes(1);
   o.dead=true;
   var self=o;
   setTimeout(function(){ if(!dead) newObj(self); },260);
