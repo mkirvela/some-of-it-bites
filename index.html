@@ -774,7 +774,14 @@ var TECH=[
   {k:'haul',  g:'Salvage',    n:'Greedy Ledger',  d:'Each open eye is worth +2% more teeth', base:2800, r:2.30, max:6, key:{}},
   {k:'scav',  g:'Salvage',    n:'Scavenger',      d:'+40% splinters from junk',            base:800,  r:2.10, max:5, key:{}}
 ];
-var DECOY={k:'decoy', n:'Put Out a Decoy', d:'Furniture left in the dungeon overnight. Things move in.', base:60, r:1.85, max:12};
+var DECOY={k:'decoy', n:'Put Out a Decoy', d:'Furniture left in the dungeon overnight. Things move in.', base:60, r:1.35, max:12};
+/* Larvae are the only gate on the last four hammers, and twelve decoys pay out
+   the same 259 a day whether you are a Third Class or a Professor — so H8's
+   500 was always two real days away, at every rank. Each promotion licenses
+   four more, which is the one number that moves that wall. */
+function decoyMax(){ return DECOY.max+4*(S.rank||0); }
+function defMax(def){ return def===DECOY?decoyMax():def.max; }
+
 
 /* mimic variants — unlocked by room depth, so the early game stays legible */
 var VAR=[
@@ -3105,7 +3112,7 @@ function refreshUI(){
   refreshNums();
   var afford=false;
   for(var i=0;i<TECH.length;i++){ var t=TECH[i]; if(U(t.k)<t.max && S.banked>=cost(t,U(t.k))){ afford=true; break; } }
-  if(!afford && U('decoy')<DECOY.max && S.spl>=cost(DECOY,U('decoy'))) afford=true;
+  if(!afford && U('decoy')<decoyMax() && S.spl>=cost(DECOY,U('decoy'))) afford=true;
   /* badge the Rooms button when a room you've never entered has opened up */
   var roomReady=false;
   for(var j=1;j<ROOMS.length;j++) if(roomOpen(j) && !S.cleared[j] && prog(j)===0 && S.room!==j){ roomReady=true; break; }
@@ -3159,7 +3166,7 @@ function costN(def,lvl,k){
 }
 function maxAfford(def,lvl,budget){
   var k=0,c=0,m=priceMul(def);
-  while(lvl+k<def.max){
+  while(lvl+k<defMax(def)){
     var nx=Math.floor(def.base*Math.pow(def.r,lvl+k)*m);
     if(c+nx>budget) break;
     c+=nx; k++;
@@ -3168,7 +3175,7 @@ function maxAfford(def,lvl,budget){
   return k;
 }
 function planBuy(def,lvl,budget){
-  var room=def.max-lvl;
+  var room=defMax(def)-lvl;
   if(room<=0) return {k:0,c:0};
   var k = buyN==='max' ? maxAfford(def,lvl,budget) : Math.min(buyN,room);
   return {k:k, c:costN(def,lvl,k)};
@@ -3246,7 +3253,7 @@ function buildShop(){
     });
   });
 
-  var dl=U('decoy'), dp=planBuy(DECOY,dl,S.spl), dmax=dl>=DECOY.max;
+  var dl=U('decoy'), dp=planBuy(DECOY,dl,S.spl), dmax=dl>=decoyMax();
   var done1=costN(DECOY,dl,1), dcan=!dmax&&dp.k>0&&S.spl>=dp.c;
   var dlabel=dmax?'<s>The dungeon is full</s>'
     :((dp.k>1&&dcan)?fmt(dp.c)+' splinters for '+dp.k:fmt(done1)+' splinters');
@@ -3261,8 +3268,10 @@ function buildShop(){
      (dl?'<div class="key act">'+dl+' out · '+fmt(dl*14)+' splinters and '+(dl*0.9).toFixed(1)+' larvae an hour while you are away</div>'
         :'<div class="key">None out yet. Splinters do nothing else — anything you are hoarding is doing nothing.</div>')+
      '<div class="key">Larvae are the <b>only</b> way to forge the last four hammers. Teeth cannot buy them.</div>'+
+     '<div class="key">'+(S.rank?'Your rank licenses <b>'+decoyMax()+'</b> of them — four more with every promotion.'
+        :'A promotion licenses four more, and the wall of larvae between you and the last hammers comes down with it.')+'</div>'+
      '</div>'+
-     '<span class="lv">'+dl+'/'+DECOY.max+'</span></button>';
+     '<span class="lv">'+dl+'/'+decoyMax()+'</span></button>';
 
   $('shopBody').innerHTML=h;
   $('shopBank').textContent=fmt(S.banked);
@@ -3401,7 +3410,7 @@ function buildBest(){
     var lv=U(t.k);
     h+='<div class="ow'+(lv?' has':'')+'"><span>'+t.n+'</span><b>'+lv+'/'+t.max+'</b></div>';
   });
-  h+='<div class="ow'+(U('decoy')?' has':'')+'"><span>Decoys</span><b>'+U('decoy')+'/'+DECOY.max+'</b></div>';
+  h+='<div class="ow'+(U('decoy')?' has':'')+'"><span>Decoys</span><b>'+U('decoy')+'/'+decoyMax()+'</b></div>';
   h+='</div>';
 
   /* ── career ── */
@@ -3669,7 +3678,7 @@ function buildHelp(){
   h+=hp('<b>Decoys</b> are furniture you build from splinters and leave in the dungeon overnight. Things move into them. That is the only source of larvae, and it works for up to 24 hours while the game is closed.');
 
   h+=hsec('Getting promoted');
-  h+=hp('Clear every room and Walk Out becomes <b>Accept promotion</b>. The dungeon closes its mouth, digests you, and you wake one rank higher inside a bigger one. You lose your teeth and your tech. <b>You keep the hammer</b> — nobody at the Guild has ever managed to get one back — along with your <b>fangs</b>, your bestiary, and <b>field notes</b>, which are a permanent multiplier on everything.');
+  h+=hp('Clear every room and Walk Out becomes <b>Accept promotion</b>. The dungeon closes its mouth, digests you, and you wake one rank higher inside a bigger one. You lose your teeth and your tech. <b>You keep the hammer and your decoys</b> — nobody at the Guild has ever managed to get one back — along with your <b>fangs</b>, your bestiary, and <b>field notes</b>, which are a permanent multiplier on everything.');
   h+=hp('<b>The next dungeon is sized to the hammer you walked out with.</b> Keeping a ×210 hammer would make a fresh cellar meaningless, so every piece of furniture in the next dungeon is proportionally heavier — the same multiplier from the cellar to Outside. With no tech bought, every room takes exactly the swings it took in your first career: <b>the tech tree, not the promotion, is what makes a room quick</b>. Contracts and prices climb too, and every rank shortens every fuse and puts the exotic mimics a room earlier.');
   h+=hp('From your <b>second career on</b>, deeper rooms also pay for what they are made of, so <b>teeth per second is roughly level across the dungeon</b> and the deep rooms earn it in fewer, bigger, far more dangerous kills. Farming the cellar with a hammer it cannot survive is never the answer.');
   h+=htab([{n:'#',num:1},{n:'Rank'}],
@@ -3826,7 +3835,7 @@ function maxState(){
   var m={v:2,teeth:0,banked:5e8,spl:5e6,room:ROOMS.length-1,rank:5,notes:60,
     upg:{},seen:{},cleared:{},prog:{},cycleTeeth:0,larvae:2000,hammer:HAMMERS.length-1,sandbox:1,t:Date.now()};
   TECH.forEach(function(t){ m.upg[t.k]=t.max; });
-  m.upg.decoy=DECOY.max;
+  m.upg.decoy=decoyMax();
   BEAST.forEach(function(b){ m.seen[b.kind]=1; });
   ROOMS.forEach(function(R,i){ m.cleared[i]=1; m.prog[i]=R.quota*3; });
   return m;
@@ -3858,7 +3867,7 @@ function promote(){
   S.banked=0; S.teeth=0; S.spl=Math.floor(S.spl*0.5); S.cycleTeeth=0;
   S.cleared={}; S.prog={}; S.room=0; runKills=0;
   var d=U('decoy');
-  S.upg={head:0,wrist:0,nerve:0,rep:0,pouch:0,staff:0,clutter:0,magnet:0,lens:0,ord:0,reach:0,crit:0,haul:0,scav:0,decoy:Math.floor(d*0.5)};
+  S.upg={head:0,wrist:0,nerve:0,rep:0,pouch:0,staff:0,clutter:0,magnet:0,lens:0,ord:0,reach:0,crit:0,haul:0,scav:0,decoy:d};
   /* You keep the hammer. What stops that trivialising the next career is that
      the dungeon is now sized to it: carryHam records the tier you walked out
      with, and the world scales off that. Snapshotting it here rather than
@@ -3873,7 +3882,7 @@ function promote(){
   $('promoWorld').innerHTML='The next dungeon is sized to the '+HAMMERS[clamp(S.carryHam||0,0,HAMMERS.length-1)].n+
     ' you are keeping. You hit <b>×'+(carryPow()*noteDmg()).toFixed(1)+'</b> harder than a first-career opening, so everything in it '+
     'carries <b>×'+worldMul().toFixed(1)+'</b> the health — which means your tech, not your rank, is what makes a room quick again. '+
-    'Contracts ask <b>'+Math.round(10*(S.rank))+'%</b> more, '+
+    'You are licensed for <b>'+decoyMax()+'</b> decoys now, up four. Contracts ask <b>'+Math.round(10*(S.rank))+'%</b> more, '+
     'prices <b>×'+costMul().toFixed(1)+'</b> against <b>×'+incomeMul().toFixed(1)+'</b> pay, and every fuse is <b>'+
     Math.round((1-rankFuse())*100)+'%</b> shorter.';
   setTimeout(function(){ show('ovPromo'); },800);
